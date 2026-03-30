@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:bastikarma/theme/app_theme.dart';
-import 'package:bastikarma/constants/app_strings.dart';
+
+import '../../core/constants/app_strings.dart';
+import '../../core/theme/app_theme.dart';
 
 class AppHeader extends StatelessWidget {
   const AppHeader({super.key});

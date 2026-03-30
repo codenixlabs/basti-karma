@@ -1,12 +1,13 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:bastikarma/constants/app_strings.dart';
-import 'package:bastikarma/controllers/auth_controller.dart';
-import 'package:bastikarma/widgets/app_header.dart';
-import 'package:bastikarma/widgets/custom_text_field.dart';
-import 'package:bastikarma/widgets/custom_button.dart';
-import 'package:bastikarma/theme/app_theme.dart';
+import 'package:bastikarma/features/auth/controller/auth_controller.dart';
+
+import '../../../app/core/constants/app_strings.dart';
+import '../../../app/core/theme/app_theme.dart';
+import '../../../app/shared/widgets/app_header.dart';
+import '../../../app/shared/widgets/custom_button.dart';
+import '../../../app/shared/widgets/custom_text_field.dart';
 
 class RegisterScreen extends StatelessWidget {
   const RegisterScreen({super.key});

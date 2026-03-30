@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:bastikarma/theme/app_theme.dart';
+
+import '../../core/theme/app_theme.dart';
 
 class CustomTextField extends StatelessWidget {
   final TextEditingController controller;

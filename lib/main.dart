@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:bastikarma/routes/app_pages.dart';
-import 'package:bastikarma/theme/app_theme.dart';
-import 'package:bastikarma/controllers/auth_controller.dart';
+import 'package:bastikarma/features/auth/controller/auth_controller.dart';
+
+import 'app/core/routes/app_pages.dart';
+import 'app/core/theme/app_theme.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();

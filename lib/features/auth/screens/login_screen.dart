@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:bastikarma/constants/app_strings.dart';
-import 'package:bastikarma/controllers/auth_controller.dart';
-import 'package:bastikarma/widgets/app_header.dart';
-import 'package:bastikarma/widgets/custom_text_field.dart';
-import 'package:bastikarma/widgets/custom_button.dart';
-import 'package:bastikarma/theme/app_theme.dart';
 
-import '../widgets/custom_snackbar.dart';
+import '../../../app/core/constants/app_strings.dart';
+import '../../../app/core/theme/app_theme.dart';
+import '../../../app/shared/utils/custom_snackbar.dart';
+import '../../../app/shared/widgets/app_header.dart';
+import '../../../app/shared/widgets/custom_button.dart';
+import '../../../app/shared/widgets/custom_text_field.dart';
+import '../controller/auth_controller.dart';
 
 class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key});

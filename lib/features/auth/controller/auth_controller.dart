@@ -1,6 +1,7 @@
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
-import 'package:bastikarma/widgets/custom_snackbar.dart';
+
+import '../../../app/shared/utils/custom_snackbar.dart';
 
 class AuthController extends GetxController {
   // Login Screen Controllers
