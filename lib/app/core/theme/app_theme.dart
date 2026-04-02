@@ -23,6 +23,12 @@ class AppColors {
 
 class AppTheme {
   static ThemeData lightTheme = ThemeData(
+    textSelectionTheme: const TextSelectionThemeData(
+      cursorColor: AppColors.primaryGreen, // cursor color
+      selectionColor: Color(0x332E7D32),   // text selection highlight
+      selectionHandleColor: AppColors.primaryGreen, // handle color
+    ),
+
     useMaterial3: true,
     brightness: Brightness.light,
     scaffoldBackgroundColor: AppColors.background,

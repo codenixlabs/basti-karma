@@ -1,223 +1,243 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+
+import '../../../app/shared/widgets/app_dropdown.dart';
+import '../controller/add_patient_controller.dart';
 import '../widgets/form_widget.dart';
+import '../widgets/sticky_nav.dart';
 
-class Step7RogiPariksha extends StatefulWidget {
-  final Map<String, dynamic> data;
-  final VoidCallback onNext;
-  final VoidCallback onPrev;
+class Step7RogiPariksha extends StatelessWidget {
+  const Step7RogiPariksha({super.key});
 
-  const Step7RogiPariksha({
-    super.key,
-    required this.data,
-    required this.onNext,
-    required this.onPrev,
-  });
+  static List<BottomSheetOption<String>> get _qualityOptions => [
+    BottomSheetOption(
+      value: 'Pravara (Excellent)',
+      label: 'Pravara (Excellent)',
+    ),
+    BottomSheetOption(
+      value: 'Madhyama (Moderate)',
+      label: 'Madhyama (Moderate)',
+    ),
+    BottomSheetOption(value: 'Avara (Poor)', label: 'Avara (Poor)'),
+  ];
 
-  @override
-  State<Step7RogiPariksha> createState() => _Step7RogiParikshaState();
-}
-
-class _Step7RogiParikshaState extends State<Step7RogiPariksha> {
-  String? _prakriti;
-  String? _sarataha;
-  String? _sanhanan;
-  String? _pramana;
-  String? _satva;
-  String? _satmya;
-  String? _aharaShakti;
-  String? _vyayamaShakti;
-  String? _vaya;
-  String? _jihwa;
-  String? _desha;
-
-  @override
-  void initState() {
-    super.initState();
-    _prakriti = widget.data['prakriti'];
-    _sarataha = widget.data['sarataha'];
-    _sanhanan = widget.data['sanhanan'];
-    _pramana = widget.data['pramana'];
-    _satva = widget.data['satva'];
-    _satmya = widget.data['satmya'];
-    _aharaShakti = widget.data['aharaShakti'];
-    _vyayamaShakti = widget.data['vyayamaShakti'];
-    _vaya = widget.data['vaya'];
-    _jihwa = widget.data['jihwa'];
-    _desha = widget.data['desha'];
-  }
-
-  void _save() {
-    widget.data['prakriti'] = _prakriti;
-    widget.data['sarataha'] = _sarataha;
-    widget.data['sanhanan'] = _sanhanan;
-    widget.data['pramana'] = _pramana;
-    widget.data['satva'] = _satva;
-    widget.data['satmya'] = _satmya;
-    widget.data['aharaShakti'] = _aharaShakti;
-    widget.data['vyayamaShakti'] = _vyayamaShakti;
-    widget.data['vaya'] = _vaya;
-    widget.data['jihwa'] = _jihwa;
-    widget.data['desha'] = _desha;
-  }
-
-  DropdownMenuItem<String> _item(String v) =>
-      DropdownMenuItem(value: v, child: Text(v));
+  static List<BottomSheetOption<String>> get _shaktiOptions => [
+    BottomSheetOption(value: 'Pravara', label: 'Pravara'),
+    BottomSheetOption(value: 'Madhyama', label: 'Madhyama'),
+    BottomSheetOption(value: 'Avara', label: 'Avara'),
+  ];
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        FormSectionCard(
-          title: 'Rogi Pariksha',
-          icon: Icons.spa_outlined,
-          children: [
-            FormDropdownField<String>(
-              label: 'Prakriti',
-              hint: 'Select Prakriti',
-              value: _prakriti,
-              onChanged: (v) => setState(() => _prakriti = v),
-              items: [
-                _item('Vata'),
-                _item('Pitta'),
-                _item('Kapha'),
-                _item('Vata-Pitta'),
-                _item('Pitta-Kapha'),
-                _item('Vata-Kapha'),
-                _item('Sama Prakriti'),
-              ],
-            ),
-            FormDropdownField<String>(
-              label: 'Sarataha (Tissue Quality)',
-              hint: 'Select Sarataha',
-              value: _sarataha,
-              onChanged: (v) => setState(() => _sarataha = v),
-              items: [
-                _item('Pravara (Excellent)'),
-                _item('Madhyama (Moderate)'),
-                _item('Avara (Poor)'),
-              ],
-            ),
-            FormDropdownField<String>(
-              label: 'Sanhanan (Body Constitution)',
-              hint: 'Select Sanhanan',
-              value: _sanhanan,
-              onChanged: (v) => setState(() => _sanhanan = v),
-              items: [
-                _item('Pravara (Excellent)'),
-                _item('Madhyama (Moderate)'),
-                _item('Avara (Poor)'),
-              ],
-            ),
-            FormDropdownField<String>(
-              label: 'Pramana (Body Proportion)',
-              hint: 'Select Pramana',
-              value: _pramana,
-              onChanged: (v) => setState(() => _pramana = v),
-              items: [
-                _item('Pravara (Excellent)'),
-                _item('Madhyama (Moderate)'),
-                _item('Avara (Poor)'),
-              ],
-            ),
-            FormDropdownField<String>(
-              label: 'Satva (Mental Strength)',
-              hint: 'Select Satva',
-              value: _satva,
-              onChanged: (v) => setState(() => _satva = v),
-              items: [
-                _item('Pravara (Excellent)'),
-                _item('Madhyama (Moderate)'),
-                _item('Avara (Poor)'),
-              ],
-            ),
-            FormDropdownField<String>(
-              label: 'Satmya (Adaptability)',
-              hint: 'Select Satmya',
-              value: _satmya,
-              onChanged: (v) => setState(() => _satmya = v),
-              items: [
-                _item('Sarvarasa Satmya'),
-                _item('Madhyama Satmya'),
-                _item('Ekarasa Satmya'),
-              ],
-            ),
-            Row(
-              children: [
-                Expanded(
-                  child: FormDropdownField<String>(
-                    label: 'Ahara Shakti',
-                    hint: 'Select',
-                    value: _aharaShakti,
-                    onChanged: (v) => setState(() => _aharaShakti = v),
-                    items: [
-                      _item('Pravara'),
-                      _item('Madhyama'),
-                      _item('Avara'),
+    final ctrl = Get.find<AddPatientController>();
+
+    return GestureDetector(
+      onTap: () => FocusScope.of(context).unfocus(),
+      behavior: HitTestBehavior.opaque,
+      child: Column(
+        children: [
+          Expanded(
+            child: SingleChildScrollView(
+              // FIX: Was missing padding — inconsistent with all other steps.
+              padding: const EdgeInsets.fromLTRB(0, 12, 0, 12),
+              child: FormSectionCard(
+                title: 'Rogi Pariksha',
+                icon: Icons.spa_outlined,
+                children: [
+                  Obx(
+                    () => AppBottomSheet<String>(
+                      label: 'Prakriti',
+                      hint: 'Select Prakriti',
+                      value: ctrl.prakriti.value,
+                      onChanged: (v) => ctrl.prakriti.value = v,
+                      options: [
+                        BottomSheetOption(value: 'Vata', label: 'Vata'),
+                        BottomSheetOption(value: 'Pitta', label: 'Pitta'),
+                        BottomSheetOption(value: 'Kapha', label: 'Kapha'),
+                        BottomSheetOption(
+                          value: 'Vata-Pitta',
+                          label: 'Vata-Pitta',
+                        ),
+                        BottomSheetOption(
+                          value: 'Pitta-Kapha',
+                          label: 'Pitta-Kapha',
+                        ),
+                        BottomSheetOption(
+                          value: 'Vata-Kapha',
+                          label: 'Vata-Kapha',
+                        ),
+                        BottomSheetOption(
+                          value: 'Sama Prakriti',
+                          label: 'Sama Prakriti',
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  Obx(
+                    () => AppBottomSheet<String>(
+                      label: 'Sarataha (Tissue Quality)',
+                      hint: 'Select Sarataha',
+                      value: ctrl.sarataha.value,
+                      onChanged: (v) => ctrl.sarataha.value = v,
+                      options: _qualityOptions,
+                    ),
+                  ),
+
+                  Obx(
+                    () => AppBottomSheet<String>(
+                      label: 'Sanhanan (Body Constitution)',
+                      hint: 'Select Sanhanan',
+                      value: ctrl.sanhanan.value,
+                      onChanged: (v) => ctrl.sanhanan.value = v,
+                      options: _qualityOptions,
+                    ),
+                  ),
+
+                  Obx(
+                    () => AppBottomSheet<String>(
+                      label: 'Pramana (Body Proportion)',
+                      hint: 'Select Pramana',
+                      value: ctrl.pramana.value,
+                      onChanged: (v) => ctrl.pramana.value = v,
+                      options: _qualityOptions,
+                    ),
+                  ),
+
+                  Obx(
+                    () => AppBottomSheet<String>(
+                      label: 'Satva (Mental Strength)',
+                      hint: 'Select Satva',
+                      value: ctrl.satva.value,
+                      onChanged: (v) => ctrl.satva.value = v,
+                      options: _qualityOptions,
+                    ),
+                  ),
+
+                  Obx(
+                    () => AppBottomSheet<String>(
+                      label: 'Satmya (Adaptability)',
+                      hint: 'Select Satmya',
+                      value: ctrl.satmya.value,
+                      onChanged: (v) => ctrl.satmya.value = v,
+                      options: [
+                        BottomSheetOption(
+                          value: 'Sarvarasa Satmya',
+                          label: 'Sarvarasa Satmya',
+                        ),
+                        BottomSheetOption(
+                          value: 'Madhyama Satmya',
+                          label: 'Madhyama Satmya',
+                        ),
+                        BottomSheetOption(
+                          value: 'Ekarasa Satmya',
+                          label: 'Ekarasa Satmya',
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  // Ahara + Vyayama Shakti side-by-side
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Obx(
+                          () => AppBottomSheet<String>(
+                            label: 'Ahara Shakti',
+                            hint: 'Select',
+                            value: ctrl.aharaShakti.value,
+                            onChanged: (v) => ctrl.aharaShakti.value = v,
+                            options: _shaktiOptions,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Obx(
+                          () => AppBottomSheet<String>(
+                            label: 'Vyayama Shakti',
+                            hint: 'Select',
+                            value: ctrl.vyayamaShakti.value,
+                            onChanged: (v) => ctrl.vyayamaShakti.value = v,
+                            options: _shaktiOptions,
+                          ),
+                        ),
+                      ),
                     ],
                   ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: FormDropdownField<String>(
-                    label: 'Vyayama Shakti',
-                    hint: 'Select',
-                    value: _vyayamaShakti,
-                    onChanged: (v) => setState(() => _vyayamaShakti = v),
-                    items: [
-                      _item('Pravara'),
-                      _item('Madhyama'),
-                      _item('Avara'),
-                    ],
+
+                  Obx(
+                    () => AppBottomSheet<String>(
+                      label: 'Vaya (Age Group)',
+                      hint: 'Select Vaya',
+                      value: ctrl.vaya.value,
+                      onChanged: (v) => ctrl.vaya.value = v,
+                      options: [
+                        BottomSheetOption(
+                          value: 'Bala (Child 0–16)',
+                          label: 'Bala (Child 0–16)',
+                        ),
+                        BottomSheetOption(
+                          value: 'Madhyama (Adult 16–60)',
+                          label: 'Madhyama (Adult 16–60)',
+                        ),
+                        BottomSheetOption(
+                          value: 'Vriddha (Old 60+)',
+                          label: 'Vriddha (Old 60+)',
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-              ],
+
+                  Obx(
+                    () => AppBottomSheet<String>(
+                      label: 'Jihwa (Tongue)',
+                      hint: 'Select Jihwa condition',
+                      value: ctrl.jihwa.value,
+                      onChanged: (v) => ctrl.jihwa.value = v,
+                      options: [
+                        BottomSheetOption(value: 'Clean', label: 'Clean'),
+                        BottomSheetOption(value: 'Coated', label: 'Coated'),
+                        BottomSheetOption(
+                          value: 'Trembling',
+                          label: 'Trembling',
+                        ),
+                        BottomSheetOption(value: 'Dry', label: 'Dry'),
+                        BottomSheetOption(value: 'Moist', label: 'Moist'),
+                      ],
+                    ),
+                  ),
+
+                  Obx(
+                    () => AppBottomSheet<String>(
+                      label: 'Desha (Habitat)',
+                      hint: 'Select Desha',
+                      value: ctrl.desha.value,
+                      onChanged: (v) => ctrl.desha.value = v,
+                      options: [
+                        BottomSheetOption(
+                          value: 'Anupa (Marshy)',
+                          label: 'Anupa (Marshy)',
+                        ),
+                        BottomSheetOption(
+                          value: 'Jangala (Dry/Desert)',
+                          label: 'Jangala (Dry/Desert)',
+                        ),
+                        BottomSheetOption(
+                          value: 'Sadharana (Normal)',
+                          label: 'Sadharana (Normal)',
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             ),
-            FormDropdownField<String>(
-              label: 'Vaya (Age Group)',
-              hint: 'Select Vaya',
-              value: _vaya,
-              onChanged: (v) => setState(() => _vaya = v),
-              items: [
-                _item('Bala (Child 0–16)'),
-                _item('Madhyama (Adult 16–60)'),
-                _item('Vriddha (Old 60+)'),
-              ],
-            ),
-            FormDropdownField<String>(
-              label: 'Jihwa (Tongue)',
-              hint: 'Select Jihwa condition',
-              value: _jihwa,
-              onChanged: (v) => setState(() => _jihwa = v),
-              items: [
-                _item('Clean'),
-                _item('Coated'),
-                _item('Trembling'),
-                _item('Dry'),
-                _item('Moist'),
-              ],
-            ),
-            FormDropdownField<String>(
-              label: 'Desha (Habitat)',
-              hint: 'Select Desha',
-              value: _desha,
-              onChanged: (v) => setState(() => _desha = v),
-              items: [
-                _item('Anupa (Marshy)'),
-                _item('Jangala (Dry/Desert)'),
-                _item('Sadharana (Normal)'),
-              ],
-            ),
-          ],
-        ),
-        const SizedBox(height: 16),
-        FormNavButtons(
-          onPrev: widget.onPrev,
-          onNext: () {
-            _save();
-            widget.onNext();
-          },
-        ),
-      ],
+          ),
+
+          StickyNav(onPrev: ctrl.prev, onNext: ctrl.next),
+        ],
+      ),
     );
   }
 }

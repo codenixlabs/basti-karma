@@ -5,7 +5,7 @@ import 'package:bastikarma/features/auth/controller/auth_controller.dart';
 
 import '../../../app/core/constants/app_strings.dart';
 import '../../../app/core/theme/app_theme.dart';
-import '../../../app/shared/widgets/app_header.dart';
+import '../widgets/app_header.dart';
 import '../../../app/shared/widgets/custom_button.dart';
 import '../../../app/shared/widgets/custom_text_field.dart';
 

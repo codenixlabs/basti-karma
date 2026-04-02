@@ -202,8 +202,8 @@ class _StatCard extends StatelessWidget {
         return Icons.people_outline;
       case 'treatments':
         return Icons.monitor_heart_outlined;
-      case 'doses':
-        return Icons.notifications_outlined;
+      // case 'doses':
+      //   return Icons.notifications_outlined;
       default:
         return Icons.info_outline;
     }
@@ -215,8 +215,8 @@ class _StatCard extends StatelessWidget {
         return AppColors.primaryGreen.withValues(alpha: 0.12);
       case 'treatments':
         return AppColors.primaryGreen.withValues(alpha: 0.12);
-      case 'doses':
-        return const Color(0xFFE8EAF6);
+      // case 'doses':
+      //   return const Color(0xFFE8EAF6);
       default:
         return AppColors.lightGrey;
     }
@@ -359,7 +359,7 @@ class _QuickActionCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        // TODO: wire to routes e.g. Get.toNamed(AppRoutes.addPatient)
+        //wire to routes e.g. Get.toNamed(AppRoutes.addPatient)
       },
       child: Container(
         decoration: BoxDecoration(

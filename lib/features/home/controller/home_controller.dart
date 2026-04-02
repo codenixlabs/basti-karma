@@ -34,25 +34,13 @@ class HomeController extends GetxController {
 
   final RxList<DashboardStat> stats = <DashboardStat>[
     DashboardStat(label: 'Total Patients', value: 24, iconType: 'patients'),
-    DashboardStat(
-      label: 'Active\nTreatments',
-      value: 8,
-      iconType: 'treatments',
-    ),
-    DashboardStat(label: "Today's Doses", value: 3, iconType: 'doses'),
+    DashboardStat(label: 'Active Treatments', value: 8, iconType: 'treatments'),
   ].obs;
 
   final RxList<Reminder> reminders = <Reminder>[
     Reminder(
-      title: 'Next Snehapana Dose',
-      subtitle: 'Patient: Rajesh Kumar - Due in 2 hours',
-      badge: 'Today',
-      isUrgent: false,
-      iconType: 'bell',
-    ),
-    Reminder(
       title: 'Pending Assessments',
-      subtitle: '3 patients require Snigdha assessment',
+      subtitle: '..............',
       badge: 'Urgent',
       isUrgent: true,
       iconType: 'pulse',

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../../core/constants/app_strings.dart';
-import '../../core/theme/app_theme.dart';
+import '../../../app/core/constants/app_strings.dart';
+import '../../../app/core/theme/app_theme.dart';
 
 class AppHeader extends StatelessWidget {
   const AppHeader({super.key});
@@ -35,12 +35,12 @@ class AppHeader extends StatelessWidget {
           AppStrings.appName,
           style: Theme.of(context).textTheme.headlineLarge,
         ),
-        const SizedBox(height: 8),
-        Text(
-          AppStrings.appSubtitle,
-          style: Theme.of(context).textTheme.bodyMedium,
-          textAlign: TextAlign.center,
-        ),
+        // const SizedBox(height: 8),
+        // Text(
+        //   AppStrings.appSubtitle,
+        //   style: Theme.of(context).textTheme.bodyMedium,
+        //   textAlign: TextAlign.center,
+        // ),
       ],
     );
   }

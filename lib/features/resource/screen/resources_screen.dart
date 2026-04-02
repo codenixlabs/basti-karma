@@ -35,13 +35,13 @@ class ResourcesScreen extends StatelessWidget {
       'subtitle': 'Dietary recommendations for Panchakarma patients',
       'iconColor': 0xFF555555,
     },
-    {
-      'icon': Icons.eco_outlined,
-      'title': 'Herbal Medicine Reference',
-      'tag': 'Pharmacology',
-      'subtitle': 'Common herbs and their therapeutic applications',
-      'iconColor': 0xFF2F5D3A,
-    },
+    // {
+    //   'icon': Icons.eco_outlined,
+    //   'title': 'Herbal Medicine Reference',
+    //   'tag': 'Pharmacology',
+    //   'subtitle': 'Common herbs and their therapeutic applications',
+    //   'iconColor': 0xFF2F5D3A,
+    // },
   ];
 
   static const _quickRef = [

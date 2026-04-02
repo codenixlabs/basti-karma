@@ -1,158 +1,184 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+
+import '../../../app/core/theme/app_theme.dart';
+import '../../../app/shared/widgets/app_dropdown.dart';
+import '../controller/add_patient_controller.dart';
 import '../widgets/form_widget.dart';
+import '../widgets/sticky_nav.dart';
 
-class Step4Lifestyle extends StatefulWidget {
-  final Map<String, dynamic> data;
-  final VoidCallback onNext;
-  final VoidCallback onPrev;
-
-  const Step4Lifestyle({
-    super.key,
-    required this.data,
-    required this.onNext,
-    required this.onPrev,
-  });
-
-  @override
-  State<Step4Lifestyle> createState() => _Step4LifestyleState();
-}
-
-class _Step4LifestyleState extends State<Step4Lifestyle> {
-  String? _diet;
-  Set<String> _addictions = {};
-  String? _bowelHabits;
-  String? _nidra;
-  String? _bloodGroup;
-  late final TextEditingController _urineFreqCtrl;
-
-  @override
-  void initState() {
-    super.initState();
-    _diet = widget.data['diet'];
-    _addictions = Set<String>.from(widget.data['addictions'] ?? []);
-    _bowelHabits = widget.data['bowelHabits'];
-    _nidra = widget.data['nidra'];
-    _bloodGroup = widget.data['bloodGroup'];
-    _urineFreqCtrl = TextEditingController(
-      text: widget.data['urineFrequency'] ?? '',
-    );
-  }
-
-  @override
-  void dispose() {
-    _urineFreqCtrl.dispose();
-    super.dispose();
-  }
-
-  void _save() {
-    widget.data['diet'] = _diet;
-    widget.data['addictions'] = _addictions.toList();
-    widget.data['bowelHabits'] = _bowelHabits;
-    widget.data['nidra'] = _nidra;
-    widget.data['bloodGroup'] = _bloodGroup;
-    widget.data['urineFrequency'] = _urineFreqCtrl.text;
-  }
+class Step4Lifestyle extends StatelessWidget {
+  const Step4Lifestyle({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        FormSectionCard(
-          title: 'Lifestyle (Ahara & Vihara)',
-          icon: Icons.restaurant_outlined,
-          children: [
-            FormRadioGroup<String>(
-              label: 'Ahara (Diet)',
-              groupValue: _diet,
-              options: const [
-                (value: 'Vegetarian', label: 'Vegetarian'),
-                (value: 'Mixed', label: 'Mixed'),
-              ],
-              onChanged: (v) => setState(() => _diet = v),
+    final ctrl = Get.find<AddPatientController>();
+
+    return GestureDetector(
+      onTap: () => FocusScope.of(context).unfocus(),
+      behavior: HitTestBehavior.opaque,
+      child: Column(
+        children: [
+          Expanded(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.fromLTRB(0, 12, 0, 12),
+              child: FormSectionCard(
+                title: 'Lifestyle (Ahara & Vihara)',
+                icon: Icons.restaurant_outlined,
+                children: [
+                  Obx(
+                        () => FormRadioGroup<String>(
+                      label: 'Ahara (Diet)',
+                      groupValue: ctrl.diet.value,
+                      options: const [
+                        (value: 'Vegetarian',     label: 'Veg'),
+                        (value: 'Non-Vegetarian', label: 'Non-Veg'),
+                        (value: 'Mixed',          label: 'Mixed'),
+                      ],
+                      onChanged: (v) => ctrl.diet.value = v,
+                    ),
+                  ),
+
+                  _AddictionsField(ctrl: ctrl),
+
+                  Obx(
+                        () => AppBottomSheet<String>(
+                      label: 'Bowel Habits',
+                      hint: 'Select bowel habits',
+                      value: ctrl.bowelHabits.value,
+                      onChanged: (v) => ctrl.bowelHabits.value = v,
+                      options: [
+                        BottomSheetOption(value: 'Regular',     label: 'Regular'),
+                        BottomSheetOption(value: 'Irregular',   label: 'Irregular'),
+                        BottomSheetOption(value: 'Constipated', label: 'Constipated'),
+                        BottomSheetOption(value: 'Watery',      label: 'Watery'),
+                        BottomSheetOption(value: 'Others',      label: 'Others'),
+                      ],
+                    ),
+                  ),
+
+                  Obx(
+                        () => AppBottomSheet<String>(
+                      label: 'Nidra (Sleep)',
+                      hint: 'Select sleep pattern',
+                      value: ctrl.nidra.value,
+                      onChanged: (v) => ctrl.nidra.value = v,
+                      options: [
+                        BottomSheetOption(value: 'Sound',     label: 'Sound'),
+                        BottomSheetOption(value: 'Disturbed', label: 'Disturbed'),
+                      ],
+                    ),
+                  ),
+
+                  FormTextField(
+                    label: 'Urine Frequency',
+                    hint: 'e.g., 6-8 times/day',
+                    controller: ctrl.urineFreqCtrl,
+                    focusNode: ctrl.urineFreqFocus,
+                    textInputAction: TextInputAction.done,
+                  ),
+
+                  Obx(
+                        () => AppBottomSheet<String>(
+                      label: 'Blood Group',
+                      hint: 'Select blood group',
+                      value: ctrl.bloodGroup.value,
+                      onChanged: (v) => ctrl.bloodGroup.value = v,
+                      options: [
+                        BottomSheetOption(value: 'A+',  label: 'A+'),
+                        BottomSheetOption(value: 'A-',  label: 'A-'),
+                        BottomSheetOption(value: 'B+',  label: 'B+'),
+                        BottomSheetOption(value: 'B-',  label: 'B-'),
+                        BottomSheetOption(value: 'AB+', label: 'AB+'),
+                        BottomSheetOption(value: 'AB-', label: 'AB-'),
+                        BottomSheetOption(value: 'O+',  label: 'O+'),
+                        BottomSheetOption(value: 'O-',  label: 'O-'),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             ),
-            FormChipGroup(
-              label: 'Vihara — Addictions',
-              options: const [
-                'Tea',
-                'Coffee',
-                'Smoking',
-                'Alcohol',
-                'Gutka',
-                'Others',
-              ],
-              selected: _addictions,
-              onToggle: (opt) => setState(() {
-                if (_addictions.contains(opt)) {
-                  _addictions.remove(opt);
-                } else {
-                  _addictions.add(opt);
-                }
-              }),
+          ),
+
+          StickyNav(onPrev: ctrl.prev, onNext: ctrl.next),
+        ],
+      ),
+    );
+  }
+}
+
+class _AddictionsField extends StatelessWidget {
+  final AddPatientController ctrl;
+  const _AddictionsField({required this.ctrl});
+
+  static const _options = ['Tea', 'Coffee', 'Smoking', 'Alcohol', 'Gutka', 'Others'];
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 14),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'Vihara — Addictions',
+            style: TextStyle(
+              color: AppColors.textDarkGreen,
+              fontSize: 13,
+              fontWeight: FontWeight.w500,
             ),
-            FormDropdownField<String>(
-              label: 'Bowel Habits',
-              hint: 'Select bowel habits',
-              value: _bowelHabits,
-              onChanged: (v) => setState(() => _bowelHabits = v),
-              items: const [
-                DropdownMenuItem(value: 'Regular', child: Text('Regular')),
-                DropdownMenuItem(
-                  value: 'Irregular',
-                  child: Text('Irregular'),
-                ),
-                DropdownMenuItem(
-                  value: 'Constipated',
-                  child: Text('Constipated'),
-                ),
-                DropdownMenuItem(value: 'Watery', child: Text('Watery')),
-                DropdownMenuItem(value: 'Others', child: Text('Others')),
-              ],
+          ),
+          const SizedBox(height: 8),
+          Obx(
+                () => Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: _options.map((opt) {
+                final selected = ctrl.addictions.contains(opt);
+                return GestureDetector(
+                  onTap: () => ctrl.toggleAddiction(opt),
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 180),
+                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                    decoration: BoxDecoration(
+                      color: selected ? AppColors.primaryGreen : AppColors.inputBackground,
+                      borderRadius: BorderRadius.circular(20),
+                      border: Border.all(
+                        color: selected
+                            ? AppColors.primaryGreen
+                            : AppColors.primaryGreen.withValues(alpha: 0.4),
+                      ),
+                    ),
+                    child: Text(
+                      opt,
+                      style: TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w500,
+                        color: selected ? Colors.white : AppColors.textDarkGreen,
+                      ),
+                    ),
+                  ),
+                );
+              }).toList(),
             ),
-            FormDropdownField<String>(
-              label: 'Nidra (Sleep)',
-              hint: 'Select sleep pattern',
-              value: _nidra,
-              onChanged: (v) => setState(() => _nidra = v),
-              items: const [
-                DropdownMenuItem(value: 'Sound', child: Text('Sound')),
-                DropdownMenuItem(
-                  value: 'Disturbed',
-                  child: Text('Disturbed'),
-                ),
-              ],
-            ),
-            FormTextField(
-              label: 'Urine Frequency',
-              hint: 'e.g., 6-8 times/day',
-              controller: _urineFreqCtrl,
-            ),
-            FormDropdownField<String>(
-              label: 'Blood Group',
-              hint: 'Select blood group',
-              value: _bloodGroup,
-              onChanged: (v) => setState(() => _bloodGroup = v),
-              items: const [
-                DropdownMenuItem(value: 'A+', child: Text('A+')),
-                DropdownMenuItem(value: 'A-', child: Text('A-')),
-                DropdownMenuItem(value: 'B+', child: Text('B+')),
-                DropdownMenuItem(value: 'B-', child: Text('B-')),
-                DropdownMenuItem(value: 'AB+', child: Text('AB+')),
-                DropdownMenuItem(value: 'AB-', child: Text('AB-')),
-                DropdownMenuItem(value: 'O+', child: Text('O+')),
-                DropdownMenuItem(value: 'O-', child: Text('O-')),
-              ],
-            ),
-          ],
-        ),
-        const SizedBox(height: 16),
-        FormNavButtons(
-          onPrev: widget.onPrev,
-          onNext: () {
-            _save();
-            widget.onNext();
-          },
-        ),
-      ],
+          ),
+          Obx(
+                () => ctrl.hasOtherAddiction
+                ? Padding(
+              padding: const EdgeInsets.only(top: 12),
+              child: FormTextField(
+                label: 'Please specify other addiction',
+                hint: 'Enter details...',
+                controller: ctrl.otherAddictionCtrl,
+                focusNode: ctrl.otherAddictionFocus,
+                textInputAction: TextInputAction.done,
+              ),
+            )
+                : const SizedBox.shrink(),
+          ),
+        ],
+      ),
     );
   }
 }

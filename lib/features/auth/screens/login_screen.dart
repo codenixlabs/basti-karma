@@ -4,7 +4,7 @@ import 'package:get/get.dart';
 import '../../../app/core/constants/app_strings.dart';
 import '../../../app/core/theme/app_theme.dart';
 import '../../../app/shared/utils/custom_snackbar.dart';
-import '../../../app/shared/widgets/app_header.dart';
+import '../widgets/app_header.dart';
 import '../../../app/shared/widgets/custom_button.dart';
 import '../../../app/shared/widgets/custom_text_field.dart';
 import '../controller/auth_controller.dart';

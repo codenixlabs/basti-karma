@@ -17,12 +17,6 @@ class CalculatorsScreen extends StatelessWidget {
       'subtitle': 'Body Mass Index calculation',
       'arrow': false,
     },
-    {
-      'icon': Icons.monitor_heart_outlined,
-      'title': 'Agni Score Calculator',
-      'subtitle': 'Quick Agni assessment score',
-      'arrow': false,
-    },
   ];
 
   @override

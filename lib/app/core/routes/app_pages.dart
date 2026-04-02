@@ -4,6 +4,7 @@ import 'package:bastikarma/features/auth/screens/register_screen.dart';
 import 'package:bastikarma/features/auth/controller/auth_controller.dart';
 import 'package:bastikarma/features/home/controller/home_controller.dart';
 
+import '../../../features/patients/controller/add_patient_controller.dart';
 import '../../../features/patients/screen/add_patient_screen.dart';
 import '../../shared/widgets/bottom_navbar.dart';
 
@@ -36,6 +37,10 @@ class AppPages {
     GetPage(
       name: AppRoutes.addPatient,
       page: () => const AddPatientScreen(),
+      transition: Transition.rightToLeft,
+      bindings: [
+        BindingsBuilder(() => Get.lazyPut(() => AddPatientController())),
+      ],
     ),
   ];
 

@@ -1,18 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:get/get.dart';
+
+import '../../../app/shared/widgets/app_dropdown.dart';
+import '../controller/add_patient_controller.dart';
 import '../widgets/form_widget.dart';
+import '../widgets/sticky_nav.dart';
 
 class Step1BasicInfo extends StatefulWidget {
-  final Map<String, dynamic> data;
-  final VoidCallback onNext;
-  final VoidCallback? onPrev;
-
-  const Step1BasicInfo({
-    super.key,
-    required this.data,
-    required this.onNext,
-    this.onPrev,
-  });
+  const Step1BasicInfo({super.key});
 
   @override
   State<Step1BasicInfo> createState() => _Step1BasicInfoState();
@@ -21,165 +17,175 @@ class Step1BasicInfo extends StatefulWidget {
 class _Step1BasicInfoState extends State<Step1BasicInfo> {
   final _formKey = GlobalKey<FormState>();
 
-  late final TextEditingController _nameCtrl;
-  late final TextEditingController _ageCtrl;
-  late final TextEditingController _phoneCtrl;
-  late final TextEditingController _occupationCtrl;
-  late final TextEditingController _addressCtrl;
-
-  String? _sex;
-  String? _religion;
-  String? _maritalStatus;
-
-  @override
-  void initState() {
-    super.initState();
-    _nameCtrl = TextEditingController(text: widget.data['name'] ?? '');
-    _ageCtrl = TextEditingController(text: widget.data['age']?.toString() ?? '');
-    _phoneCtrl = TextEditingController(text: widget.data['phone'] ?? '');
-    _occupationCtrl = TextEditingController(text: widget.data['occupation'] ?? '');
-    _addressCtrl = TextEditingController(text: widget.data['address'] ?? '');
-    _sex = widget.data['sex'];
-    _religion = widget.data['religion'];
-    _maritalStatus = widget.data['maritalStatus'];
-  }
-
-  @override
-  void dispose() {
-    _nameCtrl.dispose();
-    _ageCtrl.dispose();
-    _phoneCtrl.dispose();
-    _occupationCtrl.dispose();
-    _addressCtrl.dispose();
-    super.dispose();
-  }
-
-  void _save() {
-    widget.data['name'] = _nameCtrl.text;
-    widget.data['age'] = int.tryParse(_ageCtrl.text);
-    widget.data['sex'] = _sex;
-    widget.data['phone'] = _phoneCtrl.text;
-    widget.data['occupation'] = _occupationCtrl.text;
-    widget.data['address'] = _addressCtrl.text;
-    widget.data['religion'] = _religion;
-    widget.data['maritalStatus'] = _maritalStatus;
-  }
-
   @override
   Widget build(BuildContext context) {
-    return Form(
-      key: _formKey,
+    final ctrl = Get.find<AddPatientController>();
+
+    return GestureDetector(
+      onTap: () => FocusScope.of(context).unfocus(),
+      behavior: HitTestBehavior.opaque,
       child: Column(
         children: [
-          FormSectionCard(
-            title: 'Basic Patient Information',
-            icon: Icons.person_outline_rounded,
-            children: [
-              FormTextField(
-                label: 'Full Name',
-                hint: 'Enter patient name',
-                controller: _nameCtrl,
-                required: true,
-                validator: (v) =>
-                (v == null || v.trim().isEmpty) ? 'Name is required' : null,
-              ),
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Expanded(
-                    child: FormTextField(
-                      label: 'Age',
-                      hint: 'Years',
-                      controller: _ageCtrl,
+          Expanded(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.fromLTRB(0, 12, 0, 12),
+              child: Form(
+                key: _formKey,
+                child: FormSectionCard(
+                  title: 'Basic Patient Information',
+                  icon: Icons.person_outline_rounded,
+                  children: [
+                    // Full Name
+                    FormTextField(
+                      label: 'Full Name',
+                      hint: 'Enter patient name',
+                      controller: ctrl.nameCtrl,
+                      focusNode: ctrl.nameFocus,
+                      nextFocusNode: ctrl.ageFocus,
                       required: true,
-                      keyboardType: TextInputType.number,
-                      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                      validator: (v) =>
-                      (v == null || v.isEmpty) ? 'Required' : null,
+                      validator: (v) => (v == null || v.trim().isEmpty)
+                          ? 'Name is required'
+                          : null,
                     ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: FormTextField(
-                      label: 'Phone No',
-                      hint: '+91 XXXXXXXXXX',
-                      controller: _phoneCtrl,
-                      keyboardType: TextInputType.phone,
-                      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Expanded(
+                          child: FormTextField(
+                            label: 'Age',
+                            hint: 'Years',
+                            controller: ctrl.ageCtrl,
+                            focusNode: ctrl.ageFocus,
+                            nextFocusNode: ctrl.phoneFocus,
+                            required: true,
+                            keyboardType: TextInputType.number,
+                            inputFormatters: [
+                              FilteringTextInputFormatter.digitsOnly,
+                              LengthLimitingTextInputFormatter(3),
+                            ],
+                            validator: (v) {
+                              if (v == null || v.isEmpty) return 'Required';
+                              final age = int.tryParse(v);
+                              if (age == null || age <= 0 || age > 120) {
+                                return 'Enter valid age (1–120)';
+                              }
+                              return null;
+                            },
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: FormTextField(
+                            label: 'Phone No',
+                            hint: 'XXXXXXXXXX',
+                            controller: ctrl.phoneCtrl,
+                            focusNode: ctrl.phoneFocus,
+                            nextFocusNode: ctrl.occupationFocus,
+                            keyboardType: TextInputType.phone,
+                            inputFormatters: [
+                              FilteringTextInputFormatter.digitsOnly,
+                              LengthLimitingTextInputFormatter(10),
+                            ],
+                            validator: (v) {
+                              if (v == null || v.isEmpty) return null;
+                              if (v.length != 10) return 'Must be 10 digits';
+                              return null;
+                            },
+                          ),
+                        ),
+                      ],
                     ),
-                  ),
-                ],
+
+                    // Sex
+                    Obx(
+                      () => FormRadioGroup<String>(
+                        label: 'Sex',
+                        required: true,
+                        groupValue: ctrl.sex.value,
+                        options: const [
+                          (value: 'Male', label: 'Male'),
+                          (value: 'Female', label: 'Female'),
+                          (value: 'Other', label: 'Other'),
+                        ],
+                        onChanged: (v) => ctrl.sex.value = v,
+                      ),
+                    ),
+
+                    // Religion
+                    Obx(
+                      () => AppBottomSheet<String>(
+                        label: 'Religion',
+                        hint: 'Select religion',
+                        value: ctrl.religion.value,
+                        onChanged: (v) => ctrl.religion.value = v,
+                        options: [
+                          BottomSheetOption(value: 'Hindu', label: 'Hindu'),
+                          BottomSheetOption(value: 'Muslim', label: 'Muslim'),
+                          BottomSheetOption(
+                            value: 'Christian',
+                            label: 'Christian',
+                          ),
+                          BottomSheetOption(value: 'Sikh', label: 'Sikh'),
+                          BottomSheetOption(value: 'Jain', label: 'Jain'),
+                          BottomSheetOption(
+                            value: 'Buddhist',
+                            label: 'Buddhist',
+                          ),
+                          BottomSheetOption(value: 'Other', label: 'Other'),
+                        ],
+                      ),
+                    ),
+
+                    // Occupation
+                    FormTextField(
+                      label: 'Occupation',
+                      hint: 'e.g., Farmer, Teacher, Business',
+                      controller: ctrl.occupationCtrl,
+                      focusNode: ctrl.occupationFocus,
+                      nextFocusNode: ctrl.addressFocus,
+                    ),
+
+                    // Marital Status
+                    Obx(
+                      () => AppBottomSheet<String>(
+                        label: 'Marital Status',
+                        hint: 'Select marital status',
+                        value: ctrl.maritalStatus.value,
+                        onChanged: (v) => ctrl.maritalStatus.value = v,
+                        options: [
+                          BottomSheetOption(value: 'Single', label: 'Single'),
+                          BottomSheetOption(value: 'Married', label: 'Married'),
+                          BottomSheetOption(value: 'Widowed', label: 'Widowed'),
+                          BottomSheetOption(
+                            value: 'Divorced',
+                            label: 'Divorced',
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    // Address
+                    FormTextField(
+                      label: 'Address',
+                      hint: 'Enter full address',
+                      controller: ctrl.addressCtrl,
+                      focusNode: ctrl.addressFocus,
+                      maxLines: 3,
+                      textInputAction: TextInputAction.done,
+                    ),
+                  ],
+                ),
               ),
-              FormRadioGroup<String>(
-                label: 'Sex',
-                required: true,
-                groupValue: _sex,
-                options: const [
-                  (value: 'Male', label: 'Male'),
-                  (value: 'Female', label: 'Female'),
-                  (value: 'Other', label: 'Other'),
-                ],
-                onChanged: (v) => setState(() => _sex = v),
-              ),
-              FormDropdownField<String>(
-                label: 'Religion',
-                hint: 'Select religion',
-                value: _religion,
-                onChanged: (v) => setState(() => _religion = v),
-                items: const [
-                  DropdownMenuItem(value: 'Hindu', child: Text('Hindu')),
-                  DropdownMenuItem(value: 'Muslim', child: Text('Muslim')),
-                  DropdownMenuItem(
-                    value: 'Christian',
-                    child: Text('Christian'),
-                  ),
-                  DropdownMenuItem(value: 'Sikh', child: Text('Sikh')),
-                  DropdownMenuItem(value: 'Jain', child: Text('Jain')),
-                  DropdownMenuItem(
-                    value: 'Buddhist',
-                    child: Text('Buddhist'),
-                  ),
-                  DropdownMenuItem(value: 'Other', child: Text('Other')),
-                ],
-              ),
-              FormTextField(
-                label: 'Occupation',
-                hint: 'e.g., Farmer, Teacher, Business',
-                controller: _occupationCtrl,
-              ),
-              FormDropdownField<String>(
-                label: 'Marital Status',
-                hint: 'Select marital status',
-                value: _maritalStatus,
-                onChanged: (v) => setState(() => _maritalStatus = v),
-                items: const [
-                  DropdownMenuItem(value: 'Single', child: Text('Single')),
-                  DropdownMenuItem(value: 'Married', child: Text('Married')),
-                  DropdownMenuItem(
-                    value: 'Widowed',
-                    child: Text('Widowed'),
-                  ),
-                  DropdownMenuItem(
-                    value: 'Divorced',
-                    child: Text('Divorced'),
-                  ),
-                ],
-              ),
-              FormTextField(
-                label: 'Address',
-                hint: 'Enter full address',
-                controller: _addressCtrl,
-                maxLines: 3,
-              ),
-            ],
+            ),
           ),
-          const SizedBox(height: 16),
-          FormNavButtons(
+
+          StickyNav(
             showPrev: false,
             onNext: () {
               if (_formKey.currentState!.validate()) {
-                _save();
-                widget.onNext();
+                ctrl.inferVaya();
+                ctrl.next();
               }
             },
           ),
