@@ -1,3 +1,4 @@
+import 'package:bastikarma/app/core/routes/app_pages.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
@@ -13,6 +14,13 @@ class AddPatientController extends GetxController {
   bool get isFemale => sex.value == 'Female';
 
   int get totalSteps => isFemale ? 9 : 8;
+
+  // ── Validation callbacks ─────────────────────────────────────
+  final _validationCallbacks = <int, bool Function()>{};
+
+  void registerValidation(int step, bool Function() validator) {
+    _validationCallbacks[step] = validator;
+  }
 
   // ── Step 1 — Basic Info ──────────────────────────────────────
   final nameCtrl = TextEditingController();
@@ -271,6 +279,21 @@ class AddPatientController extends GetxController {
       duration: const Duration(milliseconds: 350),
       curve: Curves.easeInOut,
     );
+  }
+
+  void validateAndNext() {
+    final validator = _validationCallbacks[currentStep.value];
+    if (validator != null && !validator()) return;
+    if (currentStep.value == 0) inferVaya();
+    next();
+  }
+
+  void submitForm() {
+    final validator = _validationCallbacks[currentStep.value];
+    if (validator != null && !validator()) return;
+    _dismissKeyboard();
+    isSubmitting.value = true;
+    Get.toNamed(AppRoutes.home);
   }
 
   void prev() {

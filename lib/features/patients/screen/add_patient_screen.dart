@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import '../../../app/core/theme/app_theme.dart';
 import '../controller/add_patient_controller.dart';
 import '../widgets/form_widget.dart';
+import '../widgets/sticky_nav.dart';
 import 'basic_info1.dart';
 import 'clinic_info3.dart';
 import 'female_history5.dart';
@@ -23,14 +24,12 @@ class AddPatientScreen extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: AppColors.background,
-      // Shrink body when keyboard appears so nav stays above keyboard
       resizeToAvoidBottomInset: true,
       body: SafeArea(
         child: Obx(() {
           final pages = _buildPages(ctrl);
           return Column(
             children: [
-              // ── Gradient header ───────────────────────────────
               FormStepHeader(
                 title: 'Add New Patient',
                 subtitle: ctrl.stepTitle,
@@ -38,8 +37,6 @@ class AddPatientScreen extends StatelessWidget {
                 totalSteps: ctrl.totalSteps,
                 onBack: ctrl.prev,
               ),
-
-              // ── Page content scrolls; nav is fixed below ──────
               Expanded(
                 child: PageView.builder(
                   controller: ctrl.pageController,
@@ -47,6 +44,13 @@ class AddPatientScreen extends StatelessWidget {
                   itemCount: pages.length,
                   itemBuilder: (_, i) => pages[i],
                 ),
+              ),
+              StickyNav(
+                showPrev: ctrl.currentStep.value > 0,
+                isLastStep: ctrl.currentStep.value == ctrl.totalSteps - 1,
+                onPrev: ctrl.prev,
+                onNext: () => ctrl.validateAndNext(),
+                onSubmit: () => ctrl.submitForm(),
               ),
             ],
           );
