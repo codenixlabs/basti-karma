@@ -125,7 +125,9 @@ class _PatientsScreenState extends State<PatientsScreen> {
             diagnosis: p['diagnosis'],
             isActive: p['active'],
             onView: () {},
-            onAssess: () {},
+            onAssess: () {
+              Get.toNamed(AppRoutes.assessment);
+            },
             onDocs: () {},
             onDelete: () => setState(() => _patients.removeAt(index)),
           );
