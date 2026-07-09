@@ -14,7 +14,7 @@ class Step8Investigations extends StatelessWidget {
     final ctrl = Get.find<AddPatientController>();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      ctrl.registerValidation(7, () => true);
+      ctrl.registerValidation(ctrl.isFemale ? 7 : 6, () => true);
     });
 
     return GestureDetector(

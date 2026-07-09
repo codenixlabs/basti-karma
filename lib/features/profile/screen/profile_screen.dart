@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../app/core/theme/app_theme.dart';
+import '../../../app/core/theme/app_text_styles.dart';
 
 
 class ProfileScreen extends StatefulWidget {
@@ -15,10 +16,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-      child: Scaffold(
-        backgroundColor: AppColors.background,
-        body: Column(
-          children: [
+      child: Column(
+        children: [
             // Header
             Container(
               width: double.infinity,
@@ -39,11 +38,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 children: [
                   const Text(
                     'Profile',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 26,
-                      fontWeight: FontWeight.w600,
-                    ),
+                    style: AppTextStyles.pageTitle,
                   ),
                   const SizedBox(height: 16),
                   // Doctor info card inside header
@@ -77,27 +72,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           children: [
                             Text(
                               'Dr. Priya Sharma',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 16,
-                                fontWeight: FontWeight.w700,
-                              ),
+                              style: AppTextStyles.profileName,
                             ),
                             SizedBox(height: 3),
                             Text(
                               'Ayurvedic Physician',
-                              style: TextStyle(
-                                color: Colors.white70,
-                                fontSize: 12.5,
-                              ),
+                              style: AppTextStyles.profileRole,
                             ),
                             SizedBox(height: 1),
                             Text(
                               'BAMS, MD (Panchakarma)',
-                              style: TextStyle(
-                                color: Colors.white60,
-                                fontSize: 12,
-                              ),
+                              style: AppTextStyles.profileQual,
                             ),
                           ],
                         ),
@@ -177,10 +162,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         ),
                         child: Text(
                           'Version 1.0.0',
-                          style: TextStyle(
-                            color: AppColors.darkGrey,
-                            fontSize: 12,
-                          ),
+                          style: AppTextStyles.captionText,
                         ),
                       ),
                     ],
@@ -220,11 +202,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           SizedBox(width: 8),
                           Text(
                             'Logout',
-                            style: TextStyle(
-                              color: AppColors.errorRed,
-                              fontSize: 14.5,
-                              fontWeight: FontWeight.w600,
-                            ),
+                            style: AppTextStyles.logoutText,
                           ),
                         ],
                       ),
@@ -236,10 +214,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   const Center(
                     child: Text(
                       'Bastikarma – Ayurvedic Enema Management',
-                      style: TextStyle(
-                        color: AppColors.darkGrey,
-                        fontSize: 11.5,
-                      ),
+                      style: AppTextStyles.version,
                     ),
                   ),
                 ],
@@ -247,7 +222,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
           ],
         ),
-      ),
     );
   }
 }
@@ -267,11 +241,7 @@ class _SectionCard extends StatelessWidget {
           padding: const EdgeInsets.only(left: 4, bottom: 8),
           child: Text(
             title,
-            style: const TextStyle(
-              color: AppColors.textDarkGreen,
-              fontSize: 14,
-              fontWeight: FontWeight.w700,
-            ),
+            style: AppTextStyles.profileSectionTitle,
           ),
         ),
         Container(
@@ -326,16 +296,12 @@ class _ContactRow extends StatelessWidget {
             children: [
               Text(
                 label,
-                style: const TextStyle(color: AppColors.darkGrey, fontSize: 11),
+                style: AppTextStyles.contactLabel,
               ),
               const SizedBox(height: 2),
               Text(
                 value,
-                style: const TextStyle(
-                  color: AppColors.textDarkGreen,
-                  fontSize: 13.5,
-                  fontWeight: FontWeight.w500,
-                ),
+                style: AppTextStyles.contactValue,
               ),
             ],
           ),
@@ -362,10 +328,7 @@ class _NavRow extends StatelessWidget {
           children: [
             Text(
               label,
-              style: const TextStyle(
-                color: AppColors.textDarkGreen,
-                fontSize: 13.5,
-              ),
+              style: AppTextStyles.navRowLabel,
             ),
             const Icon(
               Icons.chevron_right,
@@ -403,10 +366,7 @@ class _ToggleRow extends StatelessWidget {
           Expanded(
             child: Text(
               label,
-              style: const TextStyle(
-                color: AppColors.textDarkGreen,
-                fontSize: 13.5,
-              ),
+              style: AppTextStyles.navRowLabel,
             ),
           ),
           Switch(

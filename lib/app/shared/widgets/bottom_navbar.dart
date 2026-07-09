@@ -8,6 +8,7 @@ import '../../../features/patients/screen/patients_screen.dart';
 import '../../../features/profile/screen/profile_screen.dart';
 import '../../../features/resource/screen/resources_screen.dart';
 import '../../core/theme/app_theme.dart';
+import '../../core/theme/app_text_styles.dart';
 
 class _NavItemData {
   final IconData icon;
@@ -36,15 +37,13 @@ class HomeScreen extends StatelessWidget {
       ProfileScreen(),
     ];
 
-    return Obx(
-      () => Scaffold(
-        backgroundColor: AppColors.background,
-        body: IndexedStack(
-          index: controller.currentIndex.value,
-          children: screens,
-        ),
-        bottomNavigationBar: _BottomNavBar(controller: controller),
-      ),
+    return Scaffold(
+      backgroundColor: AppColors.background,
+      body: Obx(() => IndexedStack(
+        index: controller.currentIndex.value,
+        children: screens,
+      )),
+      bottomNavigationBar: _BottomNavBar(controller: controller),
     );
   }
 }
@@ -151,8 +150,7 @@ class _NavItem extends StatelessWidget {
             const SizedBox(height: 4),
             Text(
               data.label,
-              style: TextStyle(
-                fontSize: 10,
+              style: AppTextStyles.navLabel.copyWith(
                 fontWeight: isActive ? FontWeight.w600 : FontWeight.normal,
                 color: isActive ? AppColors.primaryGreen : AppColors.darkGrey,
               ),

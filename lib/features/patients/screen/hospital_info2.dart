@@ -5,22 +5,26 @@ import '../../../app/core/theme/app_theme.dart';
 import '../controller/add_patient_controller.dart';
 import '../widgets/form_widget.dart';
 
-class Step2HospitalInfo extends StatelessWidget {
+class Step2HospitalInfo extends StatefulWidget {
   const Step2HospitalInfo({super.key});
+
+  @override
+  State<Step2HospitalInfo> createState() => _Step2HospitalInfoState();
+}
+
+class _Step2HospitalInfoState extends State<Step2HospitalInfo> {
+  final _formKey = GlobalKey<FormState>();
+
+  @override
+  void initState() {
+    super.initState();
+    final ctrl = Get.find<AddPatientController>();
+    ctrl.registerValidation(1, () => _formKey.currentState?.validate() ?? false);
+  }
 
   @override
   Widget build(BuildContext context) {
     final ctrl = Get.find<AddPatientController>();
-    final formKey = GlobalKey<FormState>();
-
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      ctrl.registerValidation(1, () {
-        if (formKey.currentState!.validate()) {
-          return true;
-        }
-        return false;
-      });
-    });
 
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
@@ -28,7 +32,7 @@ class Step2HospitalInfo extends StatelessWidget {
       child: SingleChildScrollView(
         padding: const EdgeInsets.fromLTRB(0, 12, 0, 12),
         child: Form(
-          key: formKey,
+          key: _formKey,
           child: FormSectionCard(
             title: 'Hospital Information',
             icon: Icons.local_hospital_outlined,

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../app/core/theme/app_theme.dart';
+import '../../../app/core/theme/app_text_styles.dart';
 
 
 class ResourcesScreen extends StatelessWidget {
@@ -53,10 +54,8 @@ class ResourcesScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-      child: Scaffold(
-        backgroundColor: AppColors.background,
-        body: Column(
-          children: [
+      child: Column(
+        children: [
             // Header
             Container(
               width: double.infinity,
@@ -77,16 +76,12 @@ class ResourcesScreen extends StatelessWidget {
                 children: [
                   Text(
                     'Resources',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 26,
-                      fontWeight: FontWeight.w600,
-                    ),
+                    style: AppTextStyles.pageTitle,
                   ),
                   SizedBox(height: 4),
                   Text(
                     'Clinical guidelines & references',
-                    style: TextStyle(color: Colors.white70, fontSize: 13),
+                    style: AppTextStyles.pageSubtitle,
                   ),
                 ],
               ),
@@ -141,18 +136,11 @@ class ResourcesScreen extends StatelessWidget {
                               children: [
                                 Text(
                                   item['label']!,
-                                  style: const TextStyle(
-                                    color: Colors.white70,
-                                    fontSize: 13,
-                                  ),
+                                  style: AppTextStyles.pageSubtitle,
                                 ),
                                 Text(
                                   item['value']!,
-                                  style: const TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 13,
-                                    fontWeight: FontWeight.w600,
-                                  ),
+                                  style: AppTextStyles.stepPercent,
                                 ),
                               ],
                             ),
@@ -189,11 +177,7 @@ class ResourcesScreen extends StatelessWidget {
                             children: [
                               const Text(
                                 'Educational Resources',
-                                style: TextStyle(
-                                  color: AppColors.textDarkGreen,
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w600,
-                                ),
+                                style: AppTextStyles.profileSectionTitle,
                               ),
                               const SizedBox(height: 6),
                               const Text(
@@ -215,7 +199,6 @@ class ResourcesScreen extends StatelessWidget {
             ),
           ],
         ),
-      ),
     );
   }
 }
@@ -277,11 +260,7 @@ class _ResourceCard extends StatelessWidget {
                       Expanded(
                         child: Text(
                           title,
-                          style: const TextStyle(
-                            color: AppColors.textDarkGreen,
-                            fontSize: 14,
-                            fontWeight: FontWeight.w600,
-                          ),
+                          style: AppTextStyles.profileSectionTitle,
                         ),
                       ),
                       const SizedBox(width: 6),
@@ -297,11 +276,7 @@ class _ResourceCard extends StatelessWidget {
                   const SizedBox(height: 4),
                   Text(
                     subtitle,
-                    style: const TextStyle(
-                      color: AppColors.darkGrey,
-                      fontSize: 12,
-                      height: 1.4,
-                    ),
+                    style: AppTextStyles.captionText,
                   ),
                 ],
               ),

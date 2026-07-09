@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../app/core/theme/app_theme.dart';
+import '../../../app/core/theme/app_text_styles.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Assessment Text Styles  (common across all assessment screens)
@@ -9,63 +10,15 @@ import '../../../app/core/theme/app_theme.dart';
 class AssessmentTextStyles {
   AssessmentTextStyles._();
 
-  static const sectionTitle = TextStyle(
-    color: AppColors.textDarkGreen,
-    fontSize: 15,
-    fontWeight: FontWeight.w700,
-    letterSpacing: 0.1,
-  );
-
-  static const questionText = TextStyle(
-    color: AppColors.textDarkGreen,
-    fontSize: 14,
-    fontWeight: FontWeight.w500,
-    height: 1.45,
-  );
-
-  static const optionText = TextStyle(
-    color: AppColors.textDarkGreen,
-    fontSize: 13,
-    fontWeight: FontWeight.w400,
-    height: 1.4,
-  );
-
-  static const chipLabel = TextStyle(
-    fontSize: 13,
-    fontWeight: FontWeight.w600,
-  );
-
-  static const hintText = TextStyle(
-    color: AppColors.darkGrey,
-    fontSize: 13,
-    fontWeight: FontWeight.w400,
-  );
-
-  static const resultLabel = TextStyle(
-    fontSize: 13,
-    fontWeight: FontWeight.w500,
-    color: AppColors.darkGrey,
-  );
-
-  static const resultValue = TextStyle(
-    fontSize: 15,
-    fontWeight: FontWeight.w700,
-    color: AppColors.textDarkGreen,
-  );
-
-  static const bannerText = TextStyle(
-    fontSize: 13,
-    fontWeight: FontWeight.w600,
-    height: 1.4,
-  );
-
-  static const noteText = TextStyle(
-    color: AppColors.darkGrey,
-    fontSize: 12,
-    fontWeight: FontWeight.w400,
-    fontStyle: FontStyle.italic,
-    height: 1.4,
-  );
+  static const sectionTitle = AppTextStyles.assessmentSectionTitle;
+  static const questionText = AppTextStyles.questionText;
+  static const optionText = AppTextStyles.optionText;
+  static const chipLabel = AppTextStyles.chipLabel;
+  static const hintText = AppTextStyles.hintText;
+  static const resultLabel = AppTextStyles.resultLabel;
+  static const resultValue = AppTextStyles.resultValue;
+  static const bannerText = AppTextStyles.bannerText;
+  static const noteText = AppTextStyles.noteText;
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -457,19 +410,25 @@ class LabeledDivider extends StatelessWidget {
 // ─────────────────────────────────────────────────────────────────────────────
 
 class AssessmentPageHeader extends StatelessWidget {
-  final String phase;       // e.g. "Purvakarma"
-  final String subTitle;    // e.g. "Step 2 of 5"
+  final String phase;
+  final String subTitle;
   final VoidCallback onBack;
+  final int? currentStep;
+  final int? totalSteps;
 
   const AssessmentPageHeader({
     super.key,
     required this.phase,
     required this.subTitle,
     required this.onBack,
+    this.currentStep,
+    this.totalSteps,
   });
 
   @override
   Widget build(BuildContext context) {
+    final showProgress = currentStep != null && totalSteps != null;
+
     return Container(
       width: double.infinity,
       decoration: const BoxDecoration(
@@ -483,7 +442,7 @@ class AssessmentPageHeader extends StatelessWidget {
           bottomRight: Radius.circular(28),
         ),
       ),
-      padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
+      padding: EdgeInsets.fromLTRB(16, 16, 16, showProgress ? 18 : 24),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -501,23 +460,49 @@ class AssessmentPageHeader extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 12),
-          Text(
-            phase,
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 22,
-              fontWeight: FontWeight.w700,
-            ),
-          ),
+          Text(phase, style: AppTextStyles.pageHeaderTitle),
           const SizedBox(height: 2),
-          Text(
-            subTitle,
-            style: TextStyle(
-              color: Colors.white.withValues(alpha: 0.75),
-              fontSize: 13,
-              fontWeight: FontWeight.w400,
+          Text(subTitle, style: AppTextStyles.pageHeaderSubtitle),
+          if (showProgress) ...[
+            const SizedBox(height: 14),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'Step $currentStep of $totalSteps',
+                  style: const TextStyle(
+                    color: Colors.white70,
+                    fontSize: 11,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                Text(
+                  '${((currentStep! / totalSteps!) * 100).round()}%',
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 11,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
             ),
-          ),
+            const SizedBox(height: 6),
+            ClipRRect(
+              borderRadius: BorderRadius.circular(6),
+              child: TweenAnimationBuilder<double>(
+                tween: Tween(begin: 0, end: currentStep! / totalSteps!),
+                duration: const Duration(milliseconds: 400),
+                curve: Curves.easeInOut,
+                builder: (_, value, __) => LinearProgressIndicator(
+                  value: value,
+                  minHeight: 5,
+                  backgroundColor: Colors.white.withValues(alpha: 0.25),
+                  valueColor:
+                      const AlwaysStoppedAnimation<Color>(Colors.white),
+                ),
+              ),
+            ),
+          ],
         ],
       ),
     );
@@ -572,10 +557,7 @@ class AssessmentBottomButton extends StatelessWidget {
           )
               : Text(
             label,
-            style: const TextStyle(
-              fontSize: 15,
-              fontWeight: FontWeight.w600,
-            ),
+            style: AppTextStyles.bottomButton,
           ),
         ),
       ),
@@ -621,11 +603,7 @@ class PrescriptionBox extends StatelessWidget {
               const SizedBox(width: 6),
               Text(
                 title,
-                style: const TextStyle(
-                  color: AppColors.primaryGreen,
-                  fontSize: 13,
-                  fontWeight: FontWeight.w700,
-                ),
+                style: AppTextStyles.prescriptionTitle,
               ),
             ],
           ),

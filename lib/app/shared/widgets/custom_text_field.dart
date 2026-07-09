@@ -1,32 +1,41 @@
 import 'package:flutter/material.dart';
 
 import '../../core/theme/app_theme.dart';
+import '../../core/theme/app_text_styles.dart';
 
 class CustomTextField extends StatelessWidget {
   final TextEditingController controller;
   final String hintText;
   final String label;
-  final IconData icon;
+  final IconData? icon;
   final bool obscureText;
   final VoidCallback? onVisibilityToggle;
   final bool isPasswordVisible;
   final TextInputType keyboardType;
   final String? Function(String?)? validator;
   final Color? fillColor;
+  final AutovalidateMode autovalidateMode;
 
   const CustomTextField({
     super.key,
     required this.controller,
     required this.hintText,
-    required this.label,
-    required this.icon,
+    this.label = '',
+    this.icon,
     this.obscureText = false,
     this.onVisibilityToggle,
     this.isPasswordVisible = false,
     this.keyboardType = TextInputType.text,
     this.validator,
     this.fillColor,
+    this.autovalidateMode = AutovalidateMode.onUnfocus,
   });
+
+  static OutlineInputBorder _border(Color color, {double width = 1.0}) =>
+      OutlineInputBorder(
+        borderRadius: const BorderRadius.all(Radius.circular(14)),
+        borderSide: BorderSide(width: width, color: color),
+      );
 
   @override
   Widget build(BuildContext context) {
@@ -36,11 +45,7 @@ class CustomTextField extends StatelessWidget {
         if (label.isNotEmpty) ...[
           Text(
             label,
-            style: const TextStyle(
-              color: AppColors.textDarkGreen,
-              fontSize: 13,
-              fontWeight: FontWeight.w500,
-            ),
+            style: AppTextStyles.fieldLabel,
           ),
           const SizedBox(height: 6),
         ],
@@ -48,14 +53,16 @@ class CustomTextField extends StatelessWidget {
           controller: controller,
           obscureText: obscureText && !isPasswordVisible,
           keyboardType: keyboardType,
+          autovalidateMode: autovalidateMode,
           validator: validator,
-          // Cursor matches primary green theme
           cursorColor: AppColors.primaryGreen,
-          style: const TextStyle(color: AppColors.textDarkGreen, fontSize: 14),
+          style: AppTextStyles.fieldInput,
           decoration: InputDecoration(
             hintText: hintText,
-            hintStyle: const TextStyle(color: AppColors.darkGrey, fontSize: 14),
-            prefixIcon: Icon(icon, color: AppColors.primaryGreen, size: 20),
+            hintStyle: AppTextStyles.fieldHint,
+            prefixIcon: icon != null
+                ? Icon(icon, color: AppColors.primaryGreen, size: 20)
+                : null,
             suffixIcon: obscureText
                 ? GestureDetector(
                     onTap: onVisibilityToggle,
@@ -70,38 +77,11 @@ class CustomTextField extends StatelessWidget {
                 : null,
             filled: true,
             fillColor: fillColor ?? AppColors.background.withValues(alpha: 0.3),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(14),
-              borderSide: const BorderSide(
-                width: 1,
-                color: AppColors.primaryGreen,
-              ),
-            ),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(14),
-              borderSide: const BorderSide(
-                width: 1,
-                color: AppColors.primaryGreen,
-              ),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(14),
-              borderSide: const BorderSide(
-                width: 1.5,
-                color: AppColors.primaryGreen,
-              ),
-            ),
-            errorBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(14),
-              borderSide: const BorderSide(width: 1, color: AppColors.errorRed),
-            ),
-            focusedErrorBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(14),
-              borderSide: const BorderSide(
-                width: 1.5,
-                color: AppColors.errorRed,
-              ),
-            ),
+            border: _border(AppColors.primaryGreen),
+            enabledBorder: _border(AppColors.primaryGreen),
+            focusedBorder: _border(AppColors.primaryGreen, width: 1.5),
+            errorBorder: _border(AppColors.errorRed),
+            focusedErrorBorder: _border(AppColors.errorRed, width: 1.5),
           ),
         ),
       ],

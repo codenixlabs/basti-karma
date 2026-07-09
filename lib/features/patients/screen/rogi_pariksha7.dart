@@ -8,7 +8,7 @@ import '../widgets/form_widget.dart';
 class Step7RogiPariksha extends StatelessWidget {
   const Step7RogiPariksha({super.key});
 
-  static List<BottomSheetOption<String>> get _qualityOptions => [
+  static const List<BottomSheetOption<String>> _qualityOptions = [
     BottomSheetOption(
       value: 'Pravara (Excellent)',
       label: 'Pravara (Excellent)',
@@ -20,7 +20,7 @@ class Step7RogiPariksha extends StatelessWidget {
     BottomSheetOption(value: 'Avara (Poor)', label: 'Avara (Poor)'),
   ];
 
-  static List<BottomSheetOption<String>> get _shaktiOptions => [
+  static const List<BottomSheetOption<String>> _shaktiOptions = [
     BottomSheetOption(value: 'Pravara', label: 'Pravara'),
     BottomSheetOption(value: 'Madhyama', label: 'Madhyama'),
     BottomSheetOption(value: 'Avara', label: 'Avara'),
@@ -31,7 +31,7 @@ class Step7RogiPariksha extends StatelessWidget {
     final ctrl = Get.find<AddPatientController>();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      ctrl.registerValidation(6, () => true);
+      ctrl.registerValidation(ctrl.isFemale ? 6 : 5, () => true);
     });
 
     return GestureDetector(

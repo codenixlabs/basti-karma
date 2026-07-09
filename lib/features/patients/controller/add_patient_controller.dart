@@ -264,6 +264,14 @@ class AddPatientController extends GetxController {
   final treatmentCtrl = TextEditingController();
   final treatmentFocus = FocusNode();
 
+  // ── Lifecycle ────────────────────────────────────────────────
+  @override
+  void onInit() {
+    super.onInit();
+    weightCtrl.addListener(calcBmi);
+    heightCtrl.addListener(calcBmi);
+  }
+
   // ── Navigation ───────────────────────────────────────────────
   final isSubmitting = false.obs;
 
@@ -293,7 +301,7 @@ class AddPatientController extends GetxController {
     if (validator != null && !validator()) return;
     _dismissKeyboard();
     isSubmitting.value = true;
-    Get.toNamed(AppRoutes.home);
+    Get.offAllNamed(AppRoutes.home);
   }
 
   void prev() {

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'app_text_styles.dart';
+
 class AppColors {
   // Background
   static const Color background = Color(0xFFF3EDE4);
@@ -19,6 +21,7 @@ class AppColors {
   static const Color darkGrey = Color(0xFF666666);
   static const Color errorRed = Color(0xFFE74C3C);
   static const Color successGreen = Color(0xFF27AE60);
+  static const Color warningOrange = Color(0xFFF39C12);
 }
 
 class AppTheme {
@@ -44,31 +47,11 @@ class AppTheme {
 
     // Text Theme
     textTheme: const TextTheme(
-      headlineLarge: TextStyle(
-        color: AppColors.textDarkGreen,
-        fontSize: 32,
-        fontWeight: FontWeight.bold,
-      ),
-      headlineMedium: TextStyle(
-        color: AppColors.textDarkGreen,
-        fontSize: 24,
-        fontWeight: FontWeight.w600,
-      ),
-      bodyLarge: TextStyle(
-        color: AppColors.textDarkGreen,
-        fontSize: 16,
-        fontWeight: FontWeight.w500,
-      ),
-      bodyMedium: TextStyle(
-        color: AppColors.darkGrey,
-        fontSize: 14,
-        fontWeight: FontWeight.normal,
-      ),
-      labelLarge: TextStyle(
-        color: AppColors.white,
-        fontSize: 16,
-        fontWeight: FontWeight.w600,
-      ),
+      headlineLarge: AppTextStyles.headlineLarge,
+      headlineMedium: AppTextStyles.headlineMedium,
+      bodyLarge: AppTextStyles.bodyLarge,
+      bodyMedium: AppTextStyles.bodyMedium,
+      labelLarge: AppTextStyles.labelLarge,
     ),
 
     // Input Decoration Theme

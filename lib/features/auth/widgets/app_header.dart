@@ -35,12 +35,6 @@ class AppHeader extends StatelessWidget {
           AppStrings.appName,
           style: Theme.of(context).textTheme.headlineLarge,
         ),
-        // const SizedBox(height: 8),
-        // Text(
-        //   AppStrings.appSubtitle,
-        //   style: Theme.of(context).textTheme.bodyMedium,
-        //   textAlign: TextAlign.center,
-        // ),
       ],
     );
   }

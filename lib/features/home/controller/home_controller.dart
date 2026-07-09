@@ -40,7 +40,7 @@ class HomeController extends GetxController {
   final RxList<Reminder> reminders = <Reminder>[
     Reminder(
       title: 'Pending Assessments',
-      subtitle: '..............',
+      subtitle: 'Review pending patient records',
       badge: 'Urgent',
       isUrgent: true,
       iconType: 'pulse',
@@ -48,4 +48,17 @@ class HomeController extends GetxController {
   ].obs;
 
   void changeTab(int index) => currentIndex.value = index;
+
+  @override
+  void onInit() {
+    super.onInit();
+    _loadData();
+  }
+
+  void _loadData() {
+    // TODO: replace with real API calls
+    // doctorName.value = authService.currentUser.name;
+    // stats.assignAll(await patientRepo.getStats());
+    // reminders.assignAll(await reminderRepo.getPending());
+  }
 }

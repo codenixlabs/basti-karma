@@ -2,138 +2,119 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../app/core/constants/app_strings.dart';
+import '../../../app/core/routes/app_pages.dart';
 import '../../../app/core/theme/app_theme.dart';
-import '../../../app/shared/utils/custom_snackbar.dart';
-import '../widgets/app_header.dart';
+import '../../../app/shared/utils/form_validators.dart';
 import '../../../app/shared/widgets/custom_button.dart';
 import '../../../app/shared/widgets/custom_text_field.dart';
 import '../controller/auth_controller.dart';
+import '../widgets/app_header.dart';
 
 class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final AuthController authController = Get.find<AuthController>();
+    final ctrl = Get.find<AuthController>();
 
     return Scaffold(
       body: SafeArea(
         child: SingleChildScrollView(
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                const AppHeader(),
-                const SizedBox(height: 24),
-                Card(
-                  elevation: 5,
-                  shadowColor: AppColors.primaryGreen.withValues(alpha: 0.2),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(28),
-                  ),
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 20,
-                      vertical: 24,
-                    ),
-                    decoration: BoxDecoration(
-                      color: AppColors.white,
-                      borderRadius: BorderRadius.circular(25),
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        CustomTextField(
-                          controller: authController.loginEmailController,
-                          label: "Email",
-                          hintText: AppStrings.emailHint,
-                          icon: Icons.email_outlined,
-                          keyboardType: TextInputType.emailAddress,
-                        ),
-                        const SizedBox(height: 16),
-                        Obx(
-                          () => CustomTextField(
-                            controller: authController.loginPasswordController,
-                            hintText: AppStrings.passwordHint,
-                            icon: Icons.lock_outlined,
-                            label: "Password",
-                            obscureText: true,
-                            isPasswordVisible:
-                                authController.loginPasswordVisible.value,
-                            onVisibilityToggle: () =>
-                                authController.toggleLoginPasswordVisibility(),
-                          ),
-                        ),
-                        // Forgot Password Button
-                        Align(
-                          alignment: Alignment.centerRight,
-                          child: TextButton(
-                            onPressed: () {
-                              CustomSnackBar.showInfo(
-                                'Forgot Password feature coming soon!',
-                              );
-                            },
-                            child: Text(
-                              AppStrings.forgotPassword,
-                              style: Theme.of(context).textTheme.bodyMedium,
-                            ),
-                          ),
-                        ),
-                        // Login Button
-                        Obx(
-                          () => CustomButton(
-                            text: AppStrings.loginButton,
-                            isLoading: authController.isLoading.value,
-                            onPressed: () => authController.login(),
-                          ),
-                        ),
-                        const SizedBox(height: 12),
-
-                        // Divider with Text
-                        Row(
-                          children: [
-                            Expanded(
-                              child: Divider(
-                                color: AppColors.inputBackground,
-                                thickness: 1,
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 12,
-                              ),
-                              child: Text(
-                                AppStrings.newToBastikarma,
-                                style: Theme.of(context).textTheme.bodyMedium,
-                              ),
-                            ),
-                            Expanded(
-                              child: Divider(
-                                color: AppColors.inputBackground,
-                                thickness: 1,
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 12),
-
-                        CustomButton(
-                          text: AppStrings.registerNewAccount,
-                          isOutlined: true,
-                          onPressed: () {
-                            Get.offNamed('/register');
-                          },
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            ),
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+          child: Column(
+            children: [
+              const AppHeader(),
+              const SizedBox(height: 24),
+              _buildCard(context, ctrl),
+            ],
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildCard(BuildContext context, AuthController ctrl) {
+    return Card(
+      elevation: 5,
+      shadowColor: AppColors.primaryGreen.withValues(alpha: 0.2),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
+        child: Form(
+          key: ctrl.loginFormKey,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              CustomTextField(
+                controller: ctrl.loginEmailController,
+                label: 'Email',
+                hintText: AppStrings.emailHint,
+                icon: Icons.email_outlined,
+                keyboardType: TextInputType.emailAddress,
+                validator: FormValidators.email,
+              ),
+              const SizedBox(height: 16),
+              Obx(
+                () => CustomTextField(
+                  controller: ctrl.loginPasswordController,
+                  label: 'Password',
+                  hintText: AppStrings.passwordHint,
+                  icon: Icons.lock_outlined,
+                  obscureText: true,
+                  isPasswordVisible: ctrl.loginPasswordVisible.value,
+                  onVisibilityToggle: ctrl.toggleLoginPasswordVisibility,
+                  validator: FormValidators.password,
+                ),
+              ),
+              Align(
+                alignment: Alignment.centerRight,
+                child: TextButton(
+                  onPressed: () => Get.toNamed(AppRoutes.forgotPassword),
+                  child: Text(
+                    AppStrings.forgotPassword,
+                    style: Theme.of(context).textTheme.bodyMedium,
+                  ),
+                ),
+              ),
+              Obx(
+                () => CustomButton(
+                  text: AppStrings.loginButton,
+                  isLoading: ctrl.isLoading.value,
+                  onPressed: ctrl.login,
+                ),
+              ),
+              const SizedBox(height: 12),
+              _buildDivider(context),
+              const SizedBox(height: 12),
+              CustomButton(
+                text: AppStrings.registerNewAccount,
+                isOutlined: true,
+                onPressed: () => Get.toNamed(AppRoutes.register),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDivider(BuildContext context) {
+    return Row(
+      children: [
+        const Expanded(
+          child: Divider(color: AppColors.inputBackground, thickness: 1),
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 12),
+          child: Text(
+            AppStrings.newToBastikarma,
+            style: Theme.of(context).textTheme.bodyMedium,
+          ),
+        ),
+        const Expanded(
+          child: Divider(color: AppColors.inputBackground, thickness: 1),
+        ),
+      ],
     );
   }
 }

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:bastikarma/features/auth/controller/auth_controller.dart';
 
 import 'app/core/routes/app_pages.dart';
 import 'app/core/theme/app_theme.dart';
@@ -21,9 +20,6 @@ class MyApp extends StatelessWidget {
       theme: AppTheme.lightTheme,
       initialRoute: AppPages.initialRoute,
       getPages: AppPages.pages,
-      initialBinding: BindingsBuilder(() {
-        Get.put(AuthController());
-      }),
     );
   }
 }

@@ -1,7 +1,15 @@
+import 'package:bastikarma/features/home/controller/home_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:bastikarma/features/home/controller/home_controller.dart';
+
+import '../../../app/core/routes/app_pages.dart';
+import '../../../app/core/theme/app_text_styles.dart';
 import '../../../app/core/theme/app_theme.dart';
+
+// Distance from header top at which stat cards are pinned
+const double _kStatCardTop = 90.0;
+// Extra scroll-space to clear the overlapping cards
+const double _kStatCardClearance = 100.0;
 
 class DashboardTab extends StatelessWidget {
   const DashboardTab({super.key});
@@ -22,22 +30,22 @@ class DashboardTab extends StatelessWidget {
               children: [
                 _DashboardHeader(controller: controller),
                 Positioned(
-                  top: 90,
+                  top: _kStatCardTop,
                   left: 16,
                   right: 16,
                   child: Obx(
-                        () => Row(
+                    () => Row(
                       children: controller.stats
                           .map(
                             (stat) => Expanded(
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 5,
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 5,
+                                ),
+                                child: _StatCard(stat: stat),
+                              ),
                             ),
-                            child: _StatCard(stat: stat),
-                          ),
-                        ),
-                      )
+                          )
                           .toList(),
                     ),
                   ),
@@ -46,23 +54,17 @@ class DashboardTab extends StatelessWidget {
             ),
 
             // ── Space to compensate for overlapping cards ──
-            const SizedBox(height: 100),
+            const SizedBox(height: _kStatCardClearance),
 
             // ── Quick Actions ──
             const SizedBox(height: 8),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: Text(
-                'Quick Actions',
-                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.textDarkGreen,
-                ),
-              ),
+              child: Text('Quick Actions', style: AppTextStyles.sectionHeading),
             ),
             const SizedBox(height: 12),
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
               child: _QuickActionsGrid(),
             ),
 
@@ -70,26 +72,20 @@ class DashboardTab extends StatelessWidget {
             const SizedBox(height: 24),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: Text(
-                'Reminders',
-                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.textDarkGreen,
-                ),
-              ),
+              child: Text('Reminders', style: AppTextStyles.sectionHeading),
             ),
             const SizedBox(height: 12),
             Obx(
-                  () => Padding(
+              () => Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: Column(
                   children: controller.reminders
                       .map(
                         (r) => Padding(
-                      padding: const EdgeInsets.only(bottom: 12),
-                      child: _ReminderCard(reminder: r),
-                    ),
-                  )
+                          padding: const EdgeInsets.only(bottom: 12),
+                          child: _ReminderCard(reminder: r),
+                        ),
+                      )
                       .toList(),
                 ),
               ),
@@ -104,36 +100,34 @@ class DashboardTab extends StatelessWidget {
 
 class _DashboardHeader extends StatelessWidget {
   final HomeController controller;
+
   const _DashboardHeader({required this.controller});
 
-  String get _greeting {
-    final hour = DateTime.now().hour;
-    if (hour < 12) return 'Good Morning';
-    if (hour < 17) return 'Good Afternoon';
-    return 'Good Evening';
-  }
-
-  String get _formattedDate {
-    final now = DateTime.now();
-    const months = [
-      'January',
-      'February',
-      'March',
-      'April',
-      'May',
-      'June',
-      'July',
-      'August',
-      'September',
-      'October',
-      'November',
-      'December',
-    ];
-    return '${months[now.month - 1]} ${now.day}, ${now.year}';
-  }
+  static const _months = [
+    'January',
+    'February',
+    'March',
+    'April',
+    'May',
+    'June',
+    'July',
+    'August',
+    'September',
+    'October',
+    'November',
+    'December',
+  ];
 
   @override
   Widget build(BuildContext context) {
+    final now = DateTime.now();
+    final greeting = now.hour < 12
+        ? 'Good Morning'
+        : now.hour < 17
+        ? 'Good Afternoon'
+        : 'Good Evening';
+    final date = '${_months[now.month - 1]} ${now.day}, ${now.year}';
+
     return Container(
       width: double.infinity,
       decoration: const BoxDecoration(
@@ -147,7 +141,7 @@ class _DashboardHeader extends StatelessWidget {
           bottomRight: Radius.circular(28),
         ),
       ),
-      // Extra bottom padding so the curved edge shows behind the cards
+      // Extra bottom padding so the curved edge shows behind the stat cards
       padding: const EdgeInsets.fromLTRB(20, 20, 20, 72),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -157,33 +151,30 @@ class _DashboardHeader extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Obx(
-                    () => Text(
-                  '$_greeting, ${controller.doctorName.value}',
-                  style: const TextStyle(
-                    color: AppColors.white,
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    letterSpacing: 0.2,
-                  ),
+                () => Text(
+                  '$greeting, ${controller.doctorName.value}',
+                  style: AppTextStyles.greetingText,
                 ),
               ),
               const SizedBox(height: 4),
-              Text(
-                _formattedDate,
-                style: const TextStyle(color: Colors.white70, fontSize: 13),
-              ),
+              Text(date, style: AppTextStyles.pageSubtitle),
             ],
           ),
-          Container(
-            decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.18),
-              shape: BoxShape.circle,
-            ),
-            padding: const EdgeInsets.all(10),
-            child: const Icon(
-              Icons.notifications_outlined,
-              color: AppColors.white,
-              size: 22,
+          GestureDetector(
+            onTap: () {
+              // TODO: navigate to notifications screen
+            },
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.white.withValues(alpha: 0.18),
+                shape: BoxShape.circle,
+              ),
+              padding: const EdgeInsets.all(10),
+              child: const Icon(
+                Icons.notifications_outlined,
+                color: AppColors.white,
+                size: 22,
+              ),
             ),
           ),
         ],
@@ -194,6 +185,7 @@ class _DashboardHeader extends StatelessWidget {
 
 class _StatCard extends StatelessWidget {
   final DashboardStat stat;
+
   const _StatCard({required this.stat});
 
   IconData get _icon {
@@ -202,8 +194,6 @@ class _StatCard extends StatelessWidget {
         return Icons.people_outline;
       case 'treatments':
         return Icons.monitor_heart_outlined;
-      // case 'doses':
-      //   return Icons.notifications_outlined;
       default:
         return Icons.info_outline;
     }
@@ -212,22 +202,10 @@ class _StatCard extends StatelessWidget {
   Color get _iconBg {
     switch (stat.iconType) {
       case 'patients':
-        return AppColors.primaryGreen.withValues(alpha: 0.12);
       case 'treatments':
         return AppColors.primaryGreen.withValues(alpha: 0.12);
-      // case 'doses':
-      //   return const Color(0xFFE8EAF6);
       default:
         return AppColors.lightGrey;
-    }
-  }
-
-  Color get _iconColor {
-    switch (stat.iconType) {
-      case 'doses':
-        return const Color(0xFF5C6BC0);
-      default:
-        return AppColors.primaryGreen;
     }
   }
 
@@ -249,34 +227,19 @@ class _StatCard extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          // Tinted circular icon background — matches Figma
           Container(
             width: 40,
             height: 40,
-            decoration: BoxDecoration(
-              color: _iconBg,
-              shape: BoxShape.circle,
-            ),
-            child: Icon(_icon, color: _iconColor, size: 20),
+            decoration: BoxDecoration(color: _iconBg, shape: BoxShape.circle),
+            child: Icon(_icon, color: AppColors.primaryGreen, size: 20),
           ),
           const SizedBox(height: 10),
-          Text(
-            '${stat.value}',
-            style: const TextStyle(
-              fontSize: 22,
-              fontWeight: FontWeight.bold,
-              color: AppColors.textDarkGreen,
-            ),
-          ),
+          Text(stat.value.toString(), style: AppTextStyles.statValue),
           const SizedBox(height: 4),
           Text(
             stat.label,
             textAlign: TextAlign.center,
-            style: const TextStyle(
-              fontSize: 11,
-              color: AppColors.darkGrey,
-              height: 1.3,
-            ),
+            style: AppTextStyles.statLabel,
           ),
         ],
       ),
@@ -290,6 +253,7 @@ class _QuickActionData {
   final IconData icon;
   final Color iconBg;
   final Color iconColor;
+  final VoidCallback? onTap;
 
   const _QuickActionData({
     required this.title,
@@ -297,19 +261,21 @@ class _QuickActionData {
     required this.icon,
     required this.iconBg,
     required this.iconColor,
+    this.onTap,
   });
 }
 
 class _QuickActionsGrid extends StatelessWidget {
   const _QuickActionsGrid();
 
-  static const List<_QuickActionData> _actions = [
+  static final List<_QuickActionData> _actions = [
     _QuickActionData(
       title: 'Add Patient',
       subtitle: 'New CRF',
       icon: Icons.add,
       iconBg: AppColors.primaryGreen,
       iconColor: AppColors.white,
+      onTap: () => Get.toNamed(AppRoutes.addPatient),
     ),
     _QuickActionData(
       title: 'Patient List',
@@ -317,6 +283,7 @@ class _QuickActionsGrid extends StatelessWidget {
       icon: Icons.format_list_bulleted,
       iconBg: Color(0xFFE8F5E9),
       iconColor: AppColors.primaryGreen,
+      onTap: () => Get.find<HomeController>().changeTab(1),
     ),
     _QuickActionData(
       title: 'Dose Calculator',
@@ -324,6 +291,7 @@ class _QuickActionsGrid extends StatelessWidget {
       icon: Icons.calculate,
       iconBg: AppColors.textDarkGreen,
       iconColor: AppColors.white,
+      onTap: () => Get.find<HomeController>().changeTab(2),
     ),
     _QuickActionData(
       title: 'Treatment Guide',
@@ -331,12 +299,13 @@ class _QuickActionsGrid extends StatelessWidget {
       icon: Icons.menu_book_outlined,
       iconBg: Color(0xFF757575),
       iconColor: AppColors.white,
+      onTap: () => Get.find<HomeController>().changeTab(3),
     ),
   ];
 
   @override
   Widget build(BuildContext context) {
-    return GridView.builder(
+    return GridView(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -345,22 +314,20 @@ class _QuickActionsGrid extends StatelessWidget {
         mainAxisSpacing: 12,
         childAspectRatio: 2.6,
       ),
-      itemCount: _actions.length,
-      itemBuilder: (_, i) => _QuickActionCard(data: _actions[i]),
+      children: _actions.map((d) => _QuickActionCard(data: d)).toList(),
     );
   }
 }
 
 class _QuickActionCard extends StatelessWidget {
   final _QuickActionData data;
+
   const _QuickActionCard({required this.data});
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () {
-        //wire to routes e.g. Get.toNamed(AppRoutes.addPatient)
-      },
+      onTap: data.onTap,
       child: Container(
         decoration: BoxDecoration(
           color: AppColors.white,
@@ -393,22 +360,12 @@ class _QuickActionCard extends StatelessWidget {
                 children: [
                   Text(
                     data.title,
-                    style: const TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
-                      color: AppColors.textDarkGreen,
-                    ),
+                    style: AppTextStyles.actionCardTitle,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
                   const SizedBox(height: 2),
-                  Text(
-                    data.subtitle,
-                    style: const TextStyle(
-                      fontSize: 10,
-                      color: AppColors.darkGrey,
-                    ),
-                  ),
+                  Text(data.subtitle, style: AppTextStyles.actionCardSubtitle),
                 ],
               ),
             ),
@@ -421,6 +378,7 @@ class _QuickActionCard extends StatelessWidget {
 
 class _ReminderCard extends StatelessWidget {
   final Reminder reminder;
+
   const _ReminderCard({required this.reminder});
 
   @override
@@ -460,22 +418,9 @@ class _ReminderCard extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  reminder.title,
-                  style: const TextStyle(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w600,
-                    color: AppColors.textDarkGreen,
-                  ),
-                ),
+                Text(reminder.title, style: AppTextStyles.cardTitle),
                 const SizedBox(height: 3),
-                Text(
-                  reminder.subtitle,
-                  style: const TextStyle(
-                    fontSize: 11,
-                    color: AppColors.darkGrey,
-                  ),
-                ),
+                Text(reminder.subtitle, style: AppTextStyles.cardSubtitle),
               ],
             ),
           ),
@@ -490,9 +435,7 @@ class _ReminderCard extends StatelessWidget {
             ),
             child: Text(
               reminder.badge,
-              style: TextStyle(
-                fontSize: 11,
-                fontWeight: FontWeight.w600,
+              style: AppTextStyles.badge.copyWith(
                 color: reminder.isUrgent
                     ? AppColors.errorRed
                     : AppColors.successGreen,

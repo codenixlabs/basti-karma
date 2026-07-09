@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../app/core/theme/app_theme.dart';
+import '../../../app/core/theme/app_text_styles.dart';
 
 class StickyNav extends StatelessWidget {
   final bool showPrev;
@@ -48,7 +49,7 @@ class StickyNav extends StatelessWidget {
                 ),
                 child: const Text(
                   'Previous',
-                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+                  style: AppTextStyles.button,
                 ),
               ),
             ),
@@ -70,10 +71,7 @@ class StickyNav extends StatelessWidget {
               ),
               child: Text(
                 isLastStep ? 'Submit' : 'Next',
-                style: const TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
-                ),
+                style: AppTextStyles.button,
               ),
             ),
           ),

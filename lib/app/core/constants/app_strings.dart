@@ -29,6 +29,16 @@ class AppStrings {
   static const String nameRequired = 'Name is required';
   static const String passwordsNotMatch = 'Passwords do not match';
 
+  // Forgot Password Screen
+  static const String forgotPasswordTitle = 'Forgot Password';
+  static const String forgotPasswordSubtitle =
+      'Enter your email and we\'ll send you a reset link.';
+  static const String sendResetLink = 'Send Reset Link';
+  static const String backToLogin = 'Back to Login';
+  static const String resetLinkSent =
+      'Reset link sent! Check your inbox.';
+  static const String resetLinkFailed = 'Failed to send reset link';
+
   // Messages
   static const String loggingIn = 'Logging in...';
   static const String registering = 'Registering...';

@@ -13,9 +13,7 @@ class Step6GeneralExam extends StatelessWidget {
     final ctrl = Get.find<AddPatientController>();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      ctrl.registerValidation(5, () => true);
-      ctrl.weightCtrl.addListener(ctrl.calcBmi);
-      ctrl.heightCtrl.addListener(ctrl.calcBmi);
+      ctrl.registerValidation(ctrl.isFemale ? 5 : 4, () => true);
     });
 
     return GestureDetector(

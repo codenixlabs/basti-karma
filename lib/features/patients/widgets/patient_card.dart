@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../app/core/theme/app_theme.dart';
+import '../../../app/core/theme/app_text_styles.dart';
 
 class PatientCard extends StatelessWidget {
   final String name;
@@ -49,11 +50,7 @@ class PatientCard extends StatelessWidget {
               children: [
                 Text(
                   name,
-                  style: const TextStyle(
-                    color: AppColors.textDarkGreen,
-                    fontSize: 15,
-                    fontWeight: FontWeight.w600,
-                  ),
+                  style: AppTextStyles.patientName,
                 ),
                 const SizedBox(width: 8),
                 if (isActive)
@@ -66,13 +63,9 @@ class PatientCard extends StatelessWidget {
                       color: AppColors.successGreen.withValues(alpha: 0.12),
                       borderRadius: BorderRadius.circular(20),
                     ),
-                    child: const Text(
+                    child: Text(
                       'Active',
-                      style: TextStyle(
-                        color: AppColors.successGreen,
-                        fontSize: 11,
-                        fontWeight: FontWeight.w600,
-                      ),
+                      style: AppTextStyles.badge.copyWith(color: AppColors.successGreen),
                     ),
                   ),
               ],
@@ -80,18 +73,12 @@ class PatientCard extends StatelessWidget {
             const SizedBox(height: 4),
             Text(
               'Age: $age years',
-              style: const TextStyle(
-                color: AppColors.darkGrey,
-                fontSize: 12.5,
-              ),
+              style: AppTextStyles.patientMeta,
             ),
             const SizedBox(height: 2),
             Text(
               'Diagnosis: $diagnosis',
-              style: const TextStyle(
-                color: AppColors.darkGrey,
-                fontSize: 12.5,
-              ),
+              style: AppTextStyles.patientMeta,
             ),
             const SizedBox(height: 12),
             // Divider
@@ -160,11 +147,7 @@ class _ActionButton extends StatelessWidget {
           const SizedBox(height: 4),
           Text(
             label,
-            style: TextStyle(
-              color: color,
-              fontSize: 11,
-              fontWeight: FontWeight.w500,
-            ),
+            style: AppTextStyles.badge.copyWith(color: color, fontWeight: FontWeight.w500),
           ),
         ],
       ),

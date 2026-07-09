@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../app/core/theme/app_theme.dart';
+import '../../../app/core/theme/app_text_styles.dart';
 
 class CalculatorsScreen extends StatelessWidget {
   const CalculatorsScreen({super.key});
@@ -22,10 +23,8 @@ class CalculatorsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-      child: Scaffold(
-        backgroundColor: AppColors.background,
-        body: Column(
-          children: [
+      child: Column(
+        children: [
             // Header
             Container(
               width: double.infinity,
@@ -46,16 +45,12 @@ class CalculatorsScreen extends StatelessWidget {
                 children: [
                   Text(
                     'Calculators',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 26,
-                      fontWeight: FontWeight.w600,
-                    ),
+                    style: AppTextStyles.pageTitle,
                   ),
                   SizedBox(height: 4),
                   Text(
                     'Medical calculation tools',
-                    style: TextStyle(color: Colors.white70, fontSize: 13),
+                    style: AppTextStyles.pageSubtitle,
                   ),
                 ],
               ),
@@ -101,11 +96,7 @@ class CalculatorsScreen extends StatelessWidget {
                             const SizedBox(width: 8),
                             const Text(
                               'Clinical Tools',
-                              style: TextStyle(
-                                color: AppColors.textDarkGreen,
-                                fontSize: 14,
-                                fontWeight: FontWeight.w600,
-                              ),
+                              style: AppTextStyles.profileSectionTitle,
                             ),
                           ],
                         ),
@@ -126,7 +117,6 @@ class CalculatorsScreen extends StatelessWidget {
             ),
           ],
         ),
-      ),
     );
   }
 }
@@ -191,10 +181,7 @@ class _CalculatorCard extends StatelessWidget {
                   const SizedBox(height: 3),
                   Text(
                     subtitle,
-                    style: const TextStyle(
-                      color: AppColors.darkGrey,
-                      fontSize: 12,
-                    ),
+                    style: AppTextStyles.captionText,
                   ),
                 ],
               ),

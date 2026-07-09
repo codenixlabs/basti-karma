@@ -26,35 +26,38 @@ class AddPatientScreen extends StatelessWidget {
       backgroundColor: AppColors.background,
       resizeToAvoidBottomInset: true,
       body: SafeArea(
-        child: Obx(() {
-          final pages = _buildPages(ctrl);
-          return Column(
-            children: [
-              FormStepHeader(
-                title: 'Add New Patient',
-                subtitle: ctrl.stepTitle,
-                currentStep: ctrl.currentStep.value + 1,
-                totalSteps: ctrl.totalSteps,
-                onBack: ctrl.prev,
-              ),
-              Expanded(
-                child: PageView.builder(
+        child: Column(
+          children: [
+            // Rebuilds on step change and sex change (totalSteps / stepTitle depend on both)
+            Obx(() => FormStepHeader(
+              title: 'Add New Patient',
+              subtitle: ctrl.stepTitle,
+              currentStep: ctrl.currentStep.value + 1,
+              totalSteps: ctrl.totalSteps,
+              onBack: ctrl.prev,
+            )),
+            // Rebuilds only when sex changes (isFemale changes page count)
+            Expanded(
+              child: Obx(() {
+                final pages = _buildPages(ctrl);
+                return PageView.builder(
                   controller: ctrl.pageController,
                   physics: const NeverScrollableScrollPhysics(),
                   itemCount: pages.length,
                   itemBuilder: (_, i) => pages[i],
-                ),
-              ),
-              StickyNav(
-                showPrev: ctrl.currentStep.value > 0,
-                isLastStep: ctrl.currentStep.value == ctrl.totalSteps - 1,
-                onPrev: ctrl.prev,
-                onNext: () => ctrl.validateAndNext(),
-                onSubmit: () => ctrl.submitForm(),
-              ),
-            ],
-          );
-        }),
+                );
+              }),
+            ),
+            // Rebuilds on step change (button label and Prev visibility)
+            Obx(() => StickyNav(
+              showPrev: ctrl.currentStep.value > 0,
+              isLastStep: ctrl.currentStep.value == ctrl.totalSteps - 1,
+              onPrev: ctrl.prev,
+              onNext: () => ctrl.validateAndNext(),
+              onSubmit: () => ctrl.submitForm(),
+            )),
+          ],
+        ),
       ),
     );
   }

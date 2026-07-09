@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../app/core/theme/app_theme.dart';
+import '../../../app/core/theme/app_text_styles.dart';
 import '../controller/assessment_controller.dart';
 import '../widgets/assessment_widgets.dart';
 import 'purvakarma_screen.dart';
@@ -32,11 +33,7 @@ class AssessmentDashboardScreen extends StatelessWidget {
                   children: [
                     const Text(
                       'Select a phase to begin',
-                      style: TextStyle(
-                        color: AppColors.darkGrey,
-                        fontSize: 13,
-                        fontWeight: FontWeight.w400,
-                      ),
+                      style: AppTextStyles.bodySmall,
                     ),
                     const SizedBox(height: 20),
                     Obx(
@@ -168,20 +165,12 @@ class _PhaseCard extends StatelessWidget {
                     const SizedBox(height: 2),
                     Text(
                       title,
-                      style: const TextStyle(
-                        color: AppColors.textDarkGreen,
-                        fontSize: 16,
-                        fontWeight: FontWeight.w700,
-                      ),
+                      style: AppTextStyles.sectionHeading,
                     ),
                     const SizedBox(height: 2),
                     Text(
                       subtitle,
-                      style: const TextStyle(
-                        color: AppColors.darkGrey,
-                        fontSize: 12,
-                        fontWeight: FontWeight.w400,
-                      ),
+                      style: AppTextStyles.captionText,
                     ),
                   ],
                 ),

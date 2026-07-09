@@ -29,6 +29,7 @@ class PaschatkarmaScreen extends StatelessWidget {
                   children: [
                     _VapayadaSection(),
                     _PariharaSection(),
+                    _DietSection(),
                     const SizedBox(height: 16),
                     // Note about serious complications
                     Container(
@@ -184,6 +185,110 @@ class _PariharaItem extends StatelessWidget {
   final String text;
 
   const _PariharaItem({required this.text});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            margin: const EdgeInsets.only(top: 5),
+            width: 6,
+            height: 6,
+            decoration: const BoxDecoration(
+              color: AppColors.primaryGreen,
+              shape: BoxShape.circle,
+            ),
+          ),
+          const SizedBox(width: 10),
+          Expanded(child: Text(text, style: AssessmentTextStyles.optionText)),
+        ],
+      ),
+    );
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// 3. Diet
+// ─────────────────────────────────────────────────────────────────────────────
+
+class _DietSection extends StatelessWidget {
+  static const List<String> _dietItems = [
+    'Take light and easily digestible food (Laghu Supachya Ahara)',
+    'Avoid heavy, oily, or incompatible foods',
+    'Prefer warm, freshly cooked, simple meals',
+    'Avoid cold, stale, or processed food items',
+    'Avoid excessive quantity of food',
+    'Follow diet restrictions for double the duration of Basti administration (Dwikala — Cha. Si. 1/54)',
+    'Follow all dietary guidelines as observed during Snehapana Kala',
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return AssessmentCard(
+      title: '3. Diet',
+      icon: Icons.restaurant_menu_outlined,
+      trailing: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+        decoration: BoxDecoration(
+          color: AppColors.primaryGreen.withValues(alpha: 0.1),
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: const Text(
+          'For patient',
+          style: TextStyle(
+            color: AppColors.primaryGreen,
+            fontSize: 11,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+      ),
+      children: [
+        Text(
+          'Dietary restrictions should be followed for double the number of days Basti was administered (Dwikala).',
+          style: AssessmentTextStyles.noteText,
+        ),
+        const SizedBox(height: 12),
+        ..._dietItems.map((item) => _DietItem(text: item)),
+        const SizedBox(height: 4),
+        Container(
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            color: const Color(0xFFF0F7F2),
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(
+              color: AppColors.primaryGreen.withValues(alpha: 0.25),
+            ),
+          ),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Icon(
+                Icons.menu_book_outlined,
+                size: 16,
+                color: AppColors.primaryGreen,
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  'Reference: Cha. Si. 1/54 — All instructions and precautions should be followed just as during Snehapana Kala.',
+                  style: AssessmentTextStyles.noteText,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _DietItem extends StatelessWidget {
+  final String text;
+
+  const _DietItem({required this.text});
 
   @override
   Widget build(BuildContext context) {

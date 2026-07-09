@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../app/core/routes/app_pages.dart';
 import '../../../app/core/theme/app_theme.dart';
+import '../../../app/core/theme/app_text_styles.dart';
 import '../../../app/shared/widgets/custom_button.dart';
 import '../../../app/shared/widgets/custom_text_field.dart';
 import '../widgets/patient_card.dart';
@@ -15,6 +16,7 @@ class PatientsScreen extends StatefulWidget {
 
 class _PatientsScreenState extends State<PatientsScreen> {
   final TextEditingController _searchController = TextEditingController();
+  String _searchQuery = '';
 
   final List<Map<String, dynamic>> _patients = [
     {
@@ -43,6 +45,24 @@ class _PatientsScreenState extends State<PatientsScreen> {
     },
   ];
 
+  List<Map<String, dynamic>> get _filteredPatients {
+    if (_searchQuery.isEmpty) return _patients;
+    final q = _searchQuery.toLowerCase();
+    return _patients
+        .where((p) =>
+            (p['name'] as String).toLowerCase().contains(q) ||
+            (p['diagnosis'] as String).toLowerCase().contains(q))
+        .toList();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _searchController.addListener(() {
+      setState(() => _searchQuery = _searchController.text.trim());
+    });
+  }
+
   @override
   void dispose() {
     _searchController.dispose();
@@ -52,11 +72,8 @@ class _PatientsScreenState extends State<PatientsScreen> {
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-      child: Scaffold(
-        backgroundColor: AppColors.background,
-        body: Column(
-          children: [_buildHeader(), _buildAddButton(), _buildPatientList()],
-        ),
+      child: Column(
+        children: [_buildHeader(), _buildAddButton(), _buildPatientList()],
       ),
     );
   }
@@ -82,11 +99,7 @@ class _PatientsScreenState extends State<PatientsScreen> {
         children: [
           const Text(
             "Patients",
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 26,
-              fontWeight: FontWeight.w600,
-            ),
+            style: AppTextStyles.pageTitle,
           ),
           CustomTextField(
             controller: _searchController,
@@ -113,12 +126,13 @@ class _PatientsScreenState extends State<PatientsScreen> {
 
   // ── Patient list ──────────────────────────────────────────────────────────
   Widget _buildPatientList() {
+    final patients = _filteredPatients;
     return Expanded(
       child: ListView.builder(
         padding: const EdgeInsets.only(top: 8, bottom: 16),
-        itemCount: _patients.length,
+        itemCount: patients.length,
         itemBuilder: (context, index) {
-          final p = _patients[index];
+          final p = patients[index];
           return PatientCard(
             name: p['name'],
             age: p['age'],
@@ -129,7 +143,10 @@ class _PatientsScreenState extends State<PatientsScreen> {
               Get.toNamed(AppRoutes.assessment);
             },
             onDocs: () {},
-            onDelete: () => setState(() => _patients.removeAt(index)),
+            onDelete: () {
+              final original = _patients.indexOf(p);
+              setState(() => _patients.removeAt(original));
+            },
           );
         },
       ),

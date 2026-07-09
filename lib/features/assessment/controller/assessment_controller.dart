@@ -1,6 +1,34 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+// Per-session observation data
+class BastiSessionData {
+  final int sessionNumber;
+  final adanaKala = TextEditingController();
+  final pratyagamana = TextEditingController();
+  final vega = TextEditingController();
+  late final RxList<bool> samyaka;
+  late final RxList<bool> ayoga;
+  late final RxList<bool> atiyoga;
+
+  BastiSessionData(
+    this.sessionNumber, {
+    required int samyakaCount,
+    required int ayogaCount,
+    required int atiyogaCount,
+  }) {
+    samyaka = List.filled(samyakaCount, false).obs;
+    ayoga = List.filled(ayogaCount, false).obs;
+    atiyoga = List.filled(atiyogaCount, false).obs;
+  }
+
+  void dispose() {
+    adanaKala.dispose();
+    pratyagamana.dispose();
+    vega.dispose();
+  }
+}
+
 class AssessmentController extends GetxController {
   // ── Patient context (passed from patient list) ───────────────────────────
   final String patientName;
@@ -41,25 +69,14 @@ class AssessmentController extends GetxController {
 
   // ── A. Yogya/Ayogya — Niruha contraindications ───────────────────────────
   // null = unanswered, true = Yes, false = No
-  final niruhaAnswers = List<bool?>.filled(16, null).obs;
+  // 4 grouped questions per Cha. Si. 1/3-4 & Cha. Si. 2/14
+  final niruhaAnswers = List<bool?>.filled(4, null).obs;
 
   static const List<String> niruhaQuestions = [
-    'Is the patient pregnant?',
-    'Is the patient having an ulcer in the lung?',
-    'Is the patient emaciated or dehydrated due to Shodhana?',
-    'Is the patient excessively weak, debilitated or unconscious?',
-    'Is the patient currently undergoing or just after Vamana, Virechana or Nasya?',
-    'Does the patient have history of recent or excessive internal Snehana?',
-    'Does the patient have continuous vomiting?',
-    'Does the patient have abdominal distension (Adhmana)?',
-    'Does the patient have Ama-Atisara (diarrhoea due to indigestion)?',
-    'Does the patient have Alasaka (intestinal torpor)?',
-    'Does the patient have Visuchika (gastroenteritis)?',
-    'Does the patient have intestinal obstruction?',
-    'Does the patient have perforation of intestine?',
-    'Does the patient have ascites?',
-    'Does the patient have history of miscarriage?',
-    'Does the patient have uncontrolled diabetes, hypertension, or chronic kidney disease?',
+    'Does the patient have a history of recent internal Snehana or excessive Snehana, Vamana, Virechana, or Nasya karma?',
+    'Does the patient have continuous vomiting, abdominal distension (Adhmana), Ama-Atisara, Alasaka (intestinal torpor), Visuchika (gastroenteritis), intestinal obstruction, perforation of intestine, or ascites?',
+    'Does the patient have a history of miscarriage or is currently pregnant?',
+    'Does the patient have uncontrolled diabetes, uncontrolled hypertension, or chronic kidney disease?',
   ];
 
   void setNiruhaAnswer(int index, bool value) {
@@ -72,32 +89,15 @@ class AssessmentController extends GetxController {
   bool get niruhaAllAnswered => niruhaAnswers.every((a) => a != null);
 
   // ── A. Yogya/Ayogya — Anuvasan contraindications ─────────────────────────
-  final anuvasanAnswers = List<bool?>.filled(23, null).obs;
+  // 5 grouped questions per Cha. Si. 2/17
+  final anuvasanAnswers = List<bool?>.filled(5, null).obs;
 
   static const List<String> anuvasanQuestions = [
-    'Does the patient have Niruha Basti contraindication conditions?',
+    'Does the patient have any Asthapana (Niruha) Basti contraindication condition?',
     'Does the patient have impaired digestion (Agnimandya)?',
-    'Does the patient have diarrhoea (Atisara)?',
-    'Does the patient have hard bowel or constipation with obstruction?',
-    'Does the patient have intestinal worms (Krimi)?',
-    'Does the patient have splenic disorders or splenomegaly (Pleeha Roga)?',
-    'Does the patient have Kapha-dominant Udara Roga (abdominal disorders)?',
-    'Does the patient have Abhishyandi conditions of Pitta and Kapha?',
-    'Does the patient have anorexia (Aruchi)?',
-    'Does the patient have acute poisoning?',
-    'Does the patient have coryza or rhinitis (Pratishyaya)?',
-    'Does the patient have recent fever (Nava Jvara)?',
-    'Does the patient have anaemia (Pandu)?',
-    'Does the patient have jaundice (Kamala)?',
-    'Does the patient have polyuria (excessive urination)?',
-    'Does the patient have piles (Arsha)?',
-    'Does the patient have Urustambha?',
-    'Does the patient have elephantiasis (Shleepada)?',
-    'Does the patient have goitre (Galaganda)?',
-    'Does the patient have lymphadenitis (Granthi / Apachi)?',
-    'Does the patient have general debility or weakness?',
-    'Does the patient have Kushta (chronic skin diseases)?',
-    'Does the patient have obesity (Sthaulya)?',
+    'Does the patient have diarrhoea (Atisara) or hard bowel / constipation with obstruction?',
+    'Does the patient have intestinal worms (Krimi), splenic disorders (Pleeha Roga), Kapha-dominant Udara Roga, or Abhishyandi conditions of Pitta and Kapha?',
+    'Does the patient have Aruchi, acute poisoning, coryza (Pratishyaya), Nava Jvara, Pandu, Kamala, Arsha, Urustambha, Shleepada, Galaganda, Apachi, general debility or weakness, Kushta, or Sthaulya?',
   ];
 
   void setAnuvasanAnswer(int index, bool value) {
@@ -309,6 +309,10 @@ class AssessmentController extends GetxController {
   String get saamaResult =>
       hasSaamaLakshana ? 'Saama Avastha' : 'Nirama Avastha';
 
+  // ── F. Bala Assessment ───────────────────────────────────────────────────
+  final bala = Rxn<String>();
+  static const List<String> balaOptions = ['Pravara', 'Madhyama', 'Avara'];
+
   // ── Purvakarma overall completion ────────────────────────────────────────
   bool get canCompletePurvakarma =>
       niruhaAllAnswered &&
@@ -316,7 +320,8 @@ class AssessmentController extends GetxController {
       parikshAllFilled &&
       agniAllAnswered &&
       koshthaAllAnswered &&
-      saamaAllAnswered;
+      saamaAllAnswered &&
+      bala.value != null;
 
   void completePurvakarma() {
     if (!canCompletePurvakarma) return;
@@ -332,13 +337,135 @@ class AssessmentController extends GetxController {
   final formulationCtrl = TextEditingController();
   final scheduleCtrl = TextEditingController();
 
-  // Observation log
-  final adanaKalaCtrl = TextEditingController();
-  final pratyagamanaCtrl = TextEditingController();
-  final vegaCtrl = TextEditingController();
-  final samyakLakshanaCtrl = TextEditingController();
-  final atiyogaLakshanaCtrl = TextEditingController();
-  final ayogaLakshanaCtrl = TextEditingController();
+  // ── Observation — symptom lists ──────────────────────────────────────────
+
+  static const List<String> niruhasamyakaSymptoms = [
+    'Prasrista Vina Mutra (proper urine output)',
+    'Sameerantwama (proper expulsion of Vayu)',
+    'Agni Vriddhi (increase in digestive fire)',
+    'Ruchi (appetite restored)',
+    'Ashaya Laghava (lightness in abdomen)',
+    'Rogashanti (relief from disease)',
+    'Prakriti Bala (restoration of natural strength)',
+  ];
+
+  static const List<String> niruhaAyogaSymptoms = [
+    'Siro-Hrid-Guda-Basti-Medhra Vedana (pain in head/heart/rectum)',
+    'Sopha (oedema/swelling)',
+    'Pratishyaya (rhinitis/coryza)',
+    'Vikartika (rectal cutting pain)',
+    'Hrullasa (nausea)',
+    'Maruta Sanga (retention of flatus)',
+    'Mutra Sanga (retention of urine)',
+    'Shvaskashta (difficulty in breathing)',
+  ];
+
+  static const List<String> niruhaAtiyogaSymptoms = [
+    'Kapha-Pitta-Vata-Rakta Kshayaj Vikara (depletion disorders)',
+    'Supti (numbness)',
+    'Angamarda (body ache)',
+    'Klama (mental fatigue)',
+    'Vepathu (tremors)',
+    'Nidra Nasha (loss of sleep)',
+    'Bala Nasha (loss of strength)',
+    'Tama Pravesha (blackout/fainting)',
+    'Unmada (mental disturbance)',
+    'Hikka (hiccup)',
+  ];
+
+  static const List<String> anuvasanSamyakaSymptoms = [
+    'Sapurisha Sneha Pratyeti (oily stool passed properly)',
+    'Sharira Laghavta (lightness in body)',
+    'Bala (strength restored)',
+    'Srustach Vega (proper urge for defecation)',
+    'Vatanulomana (proper downward movement of Vayu)',
+    'Agnidipta (increase in digestive fire)',
+  ];
+
+  static const List<String> anuvasanAyogaSymptoms = [
+    'Adha Sharira Ruja (pain in lower body)',
+    'Udara Ruja (abdominal pain)',
+    'Bahu-Prushtha Ruja (pain in arms and back)',
+    'Parshva Ruja (flank pain)',
+    'Ruksha Gatra (dryness of body)',
+    'Ruksha Svara (dryness of voice)',
+    'Vit Sanga (retention of stool)',
+    'Mutra Sanga (retention of urine)',
+  ];
+
+  static const List<String> anuvasanAtiyogaSymptoms = [
+    'Hrullasa (nausea)',
+    'Moha (confusion/delusion)',
+    'Klama (mental fatigue)',
+    'Sada (lassitude)',
+    'Murchha (fainting)',
+    'Vikartika (rectal cutting pain)',
+  ];
+
+  List<String> get activeSamyakaSymptoms =>
+      selectedBastiType.value == 'Anuvasan Basti'
+          ? anuvasanSamyakaSymptoms
+          : niruhasamyakaSymptoms;
+
+  List<String> get activeAyogaSymptoms =>
+      selectedBastiType.value == 'Anuvasan Basti'
+          ? anuvasanAyogaSymptoms
+          : niruhaAyogaSymptoms;
+
+  List<String> get activeAtiyogaSymptoms =>
+      selectedBastiType.value == 'Anuvasan Basti'
+          ? anuvasanAtiyogaSymptoms
+          : niruhaAtiyogaSymptoms;
+
+  int get _sessionCountForType {
+    switch (selectedBastiType.value) {
+      case 'Niruha Basti': return 12;
+      case 'Anuvasan Basti': return 18;
+      case 'Yoga Basti': return 8;
+      case 'Kala Basti': return 16;
+      case 'Karma Basti': return 30;
+      default: return 12;
+    }
+  }
+
+  // ── Observation — session list ───────────────────────────────────────────
+  final sessions = <BastiSessionData>[].obs;
+  final observationTick = 0.obs; // incremented on any symptom toggle
+
+  void _initSessions() {
+    for (final s in sessions) s.dispose();
+    sessions.value = List.generate(
+      _sessionCountForType,
+      (i) => BastiSessionData(
+        i + 1,
+        samyakaCount: activeSamyakaSymptoms.length,
+        ayogaCount: activeAyogaSymptoms.length,
+        atiyogaCount: activeAtiyogaSymptoms.length,
+      ),
+    );
+    observationTick.value = 0;
+  }
+
+  void toggleSessionSymptom(BastiSessionData session, String type, int i) {
+    if (type == 'samyaka') session.samyaka[i] = !session.samyaka[i];
+    else if (type == 'ayoga') session.ayoga[i] = !session.ayoga[i];
+    else if (type == 'atiyoga') session.atiyoga[i] = !session.atiyoga[i];
+    observationTick.value++;
+  }
+
+  int get loggedSessionCount => sessions.where(
+    (s) =>
+        s.samyaka.any((v) => v) ||
+        s.ayoga.any((v) => v) ||
+        s.atiyoga.any((v) => v) ||
+        s.adanaKala.text.isNotEmpty,
+  ).length;
+
+  @override
+  void onInit() {
+    super.onInit();
+    ever(selectedBastiType, (_) => _initSessions());
+  }
 
   bool get pradhanAllFilled =>
       selectedBastiType.value != null &&
@@ -418,7 +545,8 @@ class AssessmentController extends GetxController {
         'Pachana with Katu and Lavana Churna and Kwatha. Mrudu Virechana. Amaharan Kriya.',
     'Purisha Vruta Sneha':
         'Snehana, Swedana, Varti. Shyamadibilwadi Siddha Niruha and Anuvasana Basti.',
-    'Abhukta Pranita': 'Consult senior physician for management.',
+    'Abhukta Pranita':
+        'Niruha Basti prepared with Kashaya Dravyas (Shyama, Trivrutta, Yava, Kola, Kulattha, Gomutra). Anuvasana Basti with the same drugs.',
   };
 
   final selectedNiruhaVyapada = Rxn<String>();
@@ -459,12 +587,7 @@ class AssessmentController extends GetxController {
     dravyaDoseCtrl.dispose();
     formulationCtrl.dispose();
     scheduleCtrl.dispose();
-    adanaKalaCtrl.dispose();
-    pratyagamanaCtrl.dispose();
-    vegaCtrl.dispose();
-    samyakLakshanaCtrl.dispose();
-    atiyogaLakshanaCtrl.dispose();
-    ayogaLakshanaCtrl.dispose();
+    for (final s in sessions) s.dispose();
     super.onClose();
   }
 }

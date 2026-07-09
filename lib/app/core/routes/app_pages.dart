@@ -1,11 +1,12 @@
 import 'package:get/get.dart';
-import 'package:bastikarma/features/auth/screens/login_screen.dart';
-import 'package:bastikarma/features/auth/screens/register_screen.dart';
-import 'package:bastikarma/features/auth/controller/auth_controller.dart';
-import 'package:bastikarma/features/home/controller/home_controller.dart';
 
 import '../../../features/assessment/controller/assessment_controller.dart';
 import '../../../features/assessment/screens/assessment_dashboard.dart';
+import '../../../features/auth/bindings/auth_binding.dart';
+import '../../../features/auth/screens/forgot_password_screen.dart';
+import '../../../features/auth/screens/login_screen.dart';
+import '../../../features/auth/screens/register_screen.dart';
+import '../../../features/home/controller/home_controller.dart';
 import '../../../features/patients/controller/add_patient_controller.dart';
 import '../../../features/patients/screen/add_patient_screen.dart';
 import '../../shared/widgets/bottom_navbar.dart';
@@ -13,22 +14,30 @@ import '../../shared/widgets/bottom_navbar.dart';
 class AppRoutes {
   static const String login = '/login';
   static const String register = '/register';
+  static const String forgotPassword = '/forgot-password';
   static const String home = '/home';
   static const String addPatient = '/add-patient';
   static const String assessment = '/assessment';
 }
 
 class AppPages {
+  static const String initialRoute = AppRoutes.home;
+
   static final pages = [
     GetPage(
       name: AppRoutes.login,
       page: () => const LoginScreen(),
       transition: Transition.fadeIn,
-      bindings: [BindingsBuilder(() => Get.lazyPut(() => AuthController()))],
+      binding: AuthBinding(),
     ),
     GetPage(
       name: AppRoutes.register,
       page: () => const RegisterScreen(),
+      transition: Transition.fadeIn,
+    ),
+    GetPage(
+      name: AppRoutes.forgotPassword,
+      page: () => const ForgotPasswordScreen(),
       transition: Transition.fadeIn,
     ),
     GetPage(
@@ -70,6 +79,4 @@ class AppPages {
       ],
     ),
   ];
-
-  static const String initialRoute = AppRoutes.login;
 }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../../../app/core/theme/app_theme.dart';
+import '../../../app/core/theme/app_text_styles.dart';
 
 // ─── Step Progress Bar ───────────────────────────────────────────────────────
 class StepProgressBar extends StatelessWidget {
@@ -24,19 +25,11 @@ class StepProgressBar extends StatelessWidget {
           children: [
             Text(
               'Step $currentStep of $totalSteps',
-              style: const TextStyle(
-                color: Colors.white70,
-                fontSize: 12,
-                fontWeight: FontWeight.w500,
-              ),
+              style: AppTextStyles.stepLabel,
             ),
             Text(
               '${((currentStep / totalSteps) * 100).round()}%',
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 12,
-                fontWeight: FontWeight.w600,
-              ),
+              style: AppTextStyles.stepPercent,
             ),
           ],
         ),
@@ -266,6 +259,7 @@ class FormTextField extends StatelessWidget {
   final FocusNode? focusNode;
   final FocusNode? nextFocusNode;
   final TextInputAction? textInputAction;
+  final AutovalidateMode autovalidateMode;
 
   const FormTextField({
     super.key,
@@ -281,6 +275,7 @@ class FormTextField extends StatelessWidget {
     this.focusNode,
     this.nextFocusNode,
     this.textInputAction,
+    this.autovalidateMode = AutovalidateMode.onUserInteraction,
   });
 
   @override
@@ -303,7 +298,7 @@ class FormTextField extends StatelessWidget {
             inputFormatters: inputFormatters,
             maxLines: maxLines,
             textInputAction: action,
-            autovalidateMode: AutovalidateMode.onUserInteraction,
+            autovalidateMode: autovalidateMode,
             validator: validator,
             style: const TextStyle(
               color: AppColors.textDarkGreen,

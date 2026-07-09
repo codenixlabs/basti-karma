@@ -2,27 +2,39 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
+import '../../../app/core/theme/app_theme.dart';
 import '../../../app/shared/widgets/app_dropdown.dart';
 import '../controller/add_patient_controller.dart';
 import '../widgets/form_widget.dart';
 
-class Step1BasicInfo extends StatelessWidget {
+class Step1BasicInfo extends StatefulWidget {
   const Step1BasicInfo({super.key});
+
+  @override
+  State<Step1BasicInfo> createState() => _Step1BasicInfoState();
+}
+
+class _Step1BasicInfoState extends State<Step1BasicInfo> {
+  final _formKey = GlobalKey<FormState>();
+  bool _showSexError = false;
+
+  @override
+  void initState() {
+    super.initState();
+    final ctrl = Get.find<AddPatientController>();
+    ctrl.registerValidation(0, () {
+      final formValid = _formKey.currentState?.validate() ?? false;
+      if (ctrl.sex.value == null) {
+        setState(() => _showSexError = true);
+        return false;
+      }
+      return formValid;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     final ctrl = Get.find<AddPatientController>();
-    final formKey = GlobalKey<FormState>();
-
-    // Register validation callback
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      ctrl.registerValidation(0, () {
-        if (formKey.currentState!.validate()) {
-          return true;
-        }
-        return false;
-      });
-    });
 
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
@@ -30,7 +42,7 @@ class Step1BasicInfo extends StatelessWidget {
       child: SingleChildScrollView(
         padding: const EdgeInsets.fromLTRB(0, 12, 0, 12),
         child: Form(
-          key: formKey,
+          key: _formKey,
           child: FormSectionCard(
             title: 'Basic Patient Information',
             icon: Icons.person_outline_rounded,
@@ -66,9 +78,7 @@ class Step1BasicInfo extends StatelessWidget {
                       validator: (v) {
                         if (v == null || v.isEmpty) return 'Required';
                         final age = int.tryParse(v);
-                        if (age == null || age <= 0 || age > 120) {
-                          return 'Enter valid age (1–120)';
-                        }
+                        if (age == null || age < 1) return 'Enter a valid age';
                         return null;
                       },
                     ),
@@ -86,6 +96,7 @@ class Step1BasicInfo extends StatelessWidget {
                         FilteringTextInputFormatter.digitsOnly,
                         LengthLimitingTextInputFormatter(10),
                       ],
+                      autovalidateMode: AutovalidateMode.onUnfocus,
                       validator: (v) {
                         if (v == null || v.isEmpty) return null;
                         if (v.length != 10) return 'Must be 10 digits';
@@ -97,19 +108,37 @@ class Step1BasicInfo extends StatelessWidget {
               ),
 
               // Sex
-              Obx(
-                () => FormRadioGroup<String>(
-                  label: 'Sex',
-                  required: true,
-                  groupValue: ctrl.sex.value,
-                  options: const [
-                    (value: 'Male', label: 'Male'),
-                    (value: 'Female', label: 'Female'),
-                    (value: 'Other', label: 'Other'),
+              Obx(() {
+                final hasError = _showSexError && ctrl.sex.value == null;
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    FormRadioGroup<String>(
+                      label: 'Sex',
+                      required: true,
+                      groupValue: ctrl.sex.value,
+                      options: const [
+                        (value: 'Male', label: 'Male'),
+                        (value: 'Female', label: 'Female'),
+                        (value: 'Other', label: 'Other'),
+                      ],
+                      onChanged: (v) => ctrl.sex.value = v,
+                    ),
+                    if (hasError)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 2, bottom: 10, left: 4),
+                        child: Text(
+                          'Please select sex',
+                          style: const TextStyle(
+                            color: AppColors.errorRed,
+                            fontSize: 11,
+                            height: 0.8,
+                          ),
+                        ),
+                      ),
                   ],
-                  onChanged: (v) => ctrl.sex.value = v,
-                ),
-              ),
+                );
+              }),
 
               // Religion
               Obx(
