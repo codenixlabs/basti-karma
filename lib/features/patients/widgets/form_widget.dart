@@ -62,6 +62,8 @@ class FormStepHeader extends StatelessWidget {
   final int currentStep;
   final int totalSteps;
   final VoidCallback? onBack;
+  final Widget? action;
+  final VoidCallback? onTapProgress;
 
   const FormStepHeader({
     super.key,
@@ -70,6 +72,8 @@ class FormStepHeader extends StatelessWidget {
     required this.currentStep,
     required this.totalSteps,
     this.onBack,
+    this.action,
+    this.onTapProgress,
   });
 
   @override
@@ -133,10 +137,24 @@ class FormStepHeader extends StatelessWidget {
                   ],
                 ),
               ),
+              ?action,
             ],
           ),
           const SizedBox(height: 16),
-          StepProgressBar(currentStep: currentStep, totalSteps: totalSteps),
+          if (onTapProgress != null)
+            GestureDetector(
+              onTap: onTapProgress,
+              behavior: HitTestBehavior.opaque,
+              child: StepProgressBar(
+                currentStep: currentStep,
+                totalSteps: totalSteps,
+              ),
+            )
+          else
+            StepProgressBar(
+              currentStep: currentStep,
+              totalSteps: totalSteps,
+            ),
         ],
       ),
     );
@@ -148,12 +166,14 @@ class FormSectionCard extends StatelessWidget {
   final String title;
   final IconData icon;
   final List<Widget> children;
+  final bool required;
 
   const FormSectionCard({
     super.key,
     required this.title,
     required this.icon,
     required this.children,
+    this.required = false,
   });
 
   @override
@@ -188,12 +208,25 @@ class FormSectionCard extends StatelessWidget {
                   child: Icon(icon, color: AppColors.primaryGreen, size: 18),
                 ),
                 const SizedBox(width: 10),
-                Text(
-                  title,
-                  style: const TextStyle(
-                    color: AppColors.primaryGreen,
-                    fontSize: 16,
-                    fontWeight: FontWeight.w700,
+                RichText(
+                  text: TextSpan(
+                    text: title,
+                    style: const TextStyle(
+                      color: AppColors.primaryGreen,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w700,
+                    ),
+                    children: [
+                      if (required)
+                        const TextSpan(
+                          text: ' *',
+                          style: TextStyle(
+                            color: AppColors.errorRed,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                    ],
                   ),
                 ),
               ],
@@ -222,6 +255,7 @@ class FieldLabel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (label.trim().isEmpty) return const SizedBox.shrink();
     return Padding(
       padding: const EdgeInsets.only(bottom: 6),
       child: RichText(

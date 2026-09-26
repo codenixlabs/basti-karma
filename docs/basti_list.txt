@@ -1,0 +1,372 @@
+Basti in Different Diseases
+
+[TABLE START]
+ | DISEASES | INDICATION / STAGE | NAME OF BASTI | INGREDIENTS / DESCRIPTION | FORMULATION | REFERENCES |
+ | Abhishyanda |  | Pancha tikta niruha. (NB + AB) | As mentioned in prameha. |  | C. Si 8/8-9 |
+ | Adhmana |  | Eranda muladi basti. (NB + AB) | As mentioned in arsha. |  | C. Si 3/38-42 |
+ | Adhmana |  | Mustadya yapana basti(only YB) | As mentioned in 'promotion of semen' |  | C. Si 12/16(1) |
+ | Adhmana |  | Baladi yapana basti (2) (only YB) |  |  | C. Si 12/16(6) |
+ | Adhya Vata |  | Saindhavadi anuvasana basti.(Only Sneha basti) | As mentioned in gulma. |  | C. Si 4/13-16 |
+ | Agni vardhana |  | Jivaniya-yamaka-anuvasana basti. .(Only Sneha basti) | As mentioned in Vata-Pittaghna basti. |  | C. Si 4/9-11 |
+ | Agni vardhana |  | Hapushadi yapana basti. (only YB) |  |  | C. Si 12/16(7) |
+ | Ajirna |  | Rasnadi niruha basti.(NB + AB) | As mentioned in prameha. |  | C. Si 3/61-64 |
+ | Ajirna |  | Dvi panchamuladi yapana basti.(only YB) |  |  | C. Si 12/18(18) |
+ | Alasaka |  | Dvi panchamuladi niruha basti.(NB+AB) | As mentioned in pandu. |  | C. Si 3/59-60 |
+ | Alasaka |  | Dvi panchamuladi yapana basti. (only YB) |  |  | C. Si 12/18(18) |
+ | Amavata |  | Vaitarana basti(NB + AB) |  | Saindhavalavana 1Karsha 12 gms Guda Â½ Pala 25 gms Amlika 1 Pala 50 gms Taila 50 to 60mlGomutra 1 Kudava 200ml |  |
+ | Amavata |  | Panchamuladi Niruha Basti(NB + AB) |  | Kwath Dravya: panchamuladi KashayaKalka: indrayava,patha,madanphala,musta |  |
+ | Amavata |  | Churna basti(NB + AB) |  | 1 Saindava Lavana Â½ Karsha 6gm 2. Eranda Taila 1 Â½ Pala 75 ml 3. Rasnadi Churna 1 Pala 50 gm 4. Usna Jala 4 Pala 250 ml 5. Chincha 1 Â½ Pala 75ml Total 456 ml |  |
+ | Amavata |  | Ksharabasti(NB + AB) |  | Add kshar in kalka or Kashaya |  |
+ | Amavata |  | Vaishwanara Churna Basti(NB + AB) |  | 1 Saindhavalavana Â½ Karsha 6gm 2 Tila Taila (Murchit) 1 Â½ Pala 75ml 3 Ushana Jala 4 Pala 200ml 4 Vaishwanara Churna 1 Pala 50gm TOTAL 331ml |  |
+ | Amavata |  | Erandamooladi niruha basti(NB + AB) |  |  |  |
+ | Amavata |  | Matra basti with brihata saindhavadi taila.(Only Sneha basti) |  |  |  |
+ | Amavata |  | Ardhamatrika basti(NB+AB) |  |  |  |
+ | Ama dosha |  | Dvi panchamuladi niruha basti.Same basti as mentioned in amavata(NB + AB) | As mentioned in pandu. |  | C. Si 3/59-60 |
+ | Anaha |  | Eranda muladi basti(NB + AB) | As mentioned in arsha. |  | C. Si 3/38-42 |
+ | Anaha |  | Palashadi niruha basti. (NB + AB) | As mentioned in gulma. |  | C. Ch. Si 3/44-45 |
+ | Anaha |  | Erandamooladi niruha basti(NB + AB) | As mentioned in vit-sanga |  | C. Si 3/12 |
+ | Anaha |  | Dashamooladi niruha basti(NB + AB) |  |  |  |
+ | Anaha |  | Svadmastra niruha basti. (NB + AB) | As mentioned in mutrakrichchhra. |  | C. Si 8/13-14 |
+ | Anaha |  | Saindhavadi anuvasana basti. .(Only Sneha basti) | As mentioned in gulma |  | C. Si 4/13-16 |
+ | Andhatva |  | Mustadi yapana basti(only YB) |  |  |  |
+ | Apatyakama(Desire of progeny) |  | Eranda muladi yapana basti. (only YB) |  |  | C. Si 12/16(2) |
+ | Ardita |  | Baladi yapana basti (1). (only YB) |  |  | C. Si 12/16(5) |
+ | Ardita |  | Anuvasana with Ksheerabala Taila.(Only Sneha basti) |  |  |  |
+ | Ardita |  | Anuvasana with Mahanarayana Taila.(Only Sneha basti) |  |  |  |
+ | Ardita |  | Rasanadi niruha basti(NB + AB) |  |  |  |
+ | Ardita |  | Matra basti with bala ashwagandha taila.(Only Sneha basti) |  |  |  |
+ | Ardita |  | Dashamooladi niruha basti(NB + AB) |  |  |  |
+ | Apasmara |  | Ashwagandadi niruha Basti(NB + AB) |  |  |  |
+ | Apasmara |  | Ksheerabala Taila Anuvasana Basti.(Only Sneha basti) |  |  |  |
+ | Apasmara |  | Kalyanaka Ghruta Anuvasna Basti.(Only Sneha basti) |  |  |  |
+ | Apasmara |  | Ksheerabala Taila, bala ashwagandhabtaila Anuvasana Basti.(Only Sneha basti) |  |  |  |
+ | Arsha |  | Eranda muladi basti. (NB + AB) | Eranda mula, palash, laghu pancha mula, ashvagandha, atibala, guduchi, rasna, punarnava, aragwadha, devdaru, madana; prakshepa dravya- shatahva, hapusha, pippali, madhuka, bala, rasanjana, vatsaka, musta. |  | C. Si 3/38-42 |
+ | Arsha |  | Saindhavadi anuvasana basti. (Only Sneha basti) | As mentioned in gulma. |  | C. Si 4/13-16 |
+ | Arsha |  | Vidangadi anuvasana. (Only Sneha basti) | As mentioned in kushtha. |  | C. Si 4/18-22 |
+ | Arsha | In chronic arsha | Mustadya yapana basti. (only YB) | As mentioned in 'promotion of semen' |  | C. Si 12/16(1) |
+ | Arsha | In chronic arsha | Eranda muladi yapana basti. (only YB) |  |  | C. Si 12/16(2) |
+ | Arsha | In chronic arsha | Madhutailadi yapana basti. (only YB) | Madhu, taila â 4 prasrita, shatapushpa â 1/2 pala, saindhava - 1/2 aksha |  | C. Si 12/18(13) |
+ | Arsha | Charaka:If Vata is predominant in sravi arsha (bleeding piles). | Anuvasana basti with ghrita manda. (Only Sneha basti) |  |  | C. Ch 14/224 |
+ | Ashana dvesa |  | Koshatakadi niruha basti. (NB + AB) | As mentioned in Kaphaja vyadhi. |  | C. Si 3/56-58 |
+ | Atisara |  | Chandanadi niruha basti. (NB + AB) | As mentioned in raktapitta. |  | C. Si 3/48-52 |
+ | Atisara | Charaka:Rectal prolapse in atisara. | Dashamuladi anuvasana basti (dasamula, bilva, vacha, chitra, etc.). (Only Sneha basti) |  |  | C. Ch 19/42-45 |
+ | Atisara | In case of Pittaja atisara, if there is pain in abdomen after virechana, then anuvasana basti is indicated. | Shatapushpadi anuvasana. (Only Sneha basti) |  |  | C. Ch 19/61-62 |
+ | Atisara | If there is no response after virechana and anuvasana, then pichchha basti is indicated in Pittaja atisara, In Vata Kapha vibandha, Kapha atisara, shula or pravahika present in Kaphaja atisara. | Shalmoli, milk, oil, ghrita, kalka of yashthimadhu.(Ksheera basti) (only YB) |  |  | C. Ch 19/63-68 |
+ | Atisara | Sushruta:When vibandha bahudosa present in pakva atisara. | trina panchamula niruha basti(NB + AB) | Asthapana by shodhaniya (trina panchamula) mutra drugs and anuvasana. |  | S. Ut 40/107 |
+ | Atisara | If pravahana (tenesmus) and guda bhramsa is present. | Anuvasana by taila or ghrita processed with madhura and amla drugs. (Only Sneha basti) | Anuvasana by taila or ghrita processed with madhura and amla drugs. |  | S. Ut 40/108 |
+ | Atisara | If frequently small stool with blood is passed with pain. | Pichha basti.(NB+AB) | Honey, lavana, Sneha, kalka:Manjista, Mocharasa, Lodhra, Nagkeser, Yastimadhu, RasanjanKashaya: Salmali Vrinta kashaya |  | S. Ut 40/111 |
+ | Atisara | In Pittaja atisara | Drakshadi niruha basti. (NB + AB) | Milk boiled with draksha, kashmarya, madhuka, sevya, sariva, chandana, shitapaki; as prakshepa dravya shravani, mudgaparni, tugakshiri, atma gupta, yashthimadhu. |  | C. Si 3/53-55 |
+ | Avabahuka |  | Anuvasana With Mahanarayana Taila(Only Sneha basti) |  |  |  |
+ | Avabahuka | Amaja condition srotorodhacondition | Vaitarana basti(NB+AB) |  |  |  |
+ | Avabahuka |  | Anuvasana With Ksheerabala Taila(Only Sneha basti) |  |  |  |
+ | Bala mamsa retasaprada basti |  | Niruha basti. (NB+AB) | Chhaga mamsa processed with ghrita, taila, dadimamla. |  | Ch. Si 3/43 |
+ | Bala mamsa retasaprada basti |  | Sahacharadi sneha basti. (Only Sneha basti) |  |  | C. Si 12/19(3). |
+ | Balagraha |  | Anuvasana with Bala Taila(Only Sneha basti) |  |  |  |
+ | Balagraha |  | Ksheera Bala TailaÂ (Only Sneha basti) |  |  |  |
+ | Bala vardhana |  | Jivaniya-yamaka-anuvasana basti. (Only Sneha basti) | As mentioned in Vata-Pittaghna basti. |  | C. Si 4/9-11 |
+ | Bala vardhana |  | Dvipanchamuladi yapana basti. (only YB) |  |  | C. Si 12/18(2) |
+ | Bala vardhana |  | Godhadi yapana basti. (only YB) |  |  | C. Si 12/18(5) |
+ | Bala vardhana |  | Baladi sneha basti. (Only Sneha basti) |  |  | C. Si 12/19(2) |
+ | Bala vardhana |  | Sthiradi basti. (only YB) | As mentioned in Vataghna basti. |  | C. Si 8/4 |
+ | Basti atopa | Serious type of bladder distention. | Dvipanchamula-triphaladi niruha basti. (NB+AB) | As mentioned in pandu. |  | C. Si 3/59-60. |
+ | Basti atopa |  | Dvipanchamuladi yapana basti. (only YB) |  |  | C. Si 12/18(18) |
+ | Bhagna | Healing effect in a fracture due to riding in ratha, gaja, haya (horse) | Godhadi basti(only YB) |  |  | C. Si 12/18(5) |
+ | Bradhna |  | Rasnadi niruha basti. (NB+AB) | Mentioned in prameha. |  | C. Si 3/61-64. |
+ | Bradhna |  | Saindhavadi anuvasana basti. (Only Sneha basti) | As mentioned in gulma. |  | C. Si 4/13-16 |
+ | Bradhna |  | Mustadya yapana basti. (only YB) | As mentioned in 'promotion of semen' |  | C. Si 12/16(1) |
+ | Bradhna |  | Baladi yapana basti(2) (only YB) |  |  | C. Si 12/16(6) |
+ | Bradhna |  | Madhu-tailadi yapana basti(only YB) |  |  | C. Si 12/18(13) |
+ | Brimhana |  | Jivaniya-yamaka-anuvasana basti. (Only Sneha basti) | As mentioned as VataPittaghna. |  | C. Si 4/9-11. |
+ | Brimhana |  | Madhu-tailadi yapana basti(only YB) | Madhu,taila â 4 prasrita, shatapushpa â 1/2 pala, saindhava-1/2 aksha |  | C. Si 12/18(13) |
+ | Brimhana |  | Baladi sneha basti. (Only Sneha basti) |  |  | C. Si12/19(2) |
+ | Chakshu bala prada | Strengthening of eyes | Sthiradi niruha basti. (NB+AB) | Sthiradi bala, patala, trayantika, eranda, yava processed in chhaga mamsa rasa. |  | C. Si 3/36-38. |
+ | Daha |  | Chandanadi niruha basti(NB+AB) | As mentioned in raktapitta. |  | C. Si 3/48-52 |
+ | Daha | If daha present in hrid-nabhi-parshva-uttama deha, Antar daha. | Drakshadi niruha basti. (NB+AB) | As mentioned in Pittaja atisara. |  | C. Si 3/53-55 |
+ | Dipana |  | Sthiradi niruha basti. (NB+AB) | Sthiradi bala, patala, trayantika, eranda, yava processed in chhaga mamsa rasa. |  | C. Si 3/36-38. |
+ | Dipana |  | Eranda muladi basti(NB+AB) | As mentioned in arsha |  | C. Si.3/38-42 |
+ | Dipana |  | Madhutailadi yapana basti(only YB) | Madhu,taila â 4 prasrita, satapushpa â 1/2 pala, saindhava-1/2 akshya |  | C. Si 12/18(13) |
+ | Disease caused by samsarga dosha. | In all types of samsarga diseases. | Punarnavadi niruha basti. (NB+AB) | Punarnava, eranda, brisha, ashmabheda, vrishchira, bhutika, bala, palasha, dvi panchamula, madana phala, bilva, yava, kulattha, dhanyaka; as a prakshepa dravya vacha, shatahva, devdaru, kushtha, yashthimadhu, siddhartahaka, pippali, yavani, madana phala. |  | C. Si 3/65-68. |
+ | Graha (stiffness) | Janu-uru-jangha-basti graham | Mustadya yapana basti. (only YB) | As mentioned in 'promotion of semen' |  | C. Si 12/16(1). |
+ | Graha (stiffness) | Parshva-prishtha-kati graha. | Baladi yapana basti(2) (only YB) |  |  | C. Si 12/16(6) |
+ | Gridrasi |  | Dashamooladi Niruha Basti(NB+AB) |  |  |  |
+ | Gridrasi | Vata kaphaja | Erandamooladi niruha basti(NB+AB) |  |  |  |
+ | Gridrasi | Vataja pradhanata | Anuvasan or matrabasti with Dashamooladi Taila, Sahacharaadi Taila, Dhanwan-tharam Taila, Ksheerabala Taila, bala taila, MahanarayanaTaila, Murchita tila taila(Only Sneha basti) |  |  |  |
+ | Gridrasi | chronic cases with severe stiffness | Vaitharana Basti(NB+AB)ksheera vaitarana basti(only YB) |  |  |  |
+ | Gridrasi |  | Ksheerabasti(only YB) | with Bala, Ashwagandha, and ShatavariGuggulu Tiktaka Ksheera |  |  |
+ | Gridrasi |  | Eranda muladi yapana basti(only YB) |  |  |  |
+ | Gridrasi | Vata kaphaja | Prasarini Tail Anuvasana or matra basti(Only Sneha basti) |  |  |  |
+ | Grahani | Grahani dosha. | Erandamuladi basti(NB+AB) | As mentioned in arsha. |  | C. Si.3/38-42. |
+ | Grahani | Grahani dosha. | Vidangadi anuvasana. (Only Sneha basti) | As mentioned in kushtha. |  | C. Si 4/18-22 |
+ | Grahani |  | shampakadi niruha basti(NB+AB) |  | Kalka: .Pippali, Musta, Hapusha, Shatpusha, Idrajava, Priyangu, Yashtimadhu, RasanjnaKwath: Shampak, Eranda, Punarnava, Ashwgandha, Shati, Shalparni, Prishnparni, Brihati, Kantkari, Gokshur, Bala, Rasna, Guduchi, Devdaru, Madhanphala, Pipali, Musta, Hapusha, Yashtimadhu, Priyangu, Rasanjan, Shatpusha |  |
+ | Guda daha | Due to ushna basti to a Vata afflicted person | Drakshadi niruha basti(NB+AB) | Draksha decoction mixed with trivrit kalka. |  | C. Si 8/16. |
+ | Gulma |  | Palashadi niruha basti. (NB+AB) | Palash and magadhi, vacha, shatahva as a prakshepa dravya. |  | C. Si 3/44-45. |
+ | Gulma |  | Chandanadi niruha basti(NB+AB) | As mentioned in jvara. |  | C. Si 3/48-52 |
+ | Gulma |  | Saindhavadi anuvasana basti. (Only Sneha basti) | Eranda taila processed with paste of saindhava, madana, kushtha, shatahva, nichula, vacha, hrivera, madhuka, bhargi, devadaru, katphala, nagara, meda, chavika, chitraka, shati, vidanga, ativisha, shyama, harenu, nilini, sthira, bilva, agamoda, krishna, danti, rasna. |  | C. Si 4/13-16 |
+ | Gulma |  | Mustadya yapana basti(only YB) | As mentioned in 'promotion of semen' |  | C. Si 12/16(1) |
+ | Gulma |  | Baladi yapana basti.(1) (only YB) |  |  | C. Si 12/16(5) |
+ | Gulma |  | Baladi yapana basti.(2) (only YB) |  |  | C. Si 12/16(6) |
+ | Gulma |  | Madhutailadi yapana basti(only YB) | Madhu, taila = 4 prasrita, shatapushpa = 1/2 pala , saindhava-1/2 aksha |  | C, Si12/18(13) |
+ | Gulma |  | Madhu-ghritadi yapana basti (2) (only YB) | Equal amount of madhu, ghrita, mamsa-rasa (2 prasrita each); musta â 1 aksha |  | C. Si 12/18(15) |
+ | Gulma | Rakta gulma. | Shatavaryadi sneha basti. (Only Sneha basti) |  |  | C. Si12/19(1) |
+ | Gulma | Pakvashayastha Pittaja gulma. | Tikta kshira basti. (only YB) |  |  | C. Ch 5/34 |
+ | Gulma | Sthanad apasrita Kaphaja gulma. | Dashamula kvatha sadhita niruha.(NB+AB) |  |  | C. Ch 5/53-54 |
+ | Gulma | Pittaja gulma. | Madhura ausadha sadhita niruha. .(NB+AB) |  |  | S. Ut 42/17, 42/21 |
+ | Gulma | Kaphaja gulma. | Niruha by argvadhadi kvatha.(NB+AB) |  |  | S. Ut 42/18 & Dalhana |
+ | Gulma | Raktaja gulma | Uttara basti with pippaladi ghrita. |  |  | S. Ut 42/18 & Dalhana |
+ | Hikka-shvasa | In shvasa. | Sahacharadi sneha basti. (Only Sneha basti) |  |  | C. Si12/19(3). |
+ | Hrid roga |  | Chandanadi niruha basti.(NB+AB) | As mentioned in raktapitta. |  | C. Si 3/48-52 |
+ | Hrid roga |  | Baladi yapana basti(2) (only YB) |  |  | C. Si 12/16(6) |
+ | Jvara | Vishama jvara. | Chandanadi niruha basti.(NB+AB) | Chandana, padmaka, hriddhi, yashthimadhu, rasna, vrisha, sairva, lodhra, manjishtha, ananta, bala, sthiradi, trina panchamula; as prakshepa dravya jivanti, meda, hriddhi, shatavari, vira, kakoli, kshira kakoli, kaseruka, sitopala, jivaka, prapaundarika, kamala, utpala, lodhra, atma gupta, madhuka, vidari, munjataka, keshara, chandana. |  | C. Si 3/48-52 |
+ | Jvara | Vishama jvara. | Mustadya yapana basti(only YB) | As mentioned in 'promotion of semen' |  | C. Si 12/16(1) |
+ | Jvara | Vishama jvara. | Baladi yapana basti (1). (only YB) |  |  | C. Si 2/16(5) |
+ | Jvara | Vishama jvara. | Baladi yapana basti (4) (only YB) |  |  | C. Si 12/16(10) |
+ | Jvara | Vishama jvara. | Shatavaryadi sneha basti. (only YB) |  |  | C. Si 12/19(1) |
+ | Jvara | Vishama jvara. | Baladi sneha basti. (Only Sneha basti) |  |  | C. Si 12/19(2) |
+ | Jvara | When mala present in pakvashaya. | Patoladi niruha, aragvadhadi niruha, (NB+AB) |  |  | C. Ch 3/240 |
+ | Jvara |  | jivantyadi anuvasana, chandadi anuvasana, patoladi anuvasana. (Only Sneha basti) |  |  |  |
+ | Jvara | When mala present in pakkavasaya. | Sagudadi basti |  |  | A. H. Ch 1/116, 122 |
+ | Jvara | Sushruta:In Vataja jvara. | Madhur gana siddha niruha.(NB+AB) |  |  | S. Ut 39/309 |
+ | Jvara | In Pittaja jvara | Utpaladi gana siddha niruha.(NB+AB) |  |  | S. Ut 39/309 |
+ | Jvara | In Kaphaja jvara | Aragvadhadi ganasiddha niruha. (NB+AB) |  |  | S. Ut 39/313 |
+ | Kaphaja vyadhi |  | Koshatakadi niruha basti(NB+AB) | devadaru, sangershta, murva, kutaja, arka, patha, kulattha, brihati;as prakshepa dravya sarshapa, ela, madana, kushtha. |  | Ch. Si 3/56-58 |
+ | Kaphaja vyadhi |  | Dvipanchamula-triphaladi niruha basti(NB+AB) | As mentioned in pandu. |  | Ch. Si 3/59-60 |
+ | Kaphaja vyadhi |  | Rasnadi niruha basti(NB+AB) | Mentioned in prameha. |  | C. Si 3/61-64 |
+ | Kaphaja vyadhi |  | Saindhavadi anuvasana basti. (Only Sneha basti) | As mentioned in gulma. |  | C. Si 4/13-16 |
+ | Kaphaja vyadhi |  | Madan taila anuvasana. (Only Sneha basti) | Madan phala with amla or bilvadi processed in oil. |  | C. Si 4/17 |
+ | Kaphaja vyadhi |  | Dvipanchamuladi yapana basti. (only YB) |  |  | C. Si 12/18 (18) |
+ | Kasa |  | Mustadya yapana basti(only YB) | As mentioned in 'promotion of semen' |  | C. Si 12/16 (1) |
+ | Kasa |  | Baladi yapana basti (1). (only YB) |  |  | C. Si 12/16 (5) |
+ | Kasa |  | Sahacharadi sneha basti. (Only Sneha basti) |  |  | C. Si 12/19 (3) |
+ | Klibata |  | Vidangadi anuvasana. (Only Sneha basti) | As mentioned in kushtha. |  | C. Si 4/18-22 |
+ | Krimi |  | Rasnadi niruha basti. (NB+AB) | Mentioned in prameha. |  | C. Si 3/61-64. |
+ | Krimi |  | Vidangadi niruha basti. (NB+AB) | Vidanga, triphala, shigru, madana phala, musta, akhuparni â 5 prasrita; taila â 1 prasrita with vidanga and pippali kalka. |  | C. Si 8/9-10. |
+ | Krimi |  | Matrabasti with karanja taila(Only Sneha basti) |  |  |  |
+ | Krimi |  | Vidangadi anuvasana. (Only Sneha basti) | As mentioned in kushtha. |  | c. Si 4/18-22 |
+ | Krimi |  | Anuvasana basti Amrutadi taila(Only Sneha basti) |  |  |  |
+ | Krimi |  | Krimighna basti(NB+AB) | HoneyLavanaSneha: Panchatikta basti Krimighna basti: vidanga, Shirish, guduchi, triphala, nimb, madanphal |  |  |
+ | Kshatakshina |  | Madhutailadi yapana basti(only YB) | Madhu, taila â 4 prasrita, shatapushpa â 1/2 pala , saindhava-1/2 aksha |  | C. Si 12/18(13) |
+ | Kshatakshina |  | Mustadya yapana basti. (only YB) | As mentioned for promotion of semen. |  | C. Si 12/16(1) |
+ | Kshatakshina |  | Shatavaryadi sneha basti. (Only Sneha basti) |  |  | C. Si 12/19(1) |
+ | Kshatakshina |  | Baladi sneha basti. (Only Sneha basti) |  |  | C. Si 12/19(2) |
+ | Kshina |  | Drakshadi niruha basti. (NB+AB) | As mentioned in Pittaja atisara. |  | C. Si 3/53-55. |
+ | Kshina | Kshina due to excessive maithuna. | Eranda muladi yapana basti. (only YB) |  |  | C. Si 12/16(2) |
+ | Kshina |  | Laghu panchamuladi yapana basti. (only YB) |  |  | C. Si 12/16(8) |
+ | Kshina |  | Hapushadi yapana basti. (only YB) |  |  | C. Si 12/16(7). |
+ | Kshina | Emaciation due to vishama jvara. | Laghu panchamuladi yapana basti. (only YB) |  |  | C. Si 12/16(8) |
+ | Kshina | Kshina shukra-rudhira | Baladi yapana basti(3) (only YB) |  |  | C. Si 12/16(9) |
+ | Kshina | Kshina indriya | Shalparnyadi yapana basti(only YB) |  |  | C. Si 12/16(11) |
+ | Kshina | Ematiation due vishama jvara. | Shalparnyadi yapana basti(only YB) |  |  | C. Si 12/16(11) |
+ | Kshina | Kshina indriya | Mayuradi yapana basti(only YB) |  |  | C. Si 12/18(3) |
+ | Kshina | Kshina kshata. | Godhadi yapana basti(only YB) |  |  | C. Si 12/18(5) |
+ | Kshina | Kshina mamsa rudhira. | Satavaryadi sneha basti. (Only Sneha basti) |  |  | C. Si 12/19(1) |
+ | kshaya |  | Baladi sneha basti. (Only Sneha basti) |  |  | C. Si 12/19(3) |
+ | Kshina | Kshata. | Sahacharadi sneha basti(Only Sneha basti) |  |  | C. Si 12/19(3) |
+ | Kundala |  | Mustadya yapana basti(only YB) | As mentioned in 'promotion of semen' |  | C. Si 12/16(1). |
+ | Kushtha |  | Rasnadi niruha basti. (NB+AB) | Mentioned in prameha. |  | C. Si 3/61-64. |
+ | Kushtha |  | Pancha tikta niruha. (NB+AB) | As mentioned in prameha. |  | C. Si 8/8-9. |
+ | Kushtha |  | Pancha tika ksheera basti(only YB) |  |  |  |
+ | Kushtha |  | Vidangadi anuvasana. (Only Sneha basti) | Taila processed with decoction of vidanga, eranda, rajani, patola, triphala, amrita, jati pravala, nirgundi, dashamula, akhuparni, nimba, patha, sahachara, shampaka, karavira along with the paste of madana, bilva, trivrit, krishna, rasna, bhunimba, devadaru, saptaparna, vacha, ushira, darvi, kushtha, kalinga, lata, gauri, shatahva, agni, shati, choraka, pushkara |  | C. Si 4/18-22 |
+ | Kushtha | Charaka:The condition where basti may be beneficial. | Darviyadi niruha basti(NB+AB) | Darvi, brihati, patola, pichumarda, madana and kritamala to be used in asthapanaKalka: kutaja,mustaâ¦ |  | C. Ch 7/46 |
+ | Kushtha | If Vayu is aggravated after virechana or niruha. | Anuvasana by madana, madhuka, nimba, kutaja, patola. (Only Sneha basti) |  |  | C. Ch 7/47 |
+ | Kushtha |  | Madhu-tailadi yapana basti(only YB) | Madhu, taila â 4 prasrita, shatapushpa â 1/2 pala , saindhava-1/2 aksha |  | C. Si 12/18(13) |
+ | Lalita and sukumara |  | Eranda muladi yapana basti (1). (only YB) |  |  | C. Si 12/16(2). |
+ | Lekhaniya |  | Eranda muladi basti. (NB+AB) | As mentioned in arsha. |  | C. Si.3/38-42. |
+ | Loss of retasa |  | Drakshadi niruha basti. (NB+AB) | As mentioned in Pittaja atisara. |  | C. Si 3/53-55. |
+ | Mamsa bala prada |  | Sthiradi niruha basti. (NB+AB) | Sthiradi bala, patala, trayantika, eranda, yava processed in chhaga mamsa rasa. |  | C. Si 3/36-38. |
+ | Mamsa Dhatu Kshaya |  | Ashwagandadi Basti(NB+AB) |  |  |  |
+ | Mamsa Dhatu Kshaya |  | Shatavari Ksheera Basti |  |  |  |
+ | Mamsa bala prada | To promote instant strength and to promote mamsa and bala. | Mustadya yapana basti. (only YB) | As mentioned in 'promotion of semen'. |  | C. Si 12/16(1) |
+ | Mamsa bala prada | To promote instant strength. | Baladi yapana basti (1) (only YB) |  |  | C. Si 12/16(5) |
+ | Mandagni |  | Koshatakadi niruha basti. (NB+AB) | As mentioned in Kaphaja vyadhi. |  | C. Si 3/56-58. |
+ | Mutra dosha |  | Jivaniya yamaka-anuvasana basti. (Only Sneha basti) | As mentioned in Vata Pittaghna. |  | C. Si 4/9-11. |
+ | Mutra graha |  | Eranda muladi basti. (NB+AB) | As mentioned in arsha. |  | C. Si.3/38-42. |
+ | Mutra graha |  | Chandanadi niruha basti. (NB+AB) | As mentioned in jvara |  | C. Si 3/48-52 |
+ | Mutra graha |  | Hapushadi yapana basti. (only YB) |  |  | C. Si 12/16(7) |
+ | Mutra krichchhra |  | Drakshadi niruha basti. (NB+AB) | As mentioned in Pittaja atisara. |  | C. Si 3/53-55. |
+ | Mutra krichchhra |  | Svadmastra niruha basti. (NB+AB) | Svadmastra, asma bheda, eranda, taila, suarasava â 5 prasrita; with kalka of yashthi madhu, kaunti, magadhi, sita. |  | C. Si 8/13-14. |
+ | Mutra krichchhra |  | Mustadya yapana basti(only YB) | As mentioned in 'promotion of semen' |  | C. Si 12/16(1) |
+ | Mutra krichchhra |  | Sadyo ghritadi yapana basti(only YB) | Madhu, ghrita â 2 prasrita, ushna jala-2 prasrita, shatapushpa- Â½ pala, saindhava-1/2 aksha |  | C. Si 12/18(11) |
+ | Kampavata |  | Dashamoola Taila Anuvasana(Only Sneha basti) |  |  |  |
+ | Kampavata |  | Baladi Yapana Basti(only YB) |  |  |  |
+ | Kampavata |  | Sthiradi yapana basti(only YB) | Madhu - 80 gmSharkara - 30 gmSaindhava - 6 gmGo Ghrit - 30 mlKukutanda Rasa - 30 mlSthiradi Kwath - 400 mlAja Dugdha - 100 ml |  |  |
+ | Kampavata |  | Mustadiyapana Basti(only YB) |  |  |  |
+ | Kampavata |  | Matra basti with Bala Ashwagandhadi Taila, mulakadi taila(Only Sneha basti) |  |  |  |
+ | Mutra krichchhra |  | Sadyo ghritadi yapana basti(only YB) | Ghrita, taila, vasa, majja-4 prastha, hapusha-1/2 pala, saindhava-1/2 aksha |  | C. Si 12/18(12) |
+ | Mutra krichchhra |  | Madhu-ghritadi yapana basti(1) (only YB) | Madhu, ghrita, milk and paste mentioned in madhutailadi basti |  | C. Si 12/18(14) |
+ | Trimarmiya(Mutrakrichchhra) | Charaka:In Vataja mutrakrichchhra. | Niruha basti processed with sthiradi varga (NB+AB) | Niruha basti, uttarbasti processed with sthiradi varga. |  | C. Ch 26/45 |
+ | Nikunchana (contraction) | Trik-uru-janu-nikunchana. | Madhu-ghritadi yapana basti (2) (only YB) | Equal amount of madhu, ghrita, mamsa-rasa; musta â 1 aksha |  | C. Si 12/18(14) |
+ | Obstruction due to Vayu | Shukra-mutra-varcha sanga due to Vayu | Baladi yapana basti (2) (only YB) |  |  | C. Si 12/16(6) |
+ | Pada-harsha |  | Madhu-ghritadi yapana basti (2) (only YB) | Equal amount of madhu, ghrita, mamsa-rasa; musta â 1 aksha |  | C. Si 12/18(14) |
+ | Paka (inflammation) | Basti and medhra paka | Madhu-ghritadi yapana basti (1) (only YB) | Madhu, ghrita, milk and paste mentioned in madhutailadi basti |  | Ca si 12/18(14) |
+ | Pandu | In kamala & pandu. | Chandanadi niruha basti. .(NB+AB) | As mentioned in raktapitta. |  | C. Si 3/48-52 |
+ | Pandu |  | Dvipanchamula niruha basti.(NB+AB) | Dvipanchamula, triphala, bilva, phala (madana), mustaka, gomutra; as prakshepa dravya: kalinga, patha, phala, mustaka, kshara. |  | C. Si 3/59-60 |
+ | Pandu |  | Dvipanchamuladi yapana basti. (only YB) |  |  | C. Si 12/18(18) |
+ | Pandu |  | Madhura Skandha Dravya Basti(NB+AB) |  |  |  |
+ | Pakshaghata |  | Erandamooladi Niruha Basti.(NB+AB) |  |  |  |
+ | Pakshaghata |  | Rasnadi niruha basti.(NB+AB) |  |  |  |
+ | Pakshaghata |  | Dashamooladi niruha basti.(NB+AB) |  |  |  |
+ | Pakshaghata |  | Ksheerabala Taila, bala taila, murchita tila taila, Ashwagandha taila Anuvasana or Matrabasti(Only Sneha basti) |  |  |  |
+ | Pakshaghata |  | Mustadi yapana basti(only YB) |  |  |  |
+ | Pakshaghata |  | Majja Basti(Only Sneha basti) |  |  |  |
+ | Pakshaghata |  | Matra Basti with brahmi ghrit(Only Sneha basti) |  |  |  |
+ | Pakshaghata |  | Rajayapana basti(only YB) | MadhuSaindavaLavanasnehaRajayapana kalkaRajayapana KwathaMamsa Rasa |  |  |
+ | Parikartika |  | Madhu-ghritadi yapana basti (1) (only YB) | Madhu, ghrita, milk and paste mentioned in madhutailadi basti |  | C. Si 12/18(14) |
+ | Parikartika |  | Matrabasti with triphaladi taila, jatyadi taila(Only Sneha basti) |  |  |  |
+ | Parikartika |  | Ksheera basti(only YB) |  |  |  |
+ | Parikartika |  | Matrabasti with Jatyadi taila, manjishtha taila, Yastimadhu taila, gopyadi ghrita, (Only Sneha basti) |  |  |  |
+ | Parshvamaya |  | Palashadi niruha basti. (NB+AB) | As mentioned in gulma. |  | C. Si 3/44-45. |
+ | Person afflicted by stri and madya. |  | Baladi yapana basti (1). (only YB) |  |  | C. Si 12/16(5). |
+ | Person afflicted by stri and madya. |  | Hapushadi yapana basti. (only YB) |  |  | C. Si 12/16(7) |
+ | Pitta Kaphaja vyadhi |  | Mustadya yapana basti(only YB) | As mentioned in 'promotion of semen' |  | C. Si 12/16(1). |
+ | Pittaghna |  | Chandanadi anuvasana basti. (Only Sneha basti) | Taila, ghrita processed with 4 time of kshira along with paste of chandanadi group. |  | C. Si 4/12 |
+ | Pittaja vyadhi |  | Yasthi madhukadi niruha basti(NB+AB) | Milk boiled with yasthi madhu, lodhra. Abhaya, chandana, kamala, utpala; as a prakshepa dravya jivaniya gana. |  | C. Si 3/47. |
+ | Pittaja vyadhi |  | Madhu-ghritadi yapana basti (1) (only YB) | Madhu, ghrita, milk and paste mentioned in madhutailadi basti |  | C. Si 12/18(14) |
+ | Pliha roga |  | Saindhavadi anuvasana basti. (Only Sneha basti) | As mentioned in gulma. |  | C. Si 4/13-16 |
+ | Pliha roga |  | Baladi yapana basti (1) (only YB) |  |  | Ch. Si 12/16(5) |
+ | Pliha roga |  | Madhu-tailadi yapana basti(only YB) | Madhu,taila â 4 prasrita, satapushpa â 1/2 pala , saindhava-1/2 aksha |  | C. Si 12/18(13) |
+ | Pravahika |  | Mustadya yapana basti(only YB) | As mentioned in 'promotion of semen' |  | C. Si 12/16(1). |
+ | Pravahika |  | Bilvadi niruha basti.(NB+AB) |  |  |  |
+ | Pravahika |  | Matrabasti Bilvadi taila, dashamoola taila(Only Sneha basti) |  |  |  |
+ | Pravahika |  | Pichha basti(NB+AB) | Honey, lavana, Sneha, kalka:Manjista, Mocharasa, Lodhra, Nagkeser, Yastimadhu, RasanjanKashaya: Salmali Vrinta kashaya |  |  |
+ | Prameha |  | Rasnadi niruha basti. .(NB+AB) | Rasna, amrita, eranda, vidanga, daru haridra, saptachchhada, ushira, surahva, nimba, shampaka, bhunimba, patola, patha, tikta, akhuparni,dashamula, trayantika, shigru, triphala, pinditaka;as a prakshepa dravya â yashthimadhu, krishna, phalini, shatahva, rasanjana, shveta vacha, vidanga, kalinga, patha, ambuda (musta). |  | C. Si 3/61-64. |
+ | Prameha |  | Pancha tikta niruha basti.(NB+AB) | Decoction of patola, nimba, rasna, saptachchhada â 4 prasrita; ghrita â 1 prasrita. |  | C. Si 8/8-9. |
+ | Prameha |  | Saindhavadi anuvasana basti. (Only Sneha basti) | As mentioned in gulma. |  | C. Si 4/13-16 |
+ | Prameha |  | Vidangadi anuvasana. (Only Sneha basti) | As mentioned in kushtha. |  | C. Si 4/18-22 |
+ | Prameha |  | Mustadya yapana basti(only YB) | As mentioned in 'promotion of semen'. |  | C. Si 12/16(1) |
+ | Prameha |  | Madhu-tailadi yapana basti(only YB) | Madhu, taila â 4 prasrita, shatapushpa â 1/2 pala , saindhava-1/2 aksha |  | C. Si 12/18(13) |
+ | Prameha |  | Asanadi niruha basti.(NB+AB) | Madhu, lavana, Sneha, kalka: punarnava, gokshura, amalaka, guduchi, twakaKashaya: asanadi gana kashaya |  |  |
+ | Prameha |  | Mustadi Takra basti(only YB) |  |  |  |
+ | Prameha |  | Amalakyadi Takra basti(only YB) |  |  |  |
+ | Prameha |  | Somavalka Kashaya niruha basti.(NB+AB) |  |  |  |
+ | Prameha |  | Vacha Haridradi Gana niruha Basti.(NB+AB) |  |  |  |
+ | Rajayakshma |  | Mustadi yapana basti(only YB) |  |  |  |
+ | Rajayakshma |  | Matrabasti with bala taila, bala ashwagandha taila, ksheera bala taila(Only Sneha basti) |  |  |  |
+ | Raktapitta (Urdhvaga) |  | Chandanadi niruha basti.(NB+AB) | As mentioned in jvara. |  | C. Si 3/48-52. |
+ | Raktapitta (Urdhvaga) | Vagbhatta:Adhovaha raktapitta (Specially bleeding per rectum) | Vidarigandhadi siddha asthapana with yashthimadhu sadhita ghrita or ghritapaka by yashthimadhu sadhita kshira(NB+AB) |  |  | A. H. Ch 2/46 |
+ | Raktapitta (Urdhvaga) | Sushruta:General treatment | Priyangu rodhradi asthapana with yashthimadhu sadhita ghrita as anuvasana.(NB+AB) |  |  | S. Ut 45/38, 45/39-41 |
+ | Raktapitta (Urdhvaga) |  | Tikta ksheera basti(only YB) |  |  |  |
+ | Raktapitta (Urdhvaga) |  | Pichha basti.(NB+AB) | Honey, lavana, Sneha, kalka:Manjista, Mocharasa, Lodhra, Nagkeser, Yastimadhu, RasanjanKashaya: Salmali Vrinta kashaya |  |  |
+ | Raktapitta (Urdhvaga) |  | Chakshyushya Basti.(NB+AB) | Anuvasan Basti- Dhanvantar Tail (40 ml) + Mahatiktaka Ghrita (40 ml) Niruh Basti- Erandamool kwath- 4 prasrut (380 ml) + Yashtimadhu, Shatapushpa Kalka (2 prasrut- 96 gm) + Mahatiktaka Ghrita (2 Prasrut90ml) + (Madhu+ Saindhav)- 1 karsha- 10gm |  |  |
+ | Rasayana |  | Mustadya yapana basti(only YB) | As mentioned in 'promotion of semen' |  | C. Si 12/16(1). |
+ | Rasayana |  | Baladi yapana basti (1). (only YB) |  |  | C. Si 12/16(5) |
+ | Rasayana |  | Tittiradi yapana basti. (only YB) |  |  | C. Si 12/18(3) |
+ | Rasayana |  | Godhadi basti(only YB) |  |  | C. Si 12/18(5) |
+ | Rasayana |  | Sadyo ghritadi yapana basti(only YB) | Ghrita, taila, vasa, majja-4 prastha, hapusha-1/2 pala, saindhava-1/2 aksha |  | C. Si 12/18(12) |
+ | Rasayana |  | Madhu-tailadi yapana basti(only YB) | Madhu, taila â 4 prasrita, shatapushpa â 1/2 pala, saindhava-1/2 aksha |  | C. Si 12/18(13) |
+ | Rasayana |  | Madhu-ghritadi yapana basti(1) (only YB) | Madhu, ghrita, milk and paste mentioned in madhutailadi basti |  | C. Si 12/18(14) |
+ | Rasayana |  | Shatavaryadi sneha basti. (Only Sneha basti) |  |  | C. Si 12/19(1) |
+ | Rasayana |  | Sahacharadi sneha basti. (Only Sneha basti) |  |  | C. Si12/19(3) |
+ | Retention of mutra-varcha-shukra |  | Godhadi basti(only YB) |  |  | C. Si 12/18(5) |
+ | Retention of mutra-varcha-shukra |  | Jivaniya-yamaka-anuvasana basti. (Only Sneha basti) | As mentioned in Vata-Pittaghna basti. |  | C. Si 4/9-11 |
+ | Retasa raja dosha | In nasta retasa (loss of semen). | Shatavaryadi sneha basti. (Only Sneha basti) |  |  | C. Si 12/19(1) |
+ | Retasa raja dosha | Anartava. | Shatavaryadi sneha basti. (Only Sneha basti) |  |  | C. Si 12/19(1) |
+ | Retasa raja dosha | Nashta shukra (loss of semen) | Baladi sneha basti. (Only Sneha basti) |  |  | C. Si12/19(2) |
+ | Samjna nasha |  | Baladi yapana basti(2) (only YB) |  |  | C. Si 12/16(6) |
+ | Sandhigata vata |  | Basti with ksheerabala taila, KsheerabalaÂ tailaÂ andÂ GugguluÂ tiktakaÂ grita(Only Sneha basti) |  |  |  |
+ | Sandhigata vata |  | Navaprasrutika Basti(Only Sneha basti) |  |  |  |
+ | Sandhigata vata |  | Dashamoola niruhabasti,rasanadi niruha basti, erandamooladi niruha basti.(NB+AB) |  |  |  |
+ | Sandhigata vata |  | Panchatikta ksheera basti(only YB) |  |  |  |
+ | Sandhigata vata |  | Ardhamatrika basti.(NB+AB) |  | Honey 100mlLavana 12 gmSneha 100 mlKalka shatpushpa 12 gm Kashaya dashamoola 400 ml |  |
+ | Sandhigata vata | Dhatukshayaja condtion | Sahacharadi Yapana Basti(only YB) |  |  |  |
+ | Sandhigata vata |  | Siddha ksheera  basti(only YB) |  |  |  |
+ | Sandhigata vata |  | Vaitarana basti.(NB+AB) |  |  |  |
+ | Sandhigata vata |  | Ksheera vaitarana basti(only YB) |  |  |  |
+ | Sandhigata vata |  | Matra basti with balataila, ksheera bala taila,bala ashwagandha taila, dhanwantara taila, sahacharadi taila,murchita tila taila, dashamoola taila, maha Narayana taila, devdarubaladi taila, karpasasthyadi tail, (Only Sneha basti) |  |  |  |
+ | Sandhigata vata |  | Hapusadi yapana basti(only YB) |  |  |  |
+ | Sandhigata vata |  | Panchaprasrutik Basti(NB+AB) |  | Madhu1 Prasruta (96ml)Saindhava 6 to 12 gmTaila1 Prasruta (96ml)Ghrita1 Prasruta (96ml)Ksheera2 Prasruta (192ml) |  |
+ | Sandhigata vata | Dhatu kshaya | Majja basti as an anuvasana basti (Varaha vasa) (Only Sneha basti) |  |  |  |
+ | Sanga (obstruction) | Mutra sanga | Dvi panchamuladi niruha basti. .(NB+AB) | As mentioned in pandu. |  | C. Si 3/59-60. |
+ | Sanga (obstruction) | Vata sanga. | Dvi panchamula-triphaladi niruha basti. .(NB+AB) | As mentioned in pandu. |  | C. Si 3/59-60. |
+ | Sanga (obstruction) | Vata shukra sanga | Dvi panchamuladi yapana basti(only YB) |  |  | C. Si 12/18(18) |
+ | Sharkara |  | Eranda muladi basti. .(NB+AB) | As mentioned in arsha. |  | C. Si.3/38-42. |
+ | Shiro arti |  | Niruha basti. .(NB+AB) | Saindhava half aksha; each of madhu, taila, paya (milk ), ghrita â 1 prasrita ; hapusha- 1 karsha. |  | C. Si 8/7. |
+ | Shukra-krita | To promote virility | Niruha basti. .(NB+AB) | Each of payasya, ikshu, sthira, rasna, vidari â 1 prasrita; each of madhu and ghrita â 1 prasrita with paste of krishna. |  | C. Si 8/11 |
+ | Shukra-krita | To increase shukra. | Jivaniya-yamaka-anuvasana basti. (Only Sneha basti) | As mentioned in Vata Pittaghna. |  | C. Si 4/9-11 |
+ | Shukra-krita | Sukra janana | Mustadya yapana basti(only YB) | Musta, ushira, bala, aragvadha, rasna, manjishtha, katu rohini, trayamana, punarnava, vibhitaki, guduchi, shalaparni, brihati, kantikari, gokshura. |  | C. Si 12/16(1) |
+ | Shukra-krita | To promote production of semen | Tittiradi yapana(only YB) |  |  | C. Si12/18(1) |
+ | Shula | Jangha-uru-pada- tri- prishtha-shula. | Eranda muladi basti. .(NB+AB) | As mentioned in arsha. |  | C. Si.3/38-42. |
+ | Shula |  | Mustadya yapana basti. (only YB) | As mentioned in 'promotion of semen' |  | C. Si 12/16(1) |
+ | Shula |  | Churna basti. (only churna basti) | Rasna, vacha, bilva, shatahva, ela, putika, krishna, madana phala, daru, kushtha, saindhava, amla dravya, warm water and oil. |  | C. P on C. Si 10/13-14 |
+ | Shula | Basti-vrishana-medhra-trik-prishtha. | Madhu-ghritadi yapana basti (2) (only YB) | Equal amount of madhu, ghrita, mamsa-rasa; musta â 1 aksha |  | C. Si 12/18(14) |
+ | Shula | In Vata Pittaja vedana | Sahacharadi sneha basti(Only Sneha basti) |  |  | C. Si12/19(3) |
+ | Shiro ruja |  | Mustadya yapana basti(only YB) | As mentioned in 'promotion of semen' |  | C. Si 12/16(1) |
+ | Sthavira (old age) |  | Eranda muladi yapana basti. (only YB) |  |  | C. Si 12/16(2). |
+ | Sthavira (old age) |  | Baladi yapana basti (3). (only YB) |  |  | C. Si 12/16(9) |
+ | Sthavira (old age) |  | Kurmadi yapana basti(only YB) |  |  | C. Si 12/18(5) |
+ | Stri prasakta (excessive sexual indulgence) |  | Dvi panchamula yapana basti. (only YB) |  |  | C. Si 12/18(2). |
+ | Stri prasakta (excessive sexual indulgence) |  | Mayuradi yapana basti. (only YB) |  |  | C. Si 12/18(3) |
+ | Tri dosha nashaka |  | Vidangadi Anuvasana. (Only Sneha basti) | As mentioned in Kushtha. |  | C. Si 4/18-22 |
+ | Udara |  | Rasnadi niruha basti.(NB+AB) | As mentioned in prameha. |  | C. Si 3/61-64. |
+ | Udara | Charaka:In general treatment of Vatodara. | Niruha basti by dashamula, trivrit, aragvadha.Eranda and tila taila for anuvasana. .(NB+AB) | Niruha basti by dashamula, trivrit, aragvadha.Eranda and tila taila for anuvasana. |  | C. Ch 13/63-67 |
+ | Udara | In case of Pittodara, when patient is very weak. | Kshira basti(only YB) |  |  | C. Ch 13/68 |
+ | Udara | In baddhodara, as a general treatment. | Niruha with gomutra and anuvasana basti are to be given. (NB+AB) |  |  | C. Ch 13/89-90 |
+ | Udara | If adhmana occurs after repeated virechana. | Niruha with snigdha, amla and lavana or, with kshara and gomutra. (NB+AB) |  |  | C. Ch 13/173-174, A. H. Ch 15/51 |
+ | Udara | If, due to avarana of Pitta and Kapha, Vayu produces adhmana, then tikshana kshara basti is indicated. | Kshara gomutra with niruha basti. (NB+AB) |  |  | A. H. Ch 15/52 |
+ | Udavarta |  | Palashadi niruha basti. (NB+AB) | As mentioned in gulma. |  | C. Si 3/44-45. |
+ | Udavarta |  | Saindhavadi anuvasana basti. (Only Sneha basti) | As mentioned in gulma. |  | C. Si 4/13-16 |
+ | Udavarta |  | Mustadya yapana basti(only YB) | As mentioned in 'promotion of semen' |  | C. Si 12/16(1) |
+ | Udavarta |  | Godhadi yapana basti(only YB) |  |  | C. Si 12/18(5) |
+ | Udavarta / Pakvashayagata Vata |  | Eranda Taila MB(Only Sneha basti) |  |  |  |
+ | Udavarta / Pakvashayagata Vata |  | Dashamoola Niruha Basti(NB+AB) |  |  |  |
+ | Udavarta |  | Madhu-tailadi yapana basti(only YB) | Madhu, taila â 4 prasrita, shata pushpa â 1/2 pala , saindhava-1/2 aksha |  | C. Si 12/18(13) |
+ | Unmada |  | Mustadya yapana basti(only YB) | As mentioned in 'promotion of semen'. |  | C. Si 12/16(1) |
+ | Vaisvarya |  | Yasthi madhukadi niruha basti.(NB+AB) | As mentioned in visarpa. |  | C. Si 3/46. |
+ | Vali-palita |  | Shatavaryadi sneha basti. (Only Sneha basti) |  |  | C. Si12/19(1) |
+ | Vali-palita |  | Baladi sneha basti. (Only Sneha basti) |  |  | C. Si12/19(2) |
+ | Vali-palita |  | Sahacharadi sneha basti. (Only Sneha basti) |  |  | C. Si 12/19(3) |
+ | Vata nigraha |  | Eranda muladi basti. (NB+AB) | As mentioned in arsha. |  | C. Si.3/38-42. |
+ | Vata rakta |  | Yashthi madhukadi niruha basti. (NB+AB) | As mentioned in visarpa. |  | C. Si 3/46. |
+ | Vatarakta | Malavrita, doshavrita Vata. |  | Kshira basti |  | C. Ch 29/87 |
+ | Vatarakta |  | Mustadi kshira basti(only YB) |  |  |  |
+ | Vatarakta |  | Bala guduchyadi kshira basti(only YB) |  |  |  |
+ | Vatarakta | Vagbhatta:General treatment. |  | Kshira basti; Anuvasana by madhura aushadha sadhita taila. |  | A. H. Ch 22/13-14 |
+ | Vatarakta | Kaphavrita Vayu. | Tikshna niruha(NB+AB) |  |  | A. H. Ch 22/57 |
+ | Vatarakta | Purishavrita Vata. | Bhedaniya basti, eranda taila basti(NB+AB) |  |  | A. H. Ch 22/62 |
+ | Vata rakta |  | Mustadya yapana basti. (only YB) | As mentioned in 'promotion of semen' |  | C. Si 12/16(1) |
+ | Vata rakta | Vata rakta affecting all the body | Hapushadi yapana basti. (only YB) |  |  | C. Si 12/16(7) |
+ | Vata rakta |  | Godhadi yapana basti(only YB) |  |  | C. Si 12/18(5) |
+ | Vata rakta |  | Madhu-ghritadi yapana basti (2) (only YB) | Equal amount of madhu, ghrita, mamsa-rasa; musta â 1 aksha |  | C. Si 12/18(15) |
+ | Vataghna |  | Niruha basti(NB+AB) | Each of taila, prasanna, madhu, sarpi â 1 prasrita; each of bilvadi mula kvatha and kulattha â 2 prasrita. |  | C. Si 8/5 |
+ | Vataghna |  | Niruha basti(NB+AB) | Panchamula decoction â 5 prasrita, taila â 2 prasrita, madhu, sarpi â 1 prasrita each |  | C. Si 8/6 |
+ | Vataghna |  | Hapushadi yapana basti. (only YB) |  |  | C. Si 12/16(7). |
+ | Vataja vyadhi |  | Dvipancha muladi niruha basti. (NB+AB) | Dvi-panchamula, amla rasa, chhaga mamsa rasa. |  | C. Si 3/35-36. |
+ | Vataja vyadhi |  | Bilva taila anuvasana. (Only Sneha basti) | Dashamula, bala, rasna, ashvagandha, punarnava, guduchi, eranda, bhutika, bhargi, vrishaka, rohisha, shatavari, sahachara, kakanasa-1 pala, yava, masha, atasi, kola, kulattha â 1 pratisa with paste of jivaniya gana â 1 pala each. |  | C. Si 4/4-6 |
+ | Vataja vyadhi |  | Anuvasana | Anupa-rasa. |  | C. Si 4/7 |
+ | Vatavyadhi | In Kapha-anubandha Vata. | Niruha with gomutra.(NB+AB) |  |  | C. Ch 28/192 |
+ | Vatavyadhi | Apatanaka. | Anuvasana by mahasneha prepared from kulattha, yava, kola, bhadradarvadi gana, anupa mamsa, kanji, dugdha and kalka of madhura drugs. (Only Sneha basti) |  |  | A. H. Ch 21/28-29 |
+ | Vatavyadhi | General treatment. | Bala taila anuvasana(Only Sneha basti) |  |  | A. H. Ch 21/82 |
+ | Vatavyadhi | Sushruta:Pakvashayagata Vata. | Shodhaniya basti(NB+AB) |  |  | S. Ch 4/5 |
+ | Vatavyadhi | Bastigata Vata. |  | Uttara basti |  | Dalhana on S. Ch 4/6 |
+ | Vatavyadhi | Sarvanga Vata / Sarvanga and ekanga Vata. | Sneha basti / Basti |  |  | S. Ch 4/10, 4/20 |
+ | Vatavyadhi | Apatanaka. | Traivrit ghrita as anuvasana. (Only Sneha basti) |  |  | S. Ch 4/18 |
+ | Vatavyadhi | Tuni & pratuni. | Ghrita processed with hingu, pippalyadi, yavakshara to be used in niruha, anuvasana and uttarabasti. (Only Sneha basti) |  |  | S. Ch 4/25 |
+ | Vata-Pittaghna |  | Jivaniya-yamaka-anuvasana basti(Only Sneha basti) | Ghrita and taila together processed with four times of kshira along with kalka of jivanti, madana, meda, shravani, bala, shathva, rishabhaka, krishna, kakanasa, shatavari, svagupta, kshirakakoli, karkatakhya, shati, vacha |  | C. Si 4/9-11 |
+ | Vata-Pittaghna |  | Madhvadi yapana basti(only YB) | Madhu, ghrita â 2 prasrita, ushna jala-2 prasrita, shatapushpa- Â½ pala, saindhava-1/2 aksha |  | C. Si 12/18 (11) |
+ | Visapra |  | Yashthimadhukadi niruha basti.(NB+AB) | Yashthimadhu processed in milk; as a prakshepa dravya â shatahva, phala, pippali. |  | C. Si 3/46 |
+ | Visapra |  | Mustadya yapana basti(only YB) | As mentioned in âpromotion of semenâ |  | C. Si 12/16 (1) |
+ | Vishamagni |  | Vidangadi anuvasana. (Only Sneha basti) | As mentioned in kushtha. |  | C. Si 4/18-22 |
+ | Visuchika |  | Dvipanchamuladi yapana basti. (only YB) |  |  | C. Si 12/18 (18) |
+ | Vit graham |  | Eranda muladi basti.(NB+AB) | As mentioned in arsha. |  | C. Si 3/38-42 |
+ | Vit graham |  | Hapushadi yapana basti. (only YB) |  |  | C. Si 12/16 (7) |
+ | Vitsanga |  | Niruha basti. (NB+AB) | Taila, gomutra, dadhi manda, amla, kanji â 4 prasrita with sarshapa kalka. |  | C. Si 3/12 |
+ | Vrishya (aphrodsisiac) |  | Sthiradi yapana basti. (only YB) |  |  | C. Si 12/16 (12) |
+ | Vrishya (aphrodsisiac) | To make a person capable of having coitus with hundred women (stri shatagamina) | Karkataka rasadi yapana basti. (only YB) |  |  | C. Si 12/18 (7) |
+ | Vrishya (aphrodsisiac) |  | Go-vrishadi yapana basti. (only YB) |  |  | C. Si 12/18 (8) |
+ | Vrishya (aphrodsisiac) | Vrishyatama | Madhavdi yapana basti(only YB) | Madhu, ghrita â 2 prasrita, usna jala-2 prasrita, satapushpa- Â½ pala, saindhav-1/2 aksha. |  | C. Si 12/18 (11) |
+ | Vrishya (aphrodsisiac) | Vrishyatama | Sadyo ghritadi yapana basti(only YB) | Ghrita,taila,vasa,majja- 4 prastha,hapusa-1/2 pala,saindhav-1/2 aksha |  | C. Si 12/18 (12) |
+ | Vrishya (aphrodsisiac) | Vrishyatama | Madhu-tailadi yapana basti(only YB) | Madhu,taila â 4 prasrita, satapushpa â 1/2 pala , saindhava-1/2 aksha |  | C. Si 12/18 (13) |
+ | Vrishya (aphrodsisiac) |  | Shatavaryadi sneha basti(Only Sneha basti) |  |  | C. Si 12/19 (1) |
+ | Vrishya (aphrodsisiac) |  | Baladi sneha basti. (Only Sneha basti) |  |  | C. Si12/19 (2) |
+ | Vataja vyadhi |  | Anuvasana(Only Sneha basti) | Shathva, yava, bilva, amla. |  | C. Si 4/7 |
+ | Vataja vyadhi |  | Anuvasana(Only Sneha basti) | Ghrita with heated saindhava. |  | C. Si 4/8 |
+ | Vataja vyadhi | Vataja vyadhi in pada-gulpha-uru-janu-jangha-trik-vamkshana-basti-vrishana | Dashamuladi yapana basti. (only YB) |  |  | C. Si 12/18(9) |
+ | Vataja vyadhi |  | Suradi yapana basti(only YB) |  |  | C. Si 12/18(16) |
+ | Yonivyapada | Yoni dosha. | Palashadi niruha basti. (NB+AB) | As mentioned in gulma. |  | Ch. Si 3/44-45. |
+ | Yonivyapada | In pradara. | Chandanadi niruha basti. (NB+AB) | As mentioned in raktapitta. |  | C. Si 3/48-52 |
+ | Yonivyapada | In vyapanna yoni. | Shatavaryadi sneha basti. (Only Sneha basti) |  |  | C. Si 12/19(1) |
+ | Yonivyapada | Pittaja | Kheera basti(Only YB) |  |  | A H ut 34/60 |
+ | Yonivyapada | Kaphaja | Katupraya gomutra yukta basti(NB+AB) |  |  | A H ut 34/60 |
+ | Yonivyapada | In vyapanna yoni | Baladi sneha basti. (Only Sneha basti) |  |  | C. Si 12/19(2) |
+ | Sthaulya, kidney disorders,shoth |  | Punarnashtaka basti(NB+AB) |  |  |  |
+[TABLE END]
+

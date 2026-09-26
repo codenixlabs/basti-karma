@@ -57,6 +57,16 @@ class Step5FemaleHistory extends StatelessWidget {
                 ],
               ),
             ),
+            FormTextField(
+              label: 'Menstrual History',
+              hint: 'e.g., Regular 28-day cycle, normal flow, LMP...',
+              controller: ctrl.menstrualHistoryCtrl,
+              focusNode: ctrl.menstrualHistoryFocus,
+              nextFocusNode: ctrl.deliveriesFocus,
+              maxLines: 2,
+              textInputAction: TextInputAction.next,
+            ),
+            const SizedBox(height: 12),
             Row(
               children: [
                 Expanded(

@@ -31,8 +31,8 @@ class Step4Lifestyle extends StatelessWidget {
                 label: 'Ahara (Diet)',
                 groupValue: ctrl.diet.value,
                 options: const [
-                  (value: 'Vegetarian', label: 'Veg'),
-                  (value: 'Non-Vegetarian', label: 'Non-Veg'),
+                  (value: 'Veg', label: 'Veg'),
+                  (value: 'Non-Veg', label: 'Non-Veg'),
                   (value: 'Mixed', label: 'Mixed'),
                 ],
                 onChanged: (v) => ctrl.diet.value = v,
@@ -109,6 +109,7 @@ class _AddictionsField extends StatelessWidget {
   const _AddictionsField({required this.ctrl});
 
   static const _options = [
+    'NA',
     'Tea',
     'Coffee',
     'Smoking',

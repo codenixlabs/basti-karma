@@ -1,0 +1,77 @@
+DOSE OF BASTI
+If Patient bala is Pravara then Pravara matra should be be given
+If Patient bala is madhyama then madhyama matra should be given
+If Patient bala is avara then avara matra should be given
+Niruha basti
+Avara Matra : 
+
+[TABLE START]
+ | Honey | 80 ml |
+ | Lavana | 12 gm |
+ | Sneha | 70 gm |
+ | Kalka | 18 gm |
+ | Kashaya | 200 ml |
+ | Total | 350 ml |
+[TABLE END]
+
+Madhyama Matra : 
+
+[TABLE START]
+ | Honey | 80 ml |
+ | Lavana | 12 gm |
+ | Sneha | 60 gm |
+ | Kalka | 30 gm |
+ | Kashaya | 310 ml |
+ | Total | 480 ml |
+[TABLE END]
+
+Prava Matra : 
+
+[TABLE START]
+ | Honey | 120 ml |
+ | Lavana | 12 gm |
+ | Sneha | 240 gm |
+ | Kalka | 80 gm |
+ | Kashaya | 400 ml |
+ | Total | 840 ml |
+[TABLE END]
+
+Anuvasana basti
+Pravara matra : 60 ml
+Madhyama matra : 80 ml
+Avara matra : 120 ml
+Matra basti(Kashyapa Samhita)
+Pravara matra : 48 ml
+Madhyama matra : 72 ml
+Avara matra : 96 ml
+According to sharangdhra
+Pravara matra : 576 ml
+Madhyama matra : 756 ml
+Avara matra : 960 ml for niruha basti and anuvasana is 1/4th of niruhabasti
+Pattern of giving basti (Choose as per patient stay fir treatment)
+Karma : Pravara bala rogi, Vataja roga, balgata nigraha, patient stay longer for treatment, basti Sadhya rogas, vata pradhanata
+Kala : Madhyama bala rogi, Pitta samsarga with vata, dosha vitiation due to seasonal changes
+Yoga : Avara bala rogi, Kapha samsrushta with kapha, 
+Karma karma : pravar atur bala,vata pradhana dosha
+
+[TABLE START]
+ | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 | 15 |
+ | A | N | A | N | A | N | A | N | A | N | A | N | A | N | A |
+ | 16 | 17 | 18 | 19 | 20 | 21 | 22 | 23 | 24 | 25 | 26 | 27 | 28 | 29 | 30 |
+ | N | A | N | A | N | A | N | A | N | A | A | A | A | A | A |
+[TABLE END]
+
+Kala karma : (15 AH) (C si 16) madhyam dosha and bala
+
+[TABLE START]
+ | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 | 15 |
+ | A | N | A | N | A | N | A | N | A | N | A | N | A | A | A |
+[TABLE END]
+
+Yoga basti : avar bala and dosha,kapha samsarga along with vata
+
+[TABLE START]
+ | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 |
+ | A | N | A | N | A | N | A | A |
+[TABLE END]
+

@@ -1,11 +1,18 @@
 import 'package:get/get.dart';
+
+import '../../../app/data/repositories/auth_repository.dart';
 import '../controller/auth_controller.dart';
 
 class AuthBinding extends Bindings {
   @override
   void dependencies() {
-    // fenix: true — controller is recreated fresh each time the route is visited
-    // after being closed (e.g. login → register → login again starts clean)
-    Get.lazyPut<AuthController>(() => AuthController(), fenix: true);
+    if (!Get.isRegistered<AuthRepository>()) {
+      Get.lazyPut<AuthRepository>(() => AuthRepository());
+    }
+    if (!Get.isRegistered<AuthController>()) {
+      Get.put<AuthController>(AuthController(), permanent: true);
+    } else {
+      Get.find<AuthController>().clearFields();
+    }
   }
 }

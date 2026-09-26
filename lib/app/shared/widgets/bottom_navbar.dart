@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
 import '../../../features/home/controller/home_controller.dart';
-import '../../../features/calculator/screen/calculators_screen.dart';
 import '../../../features/home/screen/home_screen.dart';
 import '../../../features/patients/screen/patients_screen.dart';
 import '../../../features/profile/screen/profile_screen.dart';
 import '../../../features/resource/screen/resources_screen.dart';
 import '../../core/theme/app_theme.dart';
 import '../../core/theme/app_text_styles.dart';
+import '../utils/custom_snackbar.dart';
 
 class _NavItemData {
   final IconData icon;
@@ -22,8 +23,23 @@ class _NavItemData {
   });
 }
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  DateTime? _lastBackPressTime;
+
+  @override
+  void initState() {
+    super.initState();
+    if (Get.isRegistered<HomeController>()) {
+      Get.find<HomeController>().currentIndex.value = 0;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -32,18 +48,36 @@ class HomeScreen extends StatelessWidget {
     final List<Widget> screens = const [
       DashboardTab(),
       PatientsScreen(),
-      CalculatorsScreen(),
       ResourcesScreen(),
       ProfileScreen(),
     ];
 
-    return Scaffold(
-      backgroundColor: AppColors.background,
-      body: Obx(() => IndexedStack(
-        index: controller.currentIndex.value,
-        children: screens,
-      )),
-      bottomNavigationBar: _BottomNavBar(controller: controller),
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (bool didPop, dynamic result) {
+        if (didPop) return;
+        if (controller.currentIndex.value != 0) {
+          controller.changeTab(0);
+          return;
+        }
+
+        final now = DateTime.now();
+        if (_lastBackPressTime == null ||
+            now.difference(_lastBackPressTime!) > const Duration(seconds: 2)) {
+          _lastBackPressTime = now;
+          CustomSnackBar.showInfo('Press back again to exit');
+        } else {
+          SystemNavigator.pop();
+        }
+      },
+      child: Scaffold(
+        backgroundColor: AppColors.background,
+        body: Obx(() => IndexedStack(
+          index: controller.currentIndex.value,
+          children: screens,
+        )),
+        bottomNavigationBar: _BottomNavBar(controller: controller),
+      ),
     );
   }
 }
@@ -63,11 +97,6 @@ class _BottomNavBar extends StatelessWidget {
       icon: Icons.people_outline,
       activeIcon: Icons.people,
       label: 'Patients',
-    ),
-    _NavItemData(
-      icon: Icons.calculate_outlined,
-      activeIcon: Icons.calculate,
-      label: 'Calculators',
     ),
     _NavItemData(
       icon: Icons.menu_book_outlined,

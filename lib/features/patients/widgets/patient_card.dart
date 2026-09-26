@@ -9,6 +9,7 @@ class PatientCard extends StatelessWidget {
   final String diagnosis;
   final bool isActive;
   final VoidCallback? onView;
+  final VoidCallback? onEdit;
   final VoidCallback? onAssess;
   final VoidCallback? onDocs;
   final VoidCallback? onDelete;
@@ -20,6 +21,7 @@ class PatientCard extends StatelessWidget {
     required this.diagnosis,
     this.isActive = true,
     this.onView,
+    this.onEdit,
     this.onAssess,
     this.onDocs,
     this.onDelete,
@@ -48,10 +50,7 @@ class PatientCard extends StatelessWidget {
             // Name + Active badge
             Row(
               children: [
-                Text(
-                  name,
-                  style: AppTextStyles.patientName,
-                ),
+                Text(name, style: AppTextStyles.patientName),
                 const SizedBox(width: 8),
                 if (isActive)
                   Container(
@@ -65,21 +64,17 @@ class PatientCard extends StatelessWidget {
                     ),
                     child: Text(
                       'Active',
-                      style: AppTextStyles.badge.copyWith(color: AppColors.successGreen),
+                      style: AppTextStyles.badge.copyWith(
+                        color: AppColors.successGreen,
+                      ),
                     ),
                   ),
               ],
             ),
             const SizedBox(height: 4),
-            Text(
-              'Age: $age years',
-              style: AppTextStyles.patientMeta,
-            ),
+            Text('Age: $age years', style: AppTextStyles.patientMeta),
             const SizedBox(height: 2),
-            Text(
-              'Diagnosis: $diagnosis',
-              style: AppTextStyles.patientMeta,
-            ),
+            Text('Diagnosis: $diagnosis', style: AppTextStyles.patientMeta),
             const SizedBox(height: 12),
             // Divider
             Divider(
@@ -95,6 +90,12 @@ class PatientCard extends StatelessWidget {
                   icon: Icons.remove_red_eye_outlined,
                   label: 'View',
                   onTap: onView,
+                ),
+                _ActionButton(
+                  icon: Icons.edit_outlined,
+                  label: 'Edit',
+                  color: const Color(0xFF2E7D32),
+                  onTap: onEdit,
                 ),
                 _ActionButton(
                   icon: Icons.assessment_outlined,
@@ -138,16 +139,18 @@ class _ActionButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
+    return InkWell(
       onTap: onTap,
       child: Column(
-        mainAxisSize: MainAxisSize.min,
         children: [
           Icon(icon, color: color, size: 22),
           const SizedBox(height: 4),
           Text(
             label,
-            style: AppTextStyles.badge.copyWith(color: color, fontWeight: FontWeight.w500),
+            style: AppTextStyles.badge.copyWith(
+              color: color,
+              fontWeight: FontWeight.w500,
+            ),
           ),
         ],
       ),

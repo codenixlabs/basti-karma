@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../app/core/theme/app_theme.dart';
+import '../../../app/shared/widgets/app_dropdown.dart';
 import '../controller/add_patient_controller.dart';
 import '../widgets/form_widget.dart';
 
@@ -121,10 +122,44 @@ class _Step2HospitalInfoState extends State<Step2HospitalInfo> {
                 );
               }),
 
+              // Structured Disease Selection
+              Obx(() {
+                final list = ctrl.availableDiseases;
+                if (list.isEmpty) return const SizedBox.shrink();
+                final sel = ctrl.selectedDisease.value;
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    AppBottomSheet<String>(
+                      label: 'Clinical Disease Selection',
+                      hint: 'Select disease',
+                      required: true,
+                      value: sel?.name,
+                      showSearch: true,
+                      searchHint: 'Search disease...',
+                      sortAlphabetically: true,
+                      addNewLabel: 'Add Other / New Disease',
+                      onAddNew: (name) => ctrl.addNewDisease(name),
+                      onChanged: (v) {
+                        final disease = list.firstWhereOrNull((d) => d.name == v);
+                        if (disease != null) {
+                          ctrl.selectedDisease.value = disease;
+                          ctrl.diagnosisCtrl.text = disease.name;
+                        }
+                      },
+                      options: list
+                          .map((d) => BottomSheetOption(value: d.name, label: d.displayLabel))
+                          .toList(),
+                    ),
+                    const SizedBox(height: 12),
+                  ],
+                );
+              }),
+
               // Diagnosis — required
               FormTextField(
-                label: 'Diagnosis',
-                hint: 'Enter clinical diagnosis',
+                label: 'Diagnosis Details / Custom Diagnosis',
+                hint: 'Enter clinical diagnosis details',
                 controller: ctrl.diagnosisCtrl,
                 focusNode: ctrl.diagnosisFocus,
                 maxLines: 3,

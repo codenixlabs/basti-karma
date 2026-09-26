@@ -36,6 +36,10 @@ class AppTheme {
     brightness: Brightness.light,
     scaffoldBackgroundColor: AppColors.background,
     primaryColor: AppColors.primaryGreen,
+    colorScheme: ColorScheme.fromSeed(
+      seedColor: AppColors.primaryGreen,
+      primary: AppColors.primaryGreen,
+    ),
 
     // App Bar Theme
     appBarTheme: const AppBarTheme(

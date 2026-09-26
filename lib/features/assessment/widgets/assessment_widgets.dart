@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../app/core/theme/app_theme.dart';
 import '../../../app/core/theme/app_text_styles.dart';
+import '../../../app/data/models/patient/patient_model.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Assessment Text Styles  (common across all assessment screens)
@@ -79,7 +80,7 @@ class AssessmentCard extends StatelessWidget {
                 Expanded(
                   child: Text(title, style: AssessmentTextStyles.sectionTitle),
                 ),
-                if (trailing != null) trailing!,
+                ?trailing,
               ],
             ),
           ),
@@ -415,6 +416,8 @@ class AssessmentPageHeader extends StatelessWidget {
   final VoidCallback onBack;
   final int? currentStep;
   final int? totalSteps;
+  final PatientModel? patient;
+  final VoidCallback? onPatientInfo;
 
   const AssessmentPageHeader({
     super.key,
@@ -423,6 +426,8 @@ class AssessmentPageHeader extends StatelessWidget {
     required this.onBack,
     this.currentStep,
     this.totalSteps,
+    this.patient,
+    this.onPatientInfo,
   });
 
   @override
@@ -446,18 +451,23 @@ class AssessmentPageHeader extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          GestureDetector(
-            onTap: onBack,
-            child: Container(
-              width: 36,
-              height: 36,
-              decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.15),
-                borderRadius: BorderRadius.circular(10),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              GestureDetector(
+                onTap: onBack,
+                child: Container(
+                  width: 36,
+                  height: 36,
+                  decoration: BoxDecoration(
+                    color: Colors.white.withValues(alpha: 0.15),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: const Icon(Icons.arrow_back_ios_new_rounded,
+                      size: 16, color: Colors.white),
+                ),
               ),
-              child: const Icon(Icons.arrow_back_ios_new_rounded,
-                  size: 16, color: Colors.white),
-            ),
+            ],
           ),
           const SizedBox(height: 12),
           Text(phase, style: AppTextStyles.pageHeaderTitle),
@@ -493,7 +503,7 @@ class AssessmentPageHeader extends StatelessWidget {
                 tween: Tween(begin: 0, end: currentStep! / totalSteps!),
                 duration: const Duration(milliseconds: 400),
                 curve: Curves.easeInOut,
-                builder: (_, value, __) => LinearProgressIndicator(
+                builder: (_, value, child) => LinearProgressIndicator(
                   value: value,
                   minHeight: 5,
                   backgroundColor: Colors.white.withValues(alpha: 0.25),

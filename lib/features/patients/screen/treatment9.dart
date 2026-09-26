@@ -37,9 +37,10 @@ class _Step9TreatmentState extends State<Step9Treatment> {
           child: FormSectionCard(
             title: 'Treatment',
             icon: Icons.medication_outlined,
+            required: true,
             children: [
               FormTextField(
-                label: 'Treatment Given',
+                label: '',
                 hint:
                     'Ayurvedic/allopathic treatment, medicines, Panchakarma procedures...',
                 controller: ctrl.treatmentCtrl,

@@ -1,0 +1,343 @@
+Data For Application
+Screen-1-
+App Logo-           
+Screen-2
+Login- Username-xyz
+                      Password-xyz
+Register New Account-Register information?
+Forgot Password
+Screen-3
+Add New Patient
+CRF
+Demographic Data-(Heading)
+Name:______________
+Age:(In Years)________
+Sex:Male/Female
+Religion:(Hindu/Muslim/Christain/Others)
+Occupation:____________
+Marital Status:(Unmarried/Married/Divorcee/Widow)
+          Address:_________
+Phone No:_______
+OPD No:___________
+IPD No:_____________
+Diagnosis:____________
+Chief Complaints:___________
+History Of Present Illness:________________
+History Of Past Illness:___________________
+Family History:__________________________
+Personal History-(Heading)
+Ahara:(Veg/Mixed)
+Vihara:
+Addiction:(Tea/Coffee/Smoking/Alcohol/Gutka/Others)
+Bowel Habits:(Regular/Irregular/Constipated/Watery/Others)
+Nidra:(Sound/Disturbed)
+Urine: Frequency-_______________
+Blood Group-_________________
+Menstrual and obstetric History-
+Number Of Delivery:__________
+Abortion:______________
+Surgical Intervention:___________
+General examination-
+BP:__________
+RR:__________
+HR:__________
+Temperature:_____________
+Weight:_____________
+Height:____________
+BMI:____________
+Rogi Pariksha-                                   (P/M/A)=(Pravara/Madhyam/Avara)
+Prakriti: (V/P/VP/VK/PK/S/K/PV)
+Sarataha: (P/M/A)
+Sanhanan: (P/M/A)
+Pramana: (P/M/A)
+Satva: (P/M/A)
+Satmya: (P/M/A)
+Ahara Shakti: (P/M/A)
+Vyayama Shakti: (P/M/A)
+Vaya: (Bala/Madhyam/Vridha)
+Jihwa: (Nirlipta/Ishat Lipta/Lipta)
+Desha: (Sadharan/Jangala/Anupa)
+Investigations:(Pathological/Radiological)
+Upload Photo From gallery with size limit
+           Treatment Given:_______________________
+Assessment of poorva karma (Heading)
+Assessment of yogya/ayogya of Niruha and Anuvasan basti(Sub Heading-1)
+Age of Patient- (The age will be saved to include in the Pariksha section.)
+Diagnosis-List of diseases add from tables
+List of diseases
+Indication=eligible
+Contraindication=ineligible 
+Contra-indications of Niruhabasti and questions-(cha si 1/34& cha si 2/14)
+Does the patient have history of recent internal snehana and  excessive Snehana, Vamana, Virechana, or Nasya karma? (Yes / No)
+Does the patient have continuous vomiting, abdominal distension (Adhmana), Ama-Atisara (diarrhoea due to indigestion), Alasaka (intestinal torpor), Visuchika (gastroenteritis), intestinal obstruction, perforation of intestine or ascites? (Yes / No)
+Does the patient have history of miscarriage or is currently pregnant? (Yes / No)
+Does the patient have uncontrolled diabetes, uncontrolled hypertension, or chronic kidney disease? (Yes/No)
+NOTE-If the answer to any one of these questions is yes, then Niruha is contraindicated. (ineligible)
+Contra-indications of Anuvasan basti and questions-(cha si 2/17)
+Does the patient have Asthapana (Niruha) Basti contraindication conditions? (Yes / No)
+Does the patient have impaired digestion (Agnimandya)? (Yes / No)
+Does the patient have diarrhoea (Atisara) or hard bowel / constipation with obstruction? (Yes / No)
+Does the patient have intestinal worms (Krimi), pleeha roga, Kapha-dominant Udara Roga, Abhishyandi conditions of Pitta and Kapha? (Yes / No)
+Does the patient have Aruchi, acute poisoning, coryza / rhinitis (Pratishyaya), Nava Jvara, Pandu, Kamala, Arsha, Urustambha, Shleepada, Galaganda, Apachi, general debility or weakness, Kushta, (Sthaulya? (Yes / No)
+NOTE-If the answer to any one of these questions is yes, then Anuvasanbasti is contraindicated. (ineligible)
+Pariksha-(Sub heading-2)
+Prakriti: (Vata Pradhana/Pitta Pradhana/Kapha Pradhana)
+Sarataha: (Pravar/Madhyam/Avara)
+Sanhanan: (Pravar/Madhyam/Avara)
+Pramana: (Pravar/Madhyam/Avara)
+Satva: (Pravar/Madhyam/Avara)
+Satmya(Sneha satmya): (Pravar/Madhyam/Avara)
+Ahara Shakti: (Pravar/Madhyam/Avara)
+Vyayama Shakti: (Pravar/Madhyam/Avara)
+Vaya: Age (auto-filled as above)
+Jihwa: (Nirlipta/Ishat Lipta/Lipta)
+Assessment Of Agni-(Sub Heading-3)
+Jaran Shakti-
+How many of these symptoms does the patient show: 
+Utsaha (enthusiasm)
+SymptomsSymptomsLaghuta (lightness in body)
+Udgara suddhi (clear eructation)
+Kshudha (hunger) and Trishna (thirst) Pravritti
+Yathochita Malotsarga (bowel movement)
+
+[TABLE START]
+ | Symptoms | Score |
+ | Absence of all the symptoms | 0 |
+ | Presence of one symptom | 1 |
+ | Presence of two symptoms | 2 |
+ | Presence of three symptoms | 3 |
+ | Presence of four Symptoms | 4 |
+ | Presence of All the five symptoms | 5 |
+[TABLE END]
+
+Abhyavaharana Shakti-
+
+[TABLE START]
+ | Symptoms | Score |
+ | The person not at all taking food | 0 |
+ | Person taking food in less quantity once in a day | 1 |
+ | Taking food in less quantity twice a day | 2 |
+ | Taking food in Moderate quantity twice a day | 3 |
+ | Taking food in normal quantity twice a day | 4 |
+ | Taking food in excessive quantity twice or thrice | 5 |
+[TABLE END]
+
+Ruchi-
+
+[TABLE START]
+ | Symptoms | Score |
+ | Totally unwilling for meal | 0 |
+ | Unwilling for food, but could take the meal | 1 |
+ | Willing towards only most liking food, and not to other | 2 |
+ | Willing towards only one among Pungent, sour or sweet etc. food stuffs | 3 |
+ | Willing towards some specific food or taste | 4 |
+ | Equal willing towards all the food stuffs | 5 |
+[TABLE END]
+
+âResults-
+If sum of all three table is between
+0-5=Avara Agni(mandagni)
+6-10=Madhyam Agni(sama agni)
+11-15=Pravar Agni(pravaragni)                                                      
+âAgni will be saved for further selection of the dose.â
+Deepan Pachana Drugs- 
+Vata/Kapha Pradhan Prukruti- Chitrakadi Vati 2 TID B/F
+                                               -Aampachaka Vati 2 TID A/F
+Pitta Pradhana Prukruti-        - Shankh Vati 2 TID B/F
+Panchatikta Kashaya 60ml BD B/F  
+Assessment Of Kostha(Sub Heading-4)
+Frequency of bowel per day
+Less than one per day-1
+Once/twice per day-2
+More than twice per day-3
+Consistency
+Hard stool-1
+Soft, well formend-2
+Loose/Watery, not well formed-3
+Urgency
+No urgency at all, sits a long time with discomfort-1
+Moderate urgency can be controlled but not need to sit long-2
+Marked urgency cannot be controlled-3
+Patientâs experience regarding intake of 200 ml milk/100 gm grapes/50 gm jaggery/200 mal ikshu rasa/10 gm Avipattikar choorna.
+No change in bowel habit-1
+Normal well-formed stool-2
+Watery stool/not well formed-3
+Whether changes in food habits will affect the bowel habits
+Frequently hard-1
+Occasionally-2
+Frequently loose-3
+Result according to score 
+1 to 5 implies-Krura kostha
+6 to 10 implies-Madhyam kostha
+11 to 15 implies-Mridu kostha
+(The Kostha assessment will be saved for further evaluation of dose.)
+Assessment Of  Saama Nirama lakshana(Sub Heading-5)
+Srotorodha - Obstruction or clogging of (Srotasas) micro channels i.e. intestines, capillaries and blood vessels in the body.
+Balabhransha - Weakness or loss of strength.
+Gaurava - Heaviness in the body.
+Alasya - Fatigue.
+Anila Mudhata - Obstruction in the flow of Vayue., excrete gas.
+Apaki - Indigestion.
+Nishthivana - Excessive salivation.
+Mala Sanga - Obstruction of Malase., stool, urine, excrete gas, etc.
+Aruchi - Anorexia.
+Klama â Lethargy(Ashtang Hridayam, Sutrasthan Chapter 13)
+NOTE-If the answer to any one of these questions is yes, then first do Deepana pachana untill nirama lakshana are attained
+Deepan Pachana Drugs-
+Vata/Kapha Pradhan Prukruti- Chitrakadi Vati 2 TID B/F
+                                               -Aampachaka Vati 2 TID A/F
+     Pitta Pradhana Prukruti-        - Shankh Vati 2 TID B/F
+                                                         -Panchatikta Kashaya 60ml BD B/F
+Other deepan pachana drugs-
+Bastikarma should be done after the patient has attained niraama lakshan
+Assessment Of Bala(Sub Heading-6)
+Pravara
+Madhyama
+Avara
+Assessment of pradhana karma (Heading)
+Basti type(Indicated basti disease wise list) (Sub Heading-1)
+Basti Dravya Dose and formulation(Sub Heading-2)
+Schedule of basti(Sub Heading-3)
+Observation of basti(Sub Heading-4)
+Adanakala (type time by user)
+Pratyagamana kala
+If Sneha basti not come out then give Tikshna basti, phala varti (if no any complication then ignore)
+Vega
+Samyaka basti lakshana
+
+[TABLE START]
+ | NIRUHA BASTI SAMYAKLAKSHANA | 1st | 2nd | 3rd | 4th | 5th | 6th | 7th | 8th | 9th | 10th | 11th | 12th |
+ | Prasrista Vina MutraSameerantwama |  |  |  |  |  |  |  |  |  |  |  |  |
+ | Agni vriddhi |  |  |  |  |  |  |  |  |  |  |  |  |
+ | Ruchi |  |  |  |  |  |  |  |  |  |  |  |  |
+ | Ashaya laghava |  |  |  |  |  |  |  |  |  |  |  |  |
+ | Rogashanti |  |  |  |  |  |  |  |  |  |  |  |  |
+ | Prakriti |  |  |  |  |  |  |  |  |  |  |  |  |
+ | Bala |  |  |  |  |  |  |  |  |  |  |  |  |
+[TABLE END]
+
+
+[TABLE START]
+ | ANUVASANA BASTISAMYAKA LAKSHANA | 1st | 2nd | 3rd | 4th | 5th | 6th | 7th | 8th | 9th | 10 th | 11th | 12th | 13th | 14th | 15th | 16th | 17th | 18th |
+ | Sapurisha Sneha Pratyeti |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
+ | Sharira Laghavta |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
+ | Bala |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
+ | Srustach vega |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
+ | Vatanulomana |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
+ | Agnidipta |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
+[TABLE END]
+
+Ayoga basti lakshana
+
+[TABLE START]
+ | NIRUHA BASTI AYOGALAKSHANA | 1st | 2nd | 3rd | 4th | 5th | 6th | 7th | 8th | 9th | 10 th | 11th | 12th |
+ | Siro-Hrid-Guda-Basti-Medhra Vedana |  |  |  |  |  |  |  |  |  |  |  |  |
+ | Sopha |  |  |  |  |  |  |  |  |  |  |  |  |
+ | Pratishyaya |  |  |  |  |  |  |  |  |  |  |  |  |
+ | Vikartika |  |  |  |  |  |  |  |  |  |  |  |  |
+ | Hrullasa |  |  |  |  |  |  |  |  |  |  |  |  |
+ | Maruta sanga |  |  |  |  |  |  |  |  |  |  |  |  |
+ | Mutra sanga |  |  |  |  |  |  |  |  |  |  |  |  |
+ | Shvaskashta |  |  |  |  |  |  |  |  |  |  |  |  |
+[TABLE END]
+
+
+[TABLE START]
+ | ANUVASANA BASTI AYOGA LAKSHANA | 1st | 2nd | 3rd | 4th | 5th | 6th | 7th | 8th | 9th | 10 th | 11th | 12th | 13th | 14th | 15th | 16th | 17th | 18th |
+ | Adha sarira ruja |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
+ | Udara ruja |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
+ | Bahu-Prushtha ruja |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
+ | Parshva ruja |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
+ | Ruksha gatra |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
+ | Ruksha svara |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
+ | Vit sanga |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
+ | Mutra sanga |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
+[TABLE END]
+
+Atiyoga basti lakshana
+
+[TABLE START]
+ | NIRUHA BASTI ATIYOGALAKSHANA | 1st | 2nd | 3rd | 4th | 5th | 6th | 7th | 8th | 9th | 10 th | 11th | 12th |
+ | Kapha-Pitta-Vata-Raktakshayaj vikara |  |  |  |  |  |  |  |  |  |  |  |  |
+ | Supti |  |  |  |  |  |  |  |  |  |  |  |  |
+ | Angamarda |  |  |  |  |  |  |  |  |  |  |  |  |
+ | Klama |  |  |  |  |  |  |  |  |  |  |  |  |
+ | Vepathu |  |  |  |  |  |  |  |  |  |  |  |  |
+ | Nidra nasha |  |  |  |  |  |  |  |  |  |  |  |  |
+ | Bala nasha |  |  |  |  |  |  |  |  |  |  |  |  |
+ | Tama pravesha |  |  |  |  |  |  |  |  |  |  |  |  |
+ | Unmada |  |  |  |  |  |  |  |  |  |  |  |  |
+ | Hikka |  |  |  |  |  |  |  |  |  |  |  |  |
+[TABLE END]
+
+
+[TABLE START]
+ | ANUVASANA BASTI ATIYOGALAKSHANA | 1st | 2nd | 3rd | 4th | 5th | 6th | 7th | 8th | 9th | 10 th | 11th | 12th | 13th | 14th | 15th | 16th | 17th | 18th |
+ | Hrullasa |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
+ | Moha |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
+ | Klama |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
+ | Sada |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
+ | Murchha |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
+ | Vikartika |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
+[TABLE END]
+
+Assessment of paschata karma (Heading)
+VYAPADA AND ITS MANAGEMENT(Sub Heading-1)
+Niruha Vyapada and its Management-(cha si 7)
+AYOGA
+CHIKITSA: ushna pramathya, swedana, phaqlavarti, virechana, bilvamuladi Tikshna basti,
+ATIYOGA
+CHIKITSA: sheeta basti, piccha basti, anuvasan basti with ghrit manda, prishnaparnadi basti mixed with ghrita
+KLAMA(MENTAL FATIGUE)
+CHIKITSA: agnideepanartha Kashaya prepared out of pippali etc drugs mixed with lavana should be given. Prasanna, Asava, Arishta proyoga should be done. Gomutra Basti is advised. Swedana and Virukshana measures should be carried out.
+ADHMANA(FLATULENCE)
+CHIKITSA : Shyamaphaladi siddha taila Anuvasana, Guda varti, Dashamoola and Gomutra siddha Niruha Basti is administered in Admana Vyapat
+HIKKA(HICCUP)
+CHIKITSA : Bruhmana chikitsa is advised in Hikka. Bala stiradi varga siddha taila anuvasana is advised. Vatanashaka Dhuma, leha, mamsarasa, Ksheera, Sweda are advised
+HADPRAPTI
+CHIKITSA : amla and lavana skandha siddha niruha basti,vataghna Dravya siddha anuvasana basti
+UDAVARTA
+CHIKITSA : If patient gets Murcha, then firs Sheeta ambu sechana over the face. Mardana should be carried out over Parshwa and udara.The hairs should be pulled upwards. He should be feared by telling names of Gaja etc animals. Throat should be covered by hand or cloth and slight pressure should be given. By this Apana Vayu will move down normally. After this patient should be given kramuka jala for drinking.If the Basti gets strucked in Pakwashaya, then Bilwadi dwipanchamula Basti should be given. If the medicine reaches Shiras, Navana, Dhuma, lepa of Sarshapa should be applied.
+PRAVAHIKA 
+CHIKITSA : Abhyanga should be done with Lavana taila. Pradhamana nasya and dhumapana should be carried out to cause shirovirechana. After food Teekshna and Vatanulomaka dravya Saadhita Anuvasana Basti is given.
+SHIRO ARTI
+CHIKITSA : Abhyanga should be done with Lavana taila. Pradhamana nasya and dhumapana should be carried out to cause shirovirechana. After food Teekshna and Vatanulomaka dravya Saadhita Anuvasana Basti is given.
+ANGA ARTI 
+CHIKITSA : Abhyanga should be carried out with lavana taila, Ushna jala Sinchana. After this Niruha Basti should be given with Yava, kola kulattha panchamula siddha Kwatha
+PARIKARTIKA
+CHIKITSA : Basti with Madhura-sheeta dravya, ksheera Basti prepared out of Sarjarasa, Yastimadhu, Jingini, Rasanjana kalka, Madhura-Amla rasa pradhana diet should be given
+PARISRAVA 
+CHIKITSA : Piccha Basti prepared out of Shalmali Pushpa Vrunta, aja dugdha or Vatankura+aja dugdha. Madhura gana Sadhita Sheetala qwatha sechana over Guda, rakta pitta-atisara nashaka chikitsa should be done.
+Anuvasana Vyapada and its Management
+VATAVRUTA SNEHA
+CHIKITSA : rasnadi Tikshna basti, rasnadi siddha taila anuvasana basti
+PITTAVRUTA SNEHA
+CHIKITSA : basti with swadu-tiktadravyas
+KAPHAVRUTA SNEHA
+CHIKITSA : Tikshna basti
+ANNA VRUTA SNEHA
+CHIKITSA : pachana with katu and lavanachurna and kwath, mrudu virechana, amaharan kriya
+PURISHA VRUTA SNEHA 
+CHIKITSA : snehana, swedana, varti,. Shyamadibilwadi siddha niruha and anuvasana basti
+ABHUKTA PRANITA
+CHIKITSA : niruha basti prepared with Kashaya dravyas(Shyama,trivrutta,yava,kola,kulattha,gomutra) and anuvasan basti with the above drugs should be used
+Note- In more serious complications, the patient should be transferred to a higher center. 
+Parihara vishaya and kala-(Sub Heading-2)
+Patient should take laghu supachya ahara
+Patient should avoid(cha si 1/54)
+Excessive sitting
+Standing for longtime
+Travelling
+Day sleeping
+Sexual intercourse
+Suppression of natural urges
+Indulgence in cold things
+Sunlight
+Worrying
+Anger
+Untimely food
+Unwholesome food
+One should follow the restrictions and diet, double the duration taken for the treatment.
+Note- All instructions and precautions should be followed, just like during snehapana kala.
+Diet-(Sub Heading-3)
+Restriction and diet should be follow for the no. of days basti administration (dwikala)(cha si 1/54)

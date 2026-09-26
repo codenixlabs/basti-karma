@@ -1,12 +1,65 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../app/core/theme/app_theme.dart';
+import '../../../app/shared/widgets/app_dialog.dart';
 import '../../../app/shared/widgets/app_dropdown.dart';
 import '../controller/assessment_controller.dart';
 import '../widgets/assessment_widgets.dart';
 
-class PaschatkarmaScreen extends StatelessWidget {
+import '../../../app/core/theme/app_text_styles.dart';
+import '../../../app/shared/widgets/physician_yukti_banner.dart';
+
+class PaschatkarmaScreen extends StatefulWidget {
   const PaschatkarmaScreen({super.key});
+
+  @override
+  State<PaschatkarmaScreen> createState() => _PaschatkarmaScreenState();
+}
+
+class _PaschatkarmaScreenState extends State<PaschatkarmaScreen> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Get.find<AssessmentController>().loadPaschatkarma();
+    });
+  }
+
+  Future<void> _showSaveErrorDialog({
+    required VoidCallback onRetry,
+    required String message,
+  }) async {
+    final isNetwork = message.toLowerCase().contains('internet') ||
+        message.toLowerCase().contains('connection') ||
+        message.toLowerCase().contains('network');
+    final isAuth = message.toLowerCase().contains('credential') ||
+        message.toLowerCase().contains('session') ||
+        message.toLowerCase().contains('unauthorized') ||
+        message.toLowerCase().contains('token');
+    final iconData = isNetwork
+        ? Icons.wifi_off_rounded
+        : (isAuth ? Icons.lock_clock_outlined : Icons.error_outline_rounded);
+
+    await showDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      builder: (dialogCtx) => AppDialog(
+        icon: iconData,
+        iconColor: AppColors.errorRed,
+        title: 'Save Failed',
+        content: message,
+        cancelText: 'Stay',
+        confirmText: 'Retry',
+        confirmIcon: Icons.refresh_rounded,
+        confirmColor: AppColors.primaryGreen,
+        onCancel: () => Navigator.of(dialogCtx).pop(),
+        onConfirm: () {
+          Navigator.of(dialogCtx).pop();
+          onRetry();
+        },
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -62,11 +115,101 @@ class PaschatkarmaScreen extends StatelessWidget {
                         ],
                       ),
                     ),
+                    const SizedBox(height: 16),
+                    const PhysicianYuktiBanner(),
                   ],
                 ),
               ),
             ),
           ],
+        ),
+        bottomNavigationBar: Container(
+          padding: const EdgeInsets.fromLTRB(20, 12, 20, 16),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.05),
+                blurRadius: 10,
+                offset: const Offset(0, -2),
+              ),
+            ],
+          ),
+          child: Obx(() {
+            final isSaving = ctrl.isSavingPaschatkarma.value;
+            final isCompleted = ctrl.paschatkarmaComplete.value;
+            return ElevatedButton.icon(
+              onPressed: isSaving
+                  ? null
+                  : () async {
+                      final ok = await ctrl.savePaschatkarma();
+                      if (!ok) {
+                        final errorMsg = ctrl.paschatkarmaError.value;
+                        final msg = (errorMsg != null && errorMsg.isNotEmpty)
+                            ? errorMsg
+                            : 'Could not save Paschata Karma. Please try again.';
+                        await _showSaveErrorDialog(
+                          onRetry: () async {
+                            final retryOk = await ctrl.savePaschatkarma();
+                            if (retryOk) {
+                              Get.back();
+                              Get.snackbar(
+                                'Paschatkarma Saved',
+                                'Post-procedure care assessment saved successfully.',
+                                snackPosition: SnackPosition.BOTTOM,
+                                backgroundColor: AppColors.successGreen,
+                                colorText: Colors.white,
+                                duration: const Duration(seconds: 3),
+                                margin: const EdgeInsets.all(16),
+                                borderRadius: 14,
+                              );
+                            }
+                          },
+                          message: msg,
+                        );
+                        return;
+                      }
+                      Get.back();
+                      Get.snackbar(
+                        'Paschatkarma Complete',
+                        'Post-procedure care assessment saved successfully.',
+                        snackPosition: SnackPosition.BOTTOM,
+                        backgroundColor: AppColors.successGreen,
+                        colorText: Colors.white,
+                        duration: const Duration(seconds: 3),
+                        margin: const EdgeInsets.all(16),
+                        borderRadius: 14,
+                      );
+                    },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: isSaving
+                    ? AppColors.darkGrey.withValues(alpha: 0.3)
+                    : AppColors.primaryGreen,
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(vertical: 14),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(14),
+                ),
+                elevation: isSaving ? 0 : 3,
+                shadowColor: AppColors.primaryGreen.withValues(alpha: 0.3),
+              ),
+              icon: isSaving
+                  ? const SizedBox(
+                      height: 18,
+                      width: 18,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        valueColor:
+                            AlwaysStoppedAnimation<Color>(Colors.white),
+                      ),
+                    )
+                  : const Icon(Icons.check_circle_outline_rounded, size: 20),
+              label: Text(
+                isCompleted ? 'Update Paschatkarma' : 'Complete Paschatkarma',
+                style: AppTextStyles.button,
+              ),
+            );
+          }),
         ),
       ),
     );
@@ -222,7 +365,6 @@ class _DietSection extends StatelessWidget {
     'Avoid cold, stale, or processed food items',
     'Avoid excessive quantity of food',
     'Follow diet restrictions for double the duration of Basti administration (Dwikala — Cha. Si. 1/54)',
-    'Follow all dietary guidelines as observed during Snehapana Kala',
   ];
 
   @override
@@ -252,34 +394,6 @@ class _DietSection extends StatelessWidget {
         ),
         const SizedBox(height: 12),
         ..._dietItems.map((item) => _DietItem(text: item)),
-        const SizedBox(height: 4),
-        Container(
-          padding: const EdgeInsets.all(12),
-          decoration: BoxDecoration(
-            color: const Color(0xFFF0F7F2),
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(
-              color: AppColors.primaryGreen.withValues(alpha: 0.25),
-            ),
-          ),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Icon(
-                Icons.menu_book_outlined,
-                size: 16,
-                color: AppColors.primaryGreen,
-              ),
-              const SizedBox(width: 8),
-              Expanded(
-                child: Text(
-                  'Reference: Cha. Si. 1/54 — All instructions and precautions should be followed just as during Snehapana Kala.',
-                  style: AssessmentTextStyles.noteText,
-                ),
-              ),
-            ],
-          ),
-        ),
       ],
     );
   }

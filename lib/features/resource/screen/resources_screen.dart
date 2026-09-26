@@ -1,288 +1,300 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
-import '../../../app/core/theme/app_theme.dart';
 import '../../../app/core/theme/app_text_styles.dart';
-
+import '../../../app/core/theme/app_theme.dart';
+import '../controller/resource_controller.dart';
 
 class ResourcesScreen extends StatelessWidget {
   const ResourcesScreen({super.key});
 
-  static const _resources = [
-    {
-      'icon': Icons.menu_book_outlined,
-      'title': 'Panchakarma Guide',
-      'tag': 'Treatment Protocols',
-      'subtitle': 'Complete guide to Panchakarma procedures and protocols',
-      'iconColor': 0xFF2F5D3A,
-    },
-    {
-      'icon': Icons.description_outlined,
-      'title': 'Treatment Instructions',
-      'tag': 'Clinical Guidelines',
-      'subtitle': 'Step-by-step instructions for various Ayurvedic treatments',
-      'iconColor': 0xFF2F5D3A,
-    },
-    {
-      'icon': Icons.warning_amber_outlined,
-      'title': 'Vyapada Management',
-      'tag': 'Emergency Protocols',
-      'subtitle': 'Managing complications and adverse effects',
-      'iconColor': 0xFFE74C3C,
-    },
-    {
-      'icon': Icons.restaurant_outlined,
-      'title': 'Diet Guidelines',
-      'tag': 'Nutrition',
-      'subtitle': 'Dietary recommendations for Panchakarma patients',
-      'iconColor': 0xFF555555,
-    },
-    // {
-    //   'icon': Icons.eco_outlined,
-    //   'title': 'Herbal Medicine Reference',
-    //   'tag': 'Pharmacology',
-    //   'subtitle': 'Common herbs and their therapeutic applications',
-    //   'iconColor': 0xFF2F5D3A,
-    // },
-  ];
-
-  static const _quickRef = [
-    {'label': 'Snehapana Duration:', 'value': '3-7 days'},
-    {'label': 'Virechana Day:', 'value': 'After Snigdhata'},
-    {'label': 'Follow-up Required:', 'value': 'Every 3 days'},
-  ];
-
   @override
   Widget build(BuildContext context) {
+    final ctrl = Get.put(ResourceController());
+
     return SafeArea(
       child: Column(
         children: [
-            // Header
-            Container(
-              width: double.infinity,
-              decoration: const BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [AppColors.primaryGreen, Color(0xFF3D7A4F)],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
-                borderRadius: BorderRadius.only(
-                  bottomLeft: Radius.circular(28),
-                  bottomRight: Radius.circular(28),
-                ),
+          // Header
+          Container(
+            width: double.infinity,
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                colors: [AppColors.primaryGreen, Color(0xFF3D7A4F)],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
               ),
-              padding: const EdgeInsets.fromLTRB(20, 20, 20, 32),
-              child: const Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Resources',
-                    style: AppTextStyles.pageTitle,
-                  ),
-                  SizedBox(height: 4),
-                  Text(
-                    'Clinical guidelines & references',
-                    style: AppTextStyles.pageSubtitle,
-                  ),
-                ],
+              borderRadius: BorderRadius.only(
+                bottomLeft: Radius.circular(28),
+                bottomRight: Radius.circular(28),
               ),
             ),
+            padding: const EdgeInsets.fromLTRB(20, 20, 20, 32),
+            child: const Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Resources',
+                  style: AppTextStyles.pageTitle,
+                ),
+                SizedBox(height: 4),
+                Text(
+                  'Clinical guidelines & references',
+                  style: AppTextStyles.pageSubtitle,
+                ),
+              ],
+            ),
+          ),
 
-            Expanded(
-              child: ListView(
-                padding: const EdgeInsets.fromLTRB(16, 20, 16, 16),
-                children: [
-                  // Resource cards
-                  ..._resources.map(
-                        (r) => _ResourceCard(
-                      icon: r['icon'] as IconData,
-                      title: r['title'] as String,
-                      tag: r['tag'] as String,
-                      subtitle: r['subtitle'] as String,
-                      iconColor: Color(r['iconColor'] as int),
-                      onTap: () {},
-                    ),
-                  ),
-
-                  const SizedBox(height: 8),
-
-                  // Quick Reference card
-                  Container(
-                    padding: const EdgeInsets.all(16),
-                    decoration: BoxDecoration(
-                      gradient: const LinearGradient(
-                        colors: [AppColors.primaryGreen, Color(0xFF3D7A4F)],
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
+          Expanded(
+            child: Obx(() {
+              if (ctrl.isLoading.value) {
+                return const Center(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      CircularProgressIndicator(color: AppColors.primaryGreen),
+                      SizedBox(height: 16),
+                      Text(
+                        'Loading clinical resources...',
+                        style: TextStyle(
+                          color: AppColors.textDarkGreen,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
-                      borderRadius: BorderRadius.circular(16),
-                    ),
+                    ],
+                  ),
+                );
+              }
+
+              if (ctrl.errorMessage.value != null) {
+                return Center(
+                  child: Padding(
+                    padding: const EdgeInsets.all(32),
                     child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
                       children: [
-                        const Text(
-                          'Quick Reference',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 15,
-                            fontWeight: FontWeight.w700,
+                        Container(
+                          width: 64,
+                          height: 64,
+                          decoration: BoxDecoration(
+                            color: AppColors.errorRed.withValues(alpha: 0.1),
+                            shape: BoxShape.circle,
+                          ),
+                          child: const Icon(
+                            Icons.error_outline,
+                            color: AppColors.errorRed,
+                            size: 32,
                           ),
                         ),
-                        const SizedBox(height: 12),
-                        ..._quickRef.map(
-                              (item) => Padding(
-                            padding: const EdgeInsets.only(bottom: 8),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  item['label']!,
-                                  style: AppTextStyles.pageSubtitle,
-                                ),
-                                Text(
-                                  item['value']!,
-                                  style: AppTextStyles.stepPercent,
-                                ),
-                              ],
+                        const SizedBox(height: 16),
+                        Text(
+                          ctrl.errorMessage.value!,
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(
+                            color: AppColors.errorRed,
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        ElevatedButton.icon(
+                          onPressed: ctrl.fetchResources,
+                          icon: const Icon(Icons.refresh, size: 18),
+                          label: const Text('Try Again'),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppColors.primaryGreen,
+                            foregroundColor: Colors.white,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
                             ),
                           ),
                         ),
                       ],
                     ),
                   ),
+                );
+              }
 
-                  const SizedBox(height: 12),
-
-                  // Educational Resources info card
-                  Container(
-                    padding: const EdgeInsets.all(16),
-                    decoration: BoxDecoration(
-                      color: AppColors.white,
-                      borderRadius: BorderRadius.circular(16),
-                      boxShadow: [
-                        BoxShadow(
-                          color: AppColors.primaryGreen.withValues(alpha: 0.07),
-                          blurRadius: 10,
-                          offset: const Offset(0, 3),
+              if (ctrl.resources.isEmpty) {
+                return RefreshIndicator(
+                  color: AppColors.primaryGreen,
+                  onRefresh: ctrl.fetchResources,
+                  child: ListView(
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    children: [
+                      SizedBox(
+                        height: MediaQuery.of(context).size.height * 0.45,
+                        child: Center(
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 32),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Container(
+                                  width: 72,
+                                  height: 72,
+                                  decoration: BoxDecoration(
+                                    color: AppColors.primaryGreen
+                                        .withValues(alpha: 0.08),
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: const Icon(
+                                    Icons.menu_book_outlined,
+                                    color: AppColors.primaryGreen,
+                                    size: 34,
+                                  ),
+                                ),
+                                const SizedBox(height: 20),
+                                const Text(
+                                  'No Resources Available',
+                                  style: TextStyle(
+                                    color: AppColors.textDarkGreen,
+                                    fontSize: 17,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ),
+                                const SizedBox(height: 10),
+                                const Text(
+                                  'Clinical guidelines and reference documents will appear here once published.',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    color: AppColors.darkGrey,
+                                    fontSize: 13.5,
+                                    height: 1.6,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
                         ),
-                      ],
-                    ),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text('🌿', style: TextStyle(fontSize: 16)),
-                        const SizedBox(width: 10),
-                        Expanded(
-                          child: Column(
+                      ),
+                    ],
+                  ),
+                );
+              }
+
+              return RefreshIndicator(
+                color: AppColors.primaryGreen,
+                onRefresh: ctrl.fetchResources,
+                child: ListView.separated(
+                  padding: const EdgeInsets.fromLTRB(16, 20, 16, 24),
+                  itemCount: ctrl.resources.length,
+                  separatorBuilder: (_, _) => const SizedBox(height: 12),
+                  itemBuilder: (context, index) {
+                    final res = ctrl.resources[index];
+                    return Card(
+                      elevation: 2,
+                      shadowColor:
+                          AppColors.primaryGreen.withValues(alpha: 0.1),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16),
+                        side: BorderSide(
+                          color:
+                              AppColors.primaryGreen.withValues(alpha: 0.15),
+                        ),
+                      ),
+                      child: InkWell(
+                        borderRadius: BorderRadius.circular(16),
+                        onTap: () => ctrl.openResource(res),
+                        child: Padding(
+                          padding: const EdgeInsets.all(16),
+                          child: Row(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              const Text(
-                                'Educational Resources',
-                                style: AppTextStyles.profileSectionTitle,
+                              Container(
+                                width: 44,
+                                height: 44,
+                                decoration: BoxDecoration(
+                                  color: const Color(0xFFD32F2F)
+                                      .withValues(alpha: 0.1),
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                child: const Icon(
+                                  Icons.picture_as_pdf_rounded,
+                                  color: Color(0xFFD32F2F),
+                                  size: 24,
+                                ),
                               ),
-                              const SizedBox(height: 6),
-                              const Text(
-                                'These resources are provided as clinical references based on classical Ayurvedic texts and modern research. Always adapt treatments to individual patient needs and conditions.',
-                                style: TextStyle(
-                                  color: AppColors.darkGrey,
-                                  fontSize: 12.5,
-                                  height: 1.5,
+                              const SizedBox(width: 14),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      res.title,
+                                      style: const TextStyle(
+                                        color: AppColors.textDarkGreen,
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.w700,
+                                      ),
+                                    ),
+                                    if (res.description.isNotEmpty) ...[
+                                      const SizedBox(height: 6),
+                                      Text(
+                                        res.description,
+                                        style: const TextStyle(
+                                          color: AppColors.darkGrey,
+                                          fontSize: 13,
+                                          height: 1.45,
+                                        ),
+                                      ),
+                                    ],
+                                    const SizedBox(height: 8),
+                                    Row(
+                                      children: [
+                                        Container(
+                                          padding: const EdgeInsets.symmetric(
+                                            horizontal: 8,
+                                            vertical: 2,
+                                          ),
+                                          decoration: BoxDecoration(
+                                            color: AppColors.primaryGreen
+                                                .withValues(alpha: 0.1),
+                                            borderRadius:
+                                                BorderRadius.circular(6),
+                                          ),
+                                          child: Text(
+                                            res.fileType.toUpperCase(),
+                                            style: const TextStyle(
+                                              color: AppColors.primaryGreen,
+                                              fontSize: 11,
+                                              fontWeight: FontWeight.w700,
+                                            ),
+                                          ),
+                                        ),
+                                        const Spacer(),
+                                        const Text(
+                                          'Open PDF',
+                                          style: TextStyle(
+                                            color: AppColors.primaryGreen,
+                                            fontSize: 13,
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                        ),
+                                        const SizedBox(width: 4),
+                                        const Icon(
+                                          Icons.open_in_new_rounded,
+                                          size: 14,
+                                          color: AppColors.primaryGreen,
+                                        ),
+                                      ],
+                                    ),
+                                  ],
                                 ),
                               ),
                             ],
                           ),
                         ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-    );
-  }
-}
-
-class _ResourceCard extends StatelessWidget {
-  final IconData icon;
-  final String title;
-  final String tag;
-  final String subtitle;
-  final Color iconColor;
-  final VoidCallback onTap;
-
-  const _ResourceCard({
-    required this.icon,
-    required this.title,
-    required this.tag,
-    required this.subtitle,
-    required this.iconColor,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        margin: const EdgeInsets.only(bottom: 12),
-        padding: const EdgeInsets.all(14),
-        decoration: BoxDecoration(
-          color: AppColors.white,
-          borderRadius: BorderRadius.circular(16),
-          boxShadow: [
-            BoxShadow(
-              color: AppColors.primaryGreen.withValues(alpha: 0.07),
-              blurRadius: 10,
-              offset: const Offset(0, 3),
-            ),
-          ],
-        ),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              width: 44,
-              height: 44,
-              decoration: BoxDecoration(
-                color: iconColor.withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Icon(icon, color: iconColor, size: 22),
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Text(
-                          title,
-                          style: AppTextStyles.profileSectionTitle,
-                        ),
                       ),
-                      const SizedBox(width: 6),
-                      Text(
-                        tag,
-                        style: const TextStyle(
-                          color: AppColors.darkGrey,
-                          fontSize: 10.5,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    subtitle,
-                    style: AppTextStyles.captionText,
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
+                    );
+                  },
+                ),
+              );
+            }),
+          ),
+        ],
       ),
     );
   }
