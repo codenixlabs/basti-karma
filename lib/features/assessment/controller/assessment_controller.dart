@@ -12,6 +12,7 @@ import '../../../app/data/models/poorva_karma/poorva_karma_results.dart';
 import '../../../app/data/repositories/api_poorva_karma_repository.dart';
 import '../../../app/data/repositories/api_paschata_karma_repository.dart';
 import '../../../app/data/repositories/api_pradhana_karma_repository.dart';
+import '../../../app/data/repositories/api_treatment_repository.dart';
 import '../../../app/data/repositories/basti_clinical_repository.dart';
 import '../../../app/data/services/api_service.dart';
 import '../../../app/data/services/basti_dose_calculator_service.dart';
@@ -489,6 +490,12 @@ class AssessmentController extends GetxController {
           if (persisted.vega.isNotEmpty) {
             sessionData.vega.text = persisted.vega;
           }
+          if (persisted.niruhaVyapada.isNotEmpty) {
+            sessionData.niruhaVyapada.value = persisted.niruhaVyapada;
+          }
+          if (persisted.anuvasanaVyapada.isNotEmpty) {
+            sessionData.anuvasanaVyapada.value = persisted.anuvasanaVyapada;
+          }
           for (
             int i = 0;
             i < sessionData.samyaka.length &&
@@ -733,6 +740,17 @@ class AssessmentController extends GetxController {
         initialPlan?.status == TreatmentStatus.completed;
   }
 
+  bool get hasExistingPlan {
+    if (initialPlan != null) return true;
+    if (Get.isRegistered<TreatmentPlanController>()) {
+      final tpc = Get.find<TreatmentPlanController>();
+      if (tpc.currentPlan.value != null && tpc.currentPlan.value!.patientId == patientId) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   Future<void> selectDisease(DiseaseModel disease) async {
     if (isTreatmentPlanActive) return;
     selectedDisease.value = disease;
@@ -928,14 +946,12 @@ class AssessmentController extends GetxController {
   Future<void> persistTreatmentPlan() async {
     final pattern = selectedPattern.value;
     final option = selectedBastiOption.value;
-    final niruha = calculatedNiruhaDose.value;
-    final anuvasana = calculatedAnuvasanaDose.value;
+    final niruha = calculatedNiruhaDose.value ?? calculatedYapanaDose.value ?? const DoseCalculationResult(bastiType: 'Niruha', bala: 'Madhyama', totalVolume: 0, unit: 'ml', components: [], sourceReference: 'Fallback');
+    final anuvasana = calculatedAnuvasanaDose.value ?? calculatedMatraDose.value ?? const DoseCalculationResult(bastiType: 'Anuvasana', bala: 'Madhyama', totalVolume: 0, unit: 'ml', components: [], sourceReference: 'Fallback');
 
-    if (pattern == null ||
-        option == null ||
-        niruha == null ||
-        anuvasana == null) {
-      return;
+    if (pattern == null || option == null) {
+      throw Exception('Cannot persist treatment plan: missing configuration. '
+          'pattern=${pattern != null}, option=${option != null}');
     }
 
     if (generatedSchedule.isEmpty) {
@@ -967,11 +983,18 @@ class AssessmentController extends GetxController {
     final now = DateTime.now();
 
     final current = tpc.currentPlan.value;
-    final existingPlan = (current != null && current.patientId == patientId)
+    var existingPlan = (current != null && current.patientId == patientId)
         ? current
         : (initialPlan != null && initialPlan!.patientId == patientId
               ? initialPlan
               : null);
+
+    if (existingPlan == null && patientId != null) {
+      final active = await tpc.getActivePlanForPatient(patientId!);
+      if (active != null) {
+        existingPlan = active;
+      }
+    }
 
     final isExisting = existingPlan != null;
     final planId = existingPlan?.id ?? 'plan_${now.millisecondsSinceEpoch}';
@@ -1075,14 +1098,20 @@ class AssessmentController extends GetxController {
       await persistTreatmentPlan();
     }
     final planId = tpc.currentPlan.value?.id;
-    if (planId == null) return;
+    if (planId == null) {
+      throw Exception('Treatment plan could not be created or found. Cannot save session.');
+    }
 
     final dayIndex = dayNumber - 1;
-    if (dayIndex < 0 || dayIndex >= sessions.length) return;
+    if (dayIndex < 0 || dayIndex >= sessions.length) {
+      throw Exception('Session data for day $dayNumber not found in memory (sessions length: ${sessions.length}).');
+    }
     final sessionData = sessions[dayIndex];
 
     final schedule = generatedSchedule;
-    if (dayIndex >= schedule.length) return;
+    if (dayIndex >= schedule.length) {
+      throw Exception('Schedule data for day $dayNumber not found in memory (schedule length: ${schedule.length}).');
+    }
     final dayModel = schedule[dayIndex];
 
     final now = DateTime.now();
@@ -1284,6 +1313,12 @@ class AssessmentController extends GetxController {
     }
     if (persisted.vega.isNotEmpty) {
       sessionData.vega.text = persisted.vega;
+    }
+    if (persisted.niruhaVyapada.isNotEmpty) {
+      sessionData.niruhaVyapada.value = persisted.niruhaVyapada;
+    }
+    if (persisted.anuvasanaVyapada.isNotEmpty) {
+      sessionData.anuvasanaVyapada.value = persisted.anuvasanaVyapada;
     }
     
     sessionData.niruhaVyapada.value = persisted.niruhaVyapada;
@@ -2128,6 +2163,11 @@ class AssessmentController extends GetxController {
           observationTick.value++;
         }
       }
+      
+      if (Get.isRegistered<TreatmentPlanController>()) {
+        await Get.find<TreatmentPlanController>().loadActivePlanForPatient(patientId!);
+      }
+      
       _hasLoadedPradhanaKarma = true;
     } catch (e) {
       debugPrint('Error loading pradhana karma from backend: $e');
@@ -2672,18 +2712,18 @@ class AssessmentController extends GetxController {
   // Niruha Vyapada — 12 options
   static const List<String> niruhaVyapadas = [
     'None observed',
-    'Ayoga (under-action)',
-    'Atiyoga (over-action)',
-    'Klama (mental fatigue)',
     'Adhmana (flatulence)',
-    'Hikka (hiccup)',
-    'Hadprapti',
-    'Udavarta',
-    'Pravahika',
-    'Shiro Arti (headache)',
     'Anga Arti (body pain)',
+    'Atiyoga (over-action)',
+    'Ayoga (under-action)',
+    'Hadprapti',
+    'Hikka (hiccup)',
+    'Klama (mental fatigue)',
     'Parikartika (rectal pain)',
     'Parisrava (rectal discharge)',
+    'Pravahika',
+    'Shiro Arti (headache)',
+    'Udavarta',
   ];
 
   static const Map<String, String> niruhaChikitsa = {
@@ -2716,12 +2756,12 @@ class AssessmentController extends GetxController {
   // Anuvasan Vyapada — 6 options
   static const List<String> anuvasanVyapadas = [
     'None observed',
-    'Vatavruta Sneha',
-    'Pittavruta Sneha',
-    'Kaphavruta Sneha',
-    'Anna Vruta Sneha',
-    'Purisha Vruta Sneha',
     'Abhukta Pranita',
+    'Anna Vruta Sneha',
+    'Kaphavruta Sneha',
+    'Pittavruta Sneha',
+    'Purisha Vruta Sneha',
+    'Vatavruta Sneha',
   ];
 
   static const Map<String, String> anuvasanChikitsa = {

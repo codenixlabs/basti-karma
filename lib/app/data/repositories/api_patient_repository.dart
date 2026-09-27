@@ -51,7 +51,11 @@ class ApiPatientRepository implements PatientRepository {
       demographics['occupation'] = patient.occupation;
     }
     if (patient.maritalStatus != null && patient.maritalStatus!.isNotEmpty) {
-      demographics['maritalStatus'] = patient.maritalStatus;
+      String mStatus = patient.maritalStatus!;
+      if (mStatus.toLowerCase().trim() == 'divorced') {
+        mStatus = 'Divorcee';
+      }
+      demographics['maritalStatus'] = mStatus;
     }
     if (patient.address != null && patient.address!.isNotEmpty) {
       demographics['address'] = patient.address;
@@ -254,7 +258,7 @@ class ApiPatientRepository implements PatientRepository {
   static String normalizeVaya(String value) {
     final v = value.toLowerCase().trim();
     if (v.contains('bala') || v.contains('child')) return 'Bala';
-    if (v.contains('vriddha') || v.contains('old')) return 'Vriddha';
+    if (v.contains('vriddha') || v.contains('vridha') || v.contains('old')) return 'Vridha';
     if (v.contains('madhyam') || v.contains('adult')) return 'Madhyam';
     return value.isNotEmpty ? value : 'Madhyam';
   }

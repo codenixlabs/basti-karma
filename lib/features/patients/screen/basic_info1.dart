@@ -179,7 +179,7 @@ class _Step1BasicInfoState extends State<Step1BasicInfo> {
                     BottomSheetOption(value: 'Single', label: 'Single'),
                     BottomSheetOption(value: 'Married', label: 'Married'),
                     BottomSheetOption(value: 'Widowed', label: 'Widowed'),
-                    BottomSheetOption(value: 'Divorced', label: 'Divorced'),
+                    BottomSheetOption(value: 'Divorcee', label: 'Divorcee'),
                   ],
                 ),
               ),

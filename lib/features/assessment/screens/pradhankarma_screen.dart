@@ -31,22 +31,33 @@ class _PradhanKarmaScreenState extends State<PradhanKarmaScreen> {
   @override
   void initState() {
     super.initState();
+    _step = widget.initialStep;
+    
     if (Get.isRegistered<AssessmentController>()) {
       final ctrl = Get.find<AssessmentController>();
       ctrl.syncBalaFromPoorvaKarma();
-      if (!ctrl.isLoadingPradhanaKarma.value && !ctrl.hasLoadedPradhanaKarma) {
-        ctrl.loadPradhanaKarma().then((_) {
-          if (mounted && widget.initialStep == 0 && ctrl.loggedSessionCount > 0) {
-            setState(() {
-              _step = 3;
+      
+      void jumpToSessionLogs({bool isAsync = false}) {
+        if (mounted && widget.initialStep == 0 && (ctrl.hasExistingPlan || ctrl.generatedSchedule.isNotEmpty)) {
+          setState(() {
+            _step = 3;
+            // Only jump if it's already attached to the view. If not, initialPage handles it.
+            if (isAsync && _pageCtrl.hasClients) {
               _pageCtrl.jumpToPage(3);
-            });
-          }
-        });
+            }
+          });
+        }
+      }
+
+      // 1. Evaluate jump immediately before drawing
+      jumpToSessionLogs(isAsync: false);
+
+      // 2. Start data load if needed, and try jump again after load (for cases where plan was fetched)
+      if (!ctrl.isLoadingPradhanaKarma.value && !ctrl.hasLoadedPradhanaKarma) {
+        ctrl.loadPradhanaKarma().then((_) => jumpToSessionLogs(isAsync: true));
       }
     }
-    _step = widget.initialStep;
-    _pageCtrl = PageController(initialPage: widget.initialStep);
+    _pageCtrl = PageController(initialPage: _step);
   }
 
   static const int _totalSteps = 4;
@@ -681,8 +692,12 @@ class _DravyaDosePage extends StatelessWidget {
               children: [
                 Obx(() {
                   final opt = ctrl.selectedBastiOption.value;
-                  final bType = (opt?.bastiTypeCode.isNotEmpty == true ? opt!.bastiTypeCode : opt?.bastiTypeDisplay ?? '').toLowerCase();
-                  
+                  final bType =
+                      (opt?.bastiTypeCode.isNotEmpty == true
+                              ? opt!.bastiTypeCode
+                              : opt?.bastiTypeDisplay ?? '')
+                          .toLowerCase();
+
                   final niruha = ctrl.calculatedNiruhaDose.value;
                   final anuvasana = ctrl.calculatedAnuvasanaDose.value;
                   final matra = ctrl.calculatedMatraDose.value;
@@ -691,13 +706,33 @@ class _DravyaDosePage extends StatelessWidget {
 
                   List<DoseCalculationResult> doses = [];
                   if (bType.contains('yapana') || bType == 'yb') {
-                    if (yapana == null) return const Center(child: Padding(padding: EdgeInsets.all(16), child: CircularProgressIndicator()));
+                    if (yapana == null)
+                      return const Center(
+                        child: Padding(
+                          padding: EdgeInsets.all(16),
+                          child: CircularProgressIndicator(),
+                        ),
+                      );
                     doses.add(yapana);
-                  } else if (bType.contains('matra') || (bType.contains('sneha') && !bType.contains('niruha')) || bType == 'mb') {
-                    if (matra == null) return const Center(child: Padding(padding: EdgeInsets.all(16), child: CircularProgressIndicator()));
+                  } else if (bType.contains('matra') ||
+                      (bType.contains('sneha') && !bType.contains('niruha')) ||
+                      bType == 'mb') {
+                    if (matra == null)
+                      return const Center(
+                        child: Padding(
+                          padding: EdgeInsets.all(16),
+                          child: CircularProgressIndicator(),
+                        ),
+                      );
                     doses.add(matra);
                   } else {
-                    if (niruha == null || anuvasana == null) return const Center(child: Padding(padding: EdgeInsets.all(16), child: CircularProgressIndicator()));
+                    if (niruha == null || anuvasana == null)
+                      return const Center(
+                        child: Padding(
+                          padding: EdgeInsets.all(16),
+                          child: CircularProgressIndicator(),
+                        ),
+                      );
                     doses.add(niruha);
                     doses.add(anuvasana);
                   }
@@ -828,14 +863,46 @@ class _ObservationPage extends StatefulWidget {
 
 class _ObservationPageState extends State<_ObservationPage> {
   int? _expandedIndex;
+  final Map<int, GlobalKey> _cardKeys = {};
+
+  @override
+  void initState() {
+    super.initState();
+    if (Get.isRegistered<AssessmentController>()) {
+      final ctrl = Get.find<AssessmentController>();
+      final logged = ctrl.loggedSessionCount;
+      if (logged < ctrl.sessions.length) {
+        _expandedIndex = logged;
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          ctrl.restoreSessionData(_expandedIndex! + 1);
+        });
+      }
+    }
+  }
 
   void _handleToggle(int i, AssessmentController ctrl) {
     final wasExpanded = _expandedIndex == i;
     setState(() => _expandedIndex = wasExpanded ? null : i);
+    
     // Restore persisted data when expanding a session card
     if (!wasExpanded) {
       ctrl.restoreSessionData(i + 1);
     }
+    
+    // Add post frame callback to scroll to the card
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        final key = _cardKeys[i];
+        if (key?.currentContext != null) {
+          Scrollable.ensureVisible(
+            key!.currentContext!,
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeInOut,
+            alignment: 0.1, // Scroll so the card is near the top
+          );
+        }
+      }
+    });
   }
 
   @override
@@ -843,6 +910,12 @@ class _ObservationPageState extends State<_ObservationPage> {
     final ctrl = Get.find<AssessmentController>();
 
     return Obx(() {
+      if (ctrl.isLoadingPradhanaKarma.value) {
+        return const Center(
+          child: CircularProgressIndicator(color: AppColors.primaryGreen),
+        );
+      }
+
       final sessions = ctrl.sessions;
 
       if (sessions.isEmpty) {
@@ -980,7 +1053,12 @@ class _ObservationPageState extends State<_ObservationPage> {
                     child: PhysicianYuktiBanner(),
                   );
                 }
+                if (!_cardKeys.containsKey(i)) {
+                  _cardKeys[i] = GlobalKey();
+                }
+
                 return _SessionCard(
+                  key: _cardKeys[i],
                   session: sessions[i],
                   ctrl: ctrl,
                   isExpanded: _expandedIndex == i,
@@ -1006,6 +1084,7 @@ class _SessionCard extends StatelessWidget {
   final VoidCallback onToggle;
 
   const _SessionCard({
+    super.key,
     required this.session,
     required this.ctrl,
     required this.isExpanded,
@@ -1291,8 +1370,11 @@ class _SessionBody extends StatelessWidget {
     final dayIndex = session.sessionNumber - 1;
     final isKwatha = (dayIndex >= 0 && dayIndex < ctrl.generatedSchedule.length)
         ? ctrl.generatedSchedule[dayIndex].isKwathaBased
-        : (ctrl.selectedBastiOption.value?.bastiTypeDisplay.toLowerCase().contains('yapana') == true ||
-           ctrl.selectedBastiType.value != 'Anuvasan Basti');
+        : (ctrl.selectedBastiOption.value?.bastiTypeDisplay
+                      .toLowerCase()
+                      .contains('yapana') ==
+                  true ||
+              ctrl.selectedBastiType.value != 'Anuvasan Basti');
 
     final samyakaList = isKwatha
         ? AssessmentController.niruhasamyakaSymptoms
@@ -1393,21 +1475,29 @@ class _SessionBody extends StatelessWidget {
                   return AppBottomSheet<String>(
                     label: 'Niruha Vyapada',
                     hint: 'Select Vyapada',
-                    value: session.niruhaVyapada.value.isEmpty ? 'none' : session.niruhaVyapada.value,
+                    value: session.niruhaVyapada.value.isEmpty
+                        ? 'none'
+                        : session.niruhaVyapada.value,
                     options: const [
                       BottomSheetOption(value: 'none', label: 'None'),
-                      BottomSheetOption(value: 'ayoga', label: 'Ayoga'),
-                      BottomSheetOption(value: 'atiyoga', label: 'Atiyoga'),
-                      BottomSheetOption(value: 'klama', label: 'Klama'),
                       BottomSheetOption(value: 'adhmana', label: 'Adhmana'),
-                      BottomSheetOption(value: 'hikka', label: 'Hikka'),
-                      BottomSheetOption(value: 'hadprapti', label: 'Hadprapti'),
-                      BottomSheetOption(value: 'udavarta', label: 'Udavarta'),
-                      BottomSheetOption(value: 'pravahika', label: 'Pravahika'),
-                      BottomSheetOption(value: 'shiroArti', label: 'Shiro Arti'),
                       BottomSheetOption(value: 'angaArti', label: 'Anga Arti'),
-                      BottomSheetOption(value: 'parikartika', label: 'Parikartika'),
+                      BottomSheetOption(value: 'atiyoga', label: 'Atiyoga'),
+                      BottomSheetOption(value: 'ayoga', label: 'Ayoga'),
+                      BottomSheetOption(value: 'hadprapti', label: 'Hadprapti'),
+                      BottomSheetOption(value: 'hikka', label: 'Hikka'),
+                      BottomSheetOption(value: 'klama', label: 'Klama'),
+                      BottomSheetOption(
+                        value: 'parikartika',
+                        label: 'Parikartika',
+                      ),
                       BottomSheetOption(value: 'parisrava', label: 'Parisrava'),
+                      BottomSheetOption(value: 'pravahika', label: 'Pravahika'),
+                      BottomSheetOption(
+                        value: 'shiroArti',
+                        label: 'Shiro Arti',
+                      ),
+                      BottomSheetOption(value: 'udavarta', label: 'Udavarta'),
                     ],
                     onChanged: (val) => session.niruhaVyapada.value = val ?? '',
                   );
@@ -1415,17 +1505,38 @@ class _SessionBody extends StatelessWidget {
                   return AppBottomSheet<String>(
                     label: 'Anuvasana Vyapada',
                     hint: 'Select Vyapada',
-                    value: session.anuvasanaVyapada.value.isEmpty ? 'none' : session.anuvasanaVyapada.value,
+                    value: session.anuvasanaVyapada.value.isEmpty
+                        ? 'none'
+                        : session.anuvasanaVyapada.value,
                     options: const [
                       BottomSheetOption(value: 'none', label: 'None'),
-                      BottomSheetOption(value: 'vatavrutaSneha', label: 'Vatavruta Sneha'),
-                      BottomSheetOption(value: 'pittavrutaSneha', label: 'Pittavruta Sneha'),
-                      BottomSheetOption(value: 'kaphavrutaSneha', label: 'Kaphavruta Sneha'),
-                      BottomSheetOption(value: 'annaVrutaSneha', label: 'Anna Vruta Sneha'),
-                      BottomSheetOption(value: 'purishaVrutaSneha', label: 'Purisha Vruta Sneha'),
-                      BottomSheetOption(value: 'abhuktaPranita', label: 'Abhukta Pranita'),
+                      BottomSheetOption(
+                        value: 'abhuktaPranita',
+                        label: 'Abhukta Pranita',
+                      ),
+                      BottomSheetOption(
+                        value: 'annaVrutaSneha',
+                        label: 'Anna Vruta Sneha',
+                      ),
+                      BottomSheetOption(
+                        value: 'kaphavrutaSneha',
+                        label: 'Kaphavruta Sneha',
+                      ),
+                      BottomSheetOption(
+                        value: 'pittavrutaSneha',
+                        label: 'Pittavruta Sneha',
+                      ),
+                      BottomSheetOption(
+                        value: 'purishaVrutaSneha',
+                        label: 'Purisha Vruta Sneha',
+                      ),
+                      BottomSheetOption(
+                        value: 'vatavrutaSneha',
+                        label: 'Vatavruta Sneha',
+                      ),
                     ],
-                    onChanged: (val) => session.anuvasanaVyapada.value = val ?? '',
+                    onChanged: (val) =>
+                        session.anuvasanaVyapada.value = val ?? '',
                   );
                 }
               }),
@@ -2019,7 +2130,9 @@ class _TimeField extends StatelessWidget {
                 ),
                 decoration: InputDecoration(
                   hintText: hint,
-                  hintStyle: AssessmentTextStyles.hintText.copyWith(fontSize: 12),
+                  hintStyle: AssessmentTextStyles.hintText.copyWith(
+                    fontSize: 12,
+                  ),
                   filled: true,
                   fillColor: AppColors.inputBackground,
                   isDense: true,

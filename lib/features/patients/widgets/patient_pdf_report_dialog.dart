@@ -42,9 +42,7 @@ class PatientPdfReportDialog extends StatefulWidget {
 class _PatientPdfReportDialogState extends State<PatientPdfReportDialog>
     with SingleTickerProviderStateMixin {
   _DownloadPhase _phase = _DownloadPhase.generating;
-  int _elapsedSeconds = 0;
   int _currentStepIndex = 0;
-  Timer? _elapsedTimer;
   Timer? _stepTimer;
   File? _downloadedFile;
   String _errorMessage = '';
@@ -105,23 +103,14 @@ class _PatientPdfReportDialogState extends State<PatientPdfReportDialog>
 
   @override
   void dispose() {
-    _elapsedTimer?.cancel();
     _stepTimer?.cancel();
     _pulseController.dispose();
     super.dispose();
   }
 
   void _startTimers() {
-    _elapsedSeconds = 0;
     _currentStepIndex = 0;
-    _elapsedTimer?.cancel();
     _stepTimer?.cancel();
-
-    _elapsedTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      if (mounted && _phase == _DownloadPhase.generating) {
-        setState(() => _elapsedSeconds++);
-      }
-    });
 
     _stepTimer = Timer.periodic(const Duration(milliseconds: 3200), (timer) {
       if (mounted && _phase == _DownloadPhase.generating) {
@@ -153,7 +142,6 @@ class _PatientPdfReportDialogState extends State<PatientPdfReportDialog>
         timeout: const Duration(minutes: 2),
       );
 
-      _elapsedTimer?.cancel();
       _stepTimer?.cancel();
 
       if (!mounted) return;
@@ -167,7 +155,6 @@ class _PatientPdfReportDialogState extends State<PatientPdfReportDialog>
         await OpenFilex.open(file.path);
       } catch (_) {}
     } catch (e) {
-      _elapsedTimer?.cancel();
       _stepTimer?.cancel();
 
       if (!mounted) return;
@@ -308,33 +295,6 @@ class _PatientPdfReportDialogState extends State<PatientPdfReportDialog>
         ),
         const SizedBox(height: 14),
 
-        // Live Elapsed Seconds Badge
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-          decoration: BoxDecoration(
-            color: AppColors.primaryGreen.withValues(alpha: 0.08),
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Icon(
-                Icons.timer_outlined,
-                size: 13,
-                color: AppColors.primaryGreen,
-              ),
-              const SizedBox(width: 5),
-              Text(
-                'Elapsed: ${_elapsedSeconds}s',
-                style: const TextStyle(
-                  fontSize: 11.5,
-                  fontWeight: FontWeight.w600,
-                  color: AppColors.primaryGreen,
-                ),
-              ),
-            ],
-          ),
-        ),
         const SizedBox(height: 16),
 
         // Rotating Step Card with smooth animated transition

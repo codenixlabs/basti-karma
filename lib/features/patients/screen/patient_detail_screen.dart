@@ -364,19 +364,8 @@ class _PatientDetailScreenState extends State<PatientDetailScreen>
     await _loadData();
   }
 
-  bool _isDownloadingPdf = false;
-
   Future<void> _downloadPdfReport() async {
-    if (_isDownloadingPdf) return;
-    setState(() => _isDownloadingPdf = true);
-
-    try {
-      await PatientPdfReportDialog.show(context, _patient);
-    } finally {
-      if (mounted) {
-        setState(() => _isDownloadingPdf = false);
-      }
-    }
+    await PatientPdfReportDialog.show(context, _patient);
   }
 
   @override
@@ -399,21 +388,12 @@ class _PatientDetailScreenState extends State<PatientDetailScreen>
         ),
         actions: [
           IconButton(
-            onPressed: _isDownloadingPdf ? null : _downloadPdfReport,
-            icon: _isDownloadingPdf
-                ? const SizedBox(
-                    width: 18,
-                    height: 18,
-                    child: CircularProgressIndicator(
-                      color: Colors.white,
-                      strokeWidth: 2,
-                    ),
-                  )
-                : const Icon(
-                    Icons.picture_as_pdf_outlined,
-                    color: Colors.white,
-                    size: 22,
-                  ),
+            onPressed: _downloadPdfReport,
+            icon: const Icon(
+              Icons.picture_as_pdf_outlined,
+              color: Colors.white,
+              size: 22,
+            ),
             tooltip: 'Download Patient PDF Report',
           ),
           TextButton.icon(
@@ -1300,22 +1280,11 @@ class _PatientDetailScreenState extends State<PatientDetailScreen>
           SizedBox(
             width: double.infinity,
             child: ElevatedButton.icon(
-              onPressed: _isDownloadingPdf ? null : _downloadPdfReport,
-              icon: _isDownloadingPdf
-                  ? const SizedBox(
-                      width: 18,
-                      height: 18,
-                      child: CircularProgressIndicator(
-                        color: Colors.white,
-                        strokeWidth: 2,
-                      ),
-                    )
-                  : const Icon(Icons.download_rounded, size: 20),
-              label: Text(
-                _isDownloadingPdf
-                    ? 'Generating & Downloading...'
-                    : 'Download Full PDF Report',
-                style: const TextStyle(
+              onPressed: _downloadPdfReport,
+              icon: const Icon(Icons.download_rounded, size: 20),
+              label: const Text(
+                'Download Full PDF Report',
+                style: TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
                 ),

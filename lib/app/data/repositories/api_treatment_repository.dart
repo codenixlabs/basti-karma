@@ -36,6 +36,7 @@ class ApiTreatmentRepository implements TreatmentPlanRepository {
   BastiTreatmentPlanModel? _parsePlanFromBackend(
     String patientId,
     Map<String, dynamic> data,
+    [BastiTreatmentPlanModel? inMemPlan]
   ) {
     // Verify Pradhana Karma was actually configured in backend
     final rawPatternCode = data['bastiPatternCode']?.toString().trim();
@@ -116,6 +117,9 @@ class ApiTreatmentRepository implements TreatmentPlanRepository {
           );
         }
       }
+    } else if (inMemPlan != null && inMemPlan.scheduleDays.isNotEmpty && inMemPlan.selectedPatternCode.toLowerCase().trim() == patternCode) {
+      // Use existing configured schedule days if available and pattern matches
+      scheduleDays.addAll(inMemPlan.scheduleDays);
     }
 
     // 2. If scheduleDays is empty, resolve sequence and construct days
@@ -397,7 +401,11 @@ class ApiTreatmentRepository implements TreatmentPlanRepository {
         final data = model.rawJson!['data'] is Map
             ? Map<String, dynamic>.from(model.rawJson!['data'] as Map)
             : model.rawJson!;
-        final plan = _parsePlanFromBackend(patientId, data);
+        final inMemPlans = await _inMemoryStore.fetchPlansForPatient(patientId);
+        final existingPlanJson = inMemPlans.isNotEmpty ? inMemPlans.first : null;
+        final existingPlan = existingPlanJson != null ? BastiTreatmentPlanModel.fromJson(existingPlanJson) : null;
+        
+        final plan = _parsePlanFromBackend(patientId, data, existingPlan);
         if (plan != null) {
           _inMemoryStore.savePlan(plan);
           return [plan];
@@ -631,14 +639,22 @@ class ApiTreatmentRepository implements TreatmentPlanRepository {
                   }
                 }
 
-                String parsedVega = '';
-                if (item['notes'] != null) {
+                String parsedVega = item['vega']?.toString() ?? '';
+                if (parsedVega.isEmpty && item['notes'] != null) {
                   final match = RegExp(r'Vega:\s*([^|]+)').firstMatch(item['notes'].toString());
                   if (match != null) {
                     parsedVega = match.group(1)?.trim() ?? '';
                   } else if (!item['notes'].toString().contains('Pratyagamana:')) {
                     parsedVega = item['notes'].toString().replaceFirst(RegExp(r'^Vega:\s*'), '').trim();
                   }
+                }
+
+                String parsedNiruhaVyapada = '';
+                String parsedAnuvasanaVyapada = '';
+                if (item['paschataKarma'] != null && item['paschataKarma']['vyapadaAndManagement'] != null) {
+                  final vyapada = item['paschataKarma']['vyapadaAndManagement'];
+                  parsedNiruhaVyapada = vyapada['niruhaVyapada']?.toString() ?? '';
+                  parsedAnuvasanaVyapada = vyapada['anuvasanaVyapada']?.toString() ?? '';
                 }
 
                 final session = BastiSessionModel(
@@ -656,6 +672,8 @@ class ApiTreatmentRepository implements TreatmentPlanRepository {
                   samyakaSelected: samyaka,
                   ayogaSelected: ayoga,
                   atiyogaSelected: atiyoga,
+                  niruhaVyapada: parsedNiruhaVyapada,
+                  anuvasanaVyapada: parsedAnuvasanaVyapada,
                   createdAt: itemUpdatedAt,
                   updatedAt: itemUpdatedAt,
                 );
@@ -703,6 +721,12 @@ class ApiTreatmentRepository implements TreatmentPlanRepository {
                     samyakaSelected: mergedSamyaka,
                     ayogaSelected: mergedAyoga,
                     atiyogaSelected: mergedAtiyoga,
+                    niruhaVyapada: backendSession.niruhaVyapada.isNotEmpty
+                        ? backendSession.niruhaVyapada
+                        : inMemSession.niruhaVyapada,
+                    anuvasanaVyapada: backendSession.anuvasanaVyapada.isNotEmpty
+                        ? backendSession.anuvasanaVyapada
+                        : inMemSession.anuvasanaVyapada,
                     updatedAt: inMemSession.updatedAt.isAfter(backendSession.updatedAt)
                         ? inMemSession.updatedAt
                         : backendSession.updatedAt,
@@ -750,6 +774,8 @@ class ApiTreatmentRepository implements TreatmentPlanRepository {
             adanaKala: s.adanaKala.isNotEmpty ? s.adanaKala : inMemSession.adanaKala,
             pratyagamana: s.pratyagamana.isNotEmpty ? s.pratyagamana : inMemSession.pratyagamana,
             vega: s.vega.isNotEmpty ? s.vega : inMemSession.vega,
+            niruhaVyapada: s.niruhaVyapada.isNotEmpty ? s.niruhaVyapada : inMemSession.niruhaVyapada,
+            anuvasanaVyapada: s.anuvasanaVyapada.isNotEmpty ? s.anuvasanaVyapada : inMemSession.anuvasanaVyapada,
           );
         }
         return s;
@@ -895,6 +921,13 @@ class ApiTreatmentRepository implements TreatmentPlanRepository {
       patientId = session.treatmentPlanId.substring('plan_'.length);
       _planToPatientId[session.treatmentPlanId] = patientId;
     }
+    if (patientId == null) {
+      final planJson = await _inMemoryStore.fetchPlan(session.treatmentPlanId);
+      if (planJson != null && planJson['patientId'] != null) {
+        patientId = planJson['patientId'].toString();
+        _planToPatientId[session.treatmentPlanId] = patientId;
+      }
+    }
 
     final symptoms = _buildSymptomsMap(session);
     final doseStr = '${session.scheduledDose}${session.doseUnit}';
@@ -941,7 +974,10 @@ class ApiTreatmentRepository implements TreatmentPlanRepository {
         );
       } catch (e) {
         debugPrint('ApiTreatmentRepository.saveSession error: $e');
+        rethrow;
       }
+    } else {
+      throw Exception('Could not resolve patientId for session ${session.id}');
     }
   }
 
@@ -952,6 +988,13 @@ class ApiTreatmentRepository implements TreatmentPlanRepository {
     if (patientId == null && session.treatmentPlanId.startsWith('plan_')) {
       patientId = session.treatmentPlanId.substring('plan_'.length);
       _planToPatientId[session.treatmentPlanId] = patientId;
+    }
+    if (patientId == null) {
+      final planJson = await _inMemoryStore.fetchPlan(session.treatmentPlanId);
+      if (planJson != null && planJson['patientId'] != null) {
+        patientId = planJson['patientId'].toString();
+        _planToPatientId[session.treatmentPlanId] = patientId;
+      }
     }
 
     final symptoms = _buildSymptomsMap(session);
@@ -1018,7 +1061,10 @@ class ApiTreatmentRepository implements TreatmentPlanRepository {
         }
       } catch (e) {
         debugPrint('ApiTreatmentRepository.updateSession error: $e');
+        rethrow;
       }
+    } else {
+      throw Exception('Could not resolve patientId for session ${session.id}');
     }
   }
 
