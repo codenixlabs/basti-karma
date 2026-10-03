@@ -109,7 +109,7 @@ class _AddictionsField extends StatelessWidget {
   const _AddictionsField({required this.ctrl});
 
   static const _options = [
-    'NA',
+    'No',
     'Tea',
     'Coffee',
     'Smoking',
