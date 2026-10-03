@@ -783,6 +783,16 @@ class _SchedulePage extends StatelessWidget {
               title: 'Basti Treatment Pattern',
               icon: Icons.calendar_month_outlined,
               children: [
+                const Text(
+                  '“Basti schedule will be planned according to the patient’s hospital stay duration and clinical condition.”',
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w500,
+                    color: AppColors.darkGrey,
+                    height: 1.35,
+                  ),
+                ),
+                const SizedBox(height: 12),
                 if (ctrl.isTreatmentPlanActive)
                   Container(
                     margin: const EdgeInsets.only(bottom: 12),
