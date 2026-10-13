@@ -19,6 +19,7 @@ import '../controller/patient_controller.dart';
 import '../widgets/patient_case_sheet_sheet.dart';
 import '../widgets/patient_documents_sheet.dart';
 import '../widgets/patient_pdf_report_dialog.dart';
+import '../widgets/follow_up_tab.dart';
 import 'add_patient_screen.dart';
 
 class PatientDetailScreen extends StatefulWidget {
@@ -44,7 +45,7 @@ class _PatientDetailScreenState extends State<PatientDetailScreen>
   void initState() {
     super.initState();
     _patient = widget.patient;
-    _tabController = TabController(length: 3, vsync: this);
+    _tabController = TabController(length: 4, vsync: this);
     if (Get.isRegistered<TreatmentPlanController>()) {
       _tpc = Get.find<TreatmentPlanController>();
     } else {
@@ -454,6 +455,10 @@ class _PatientDetailScreenState extends State<PatientDetailScreen>
                             icon: Icon(Icons.biotech_outlined, size: 20),
                             text: 'Reports & Media',
                           ),
+                          Tab(
+                            icon: Icon(Icons.note_alt_outlined, size: 20),
+                            text: 'Follow Up',
+                          ),
                         ],
                       ),
                     ),
@@ -465,6 +470,7 @@ class _PatientDetailScreenState extends State<PatientDetailScreen>
                     _buildClinicalRecordTab(p),
                     _buildBastiTherapyTab(),
                     _buildReportsTab(p),
+                    FollowUpTab(patient: p),
                   ],
                 ),
               ),
