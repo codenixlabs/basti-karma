@@ -16,6 +16,9 @@ class BastiOptionModel {
   final String? referencedCondition;
   final String? recipeCompleteness;
   final String? sourceText;
+  final bool isCustom;
+  final String? patientId;
+  final String? doctorId;
 
   const BastiOptionModel({
     required this.id,
@@ -32,6 +35,9 @@ class BastiOptionModel {
     this.referencedCondition,
     this.recipeCompleteness,
     this.sourceText,
+    this.isCustom = false,
+    this.patientId,
+    this.doctorId,
   });
 
   factory BastiOptionModel.fromFormulation(
@@ -62,6 +68,9 @@ class BastiOptionModel {
       referencedCondition: formulation.referencedCondition,
       recipeCompleteness: formulation.recipeCompleteness,
       sourceText: formulation.sourceText,
+      isCustom: formulation.isCustom,
+      patientId: formulation.patientId,
+      doctorId: formulation.doctorId,
     );
   }
 
@@ -89,13 +98,15 @@ class BastiOptionModel {
   }
 
   factory BastiOptionModel.fromJson(Map<String, dynamic> json) {
+    final rawId = (json['id'] as String?) ?? '';
+    final isCustom = (json['isCustom'] as bool?) ?? rawId.startsWith('custom_');
     return BastiOptionModel(
-      id: json['id'] as String,
-      diseaseId: json['diseaseId'] as String,
-      name: json['name'] as String,
-      bastiTypeCode: json['bastiTypeCode'] as String,
-      bastiTypeDisplay: json['bastiTypeDisplay'] as String,
-      indicationStage: json['indicationStage'] as String,
+      id: rawId,
+      diseaseId: (json['diseaseId'] as String?) ?? '',
+      name: (json['name'] as String?) ?? '',
+      bastiTypeCode: (json['bastiTypeCode'] as String?) ?? '',
+      bastiTypeDisplay: (json['bastiTypeDisplay'] as String?) ?? '',
+      indicationStage: (json['indicationStage'] as String?) ?? '',
       ingredients: (json['ingredients'] as List<dynamic>?)
               ?.map((e) => BastiIngredient.fromJson(
                     e is Map<String, dynamic>
@@ -110,6 +121,9 @@ class BastiOptionModel {
       referencedCondition: json['referencedCondition'] as String?,
       recipeCompleteness: json['recipeCompleteness'] as String?,
       sourceText: json['sourceText'] as String?,
+      isCustom: isCustom,
+      patientId: json['patientId'] as String?,
+      doctorId: json['doctorId'] as String?,
     );
   }
 
@@ -128,6 +142,9 @@ class BastiOptionModel {
       if (referencedCondition != null) 'referencedCondition': referencedCondition,
       if (recipeCompleteness != null) 'recipeCompleteness': recipeCompleteness,
       if (sourceText != null) 'sourceText': sourceText,
+      if (isCustom) 'isCustom': isCustom,
+      if (patientId != null) 'patientId': patientId,
+      if (doctorId != null) 'doctorId': doctorId,
     };
   }
 

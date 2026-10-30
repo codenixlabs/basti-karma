@@ -8,11 +8,13 @@ import '../../../app/shared/widgets/app_dialog.dart';
 import '../../../app/shared/widgets/app_dropdown.dart';
 import '../controller/assessment_controller.dart';
 import '../controller/treatment_plan_controller.dart';
+import '../../../app/data/models/patient/treatment_status.dart';
 import '../widgets/assessment_widgets.dart';
 import '../widgets/basti_option_card.dart';
 import '../widgets/dose_breakdown_card.dart';
 import '../widgets/basti_pattern_selector.dart';
 import '../../../app/shared/widgets/physician_yukti_banner.dart';
+import '../../../app/shared/utils/custom_snackbar.dart';
 
 class PradhanKarmaScreen extends StatefulWidget {
   final int initialStep;
@@ -244,14 +246,42 @@ class _PradhanKarmaScreenState extends State<PradhanKarmaScreen> {
             child: isLast
                 ? Obx(() {
                     ctrl.observationTick.value;
+                    final total = ctrl.sessions.length;
+                    final logged = ctrl.loggedSessionCount;
                     final tpc = Get.isRegistered<TreatmentPlanController>()
                         ? Get.find<TreatmentPlanController>()
                         : null;
-                    final total = ctrl.sessions.length;
-                    final logged = ctrl.loggedSessionCount;
-                    final isAllLogged =
+                    final isPlanDone = ctrl.pradhankarmaComplete.value ||
+                        ctrl.initialPradhanaKarmaCompleted ||
+                        (tpc != null &&
+                            tpc.currentPlan.value?.status ==
+                                TreatmentStatus.completed);
+                    final isAllLogged = isPlanDone ||
                         (tpc != null && tpc.allSessionsCompleted) ||
-                        (total > 0 && logged == total);
+                        (total > 0 && logged >= total);
+
+                    if (isPlanDone) {
+                      return ElevatedButton.icon(
+                        icon: const Icon(
+                          Icons.check_circle_rounded,
+                          size: 18,
+                        ),
+                        label: const Text(
+                          'Pradhan Karma Completed',
+                          style: AppTextStyles.button,
+                        ),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppColors.successGreen,
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(vertical: 14),
+                          elevation: 2,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(14),
+                          ),
+                        ),
+                        onPressed: () => Get.back(),
+                      );
+                    }
 
                     if (!isAllLogged) {
                       return OutlinedButton.icon(
@@ -425,46 +455,95 @@ class _BastiTypePage extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        const Text(
-                          'Available Formulations',
-                          style: TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.bold,
-                            color: AppColors.textDarkGreen,
+                        Expanded(
+                          child: Wrap(
+                            crossAxisAlignment: WrapCrossAlignment.center,
+                            spacing: 8,
+                            runSpacing: 4,
+                            children: [
+                              const Text(
+                                'Available Formulations',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.bold,
+                                  color: AppColors.textDarkGreen,
+                                ),
+                              ),
+                              if (!isLoading &&
+                                  error.isEmpty &&
+                                  options.isNotEmpty)
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 8,
+                                    vertical: 2,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: AppColors.primaryGreen.withValues(
+                                      alpha: 0.12,
+                                    ),
+                                    borderRadius: BorderRadius.circular(12),
+                                    border: Border.all(
+                                      color: AppColors.primaryGreen.withValues(
+                                        alpha: 0.25,
+                                      ),
+                                      width: 0.8,
+                                    ),
+                                  ),
+                                  child: Text(
+                                    '${options.length} ${options.length == 1 ? 'formulation' : 'formulations'}',
+                                    style: const TextStyle(
+                                      fontSize: 11,
+                                      fontWeight: FontWeight.w600,
+                                      color: AppColors.primaryGreen,
+                                    ),
+                                  ),
+                                ),  
+                            ],
                           ),
                         ),
-                        if (!isLoading &&
-                            error.isEmpty &&
-                            options.isNotEmpty) ...[
+                        if (!ctrl.isTreatmentPlanActive) ...[
                           const SizedBox(width: 8),
-                          Flexible(
+                          InkWell(
+                            onTap: () =>
+                                _openAddCustomFormulation(context, ctrl),
+                            borderRadius: BorderRadius.circular(8),
                             child: Container(
                               padding: const EdgeInsets.symmetric(
-                                horizontal: 8,
-                                vertical: 2,
+                                horizontal: 10,
+                                vertical: 5,
                               ),
                               decoration: BoxDecoration(
                                 color: AppColors.primaryGreen.withValues(
-                                  alpha: 0.12,
+                                  alpha: 0.1,
                                 ),
-                                borderRadius: BorderRadius.circular(12),
+                                borderRadius: BorderRadius.circular(8),
                                 border: Border.all(
                                   color: AppColors.primaryGreen.withValues(
-                                    alpha: 0.25,
+                                    alpha: 0.3,
                                   ),
-                                  width: 0.8,
+                                  width: 1,
                                 ),
                               ),
-                              child: Text(
-                                '${options.length} ${options.length == 1 ? 'formulation' : 'formulations'}',
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                style: const TextStyle(
-                                  fontSize: 11,
-                                  fontWeight: FontWeight.w600,
-                                  color: AppColors.primaryGreen,
-                                ),
+                              child: const Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Icon(
+                                    Icons.add_rounded,
+                                    size: 16,
+                                    color: AppColors.primaryGreen,
+                                  ),
+                                  SizedBox(width: 4),
+                                  Text(
+                                    'Add Custom',
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w600,
+                                      color: AppColors.primaryGreen,
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
                           ),
@@ -639,6 +718,28 @@ class _BastiTypePage extends StatelessWidget {
                               ),
                               textAlign: TextAlign.center,
                             ),
+                            if (!ctrl.isTreatmentPlanActive) ...[
+                              const SizedBox(height: 16),
+                              OutlinedButton.icon(
+                                onPressed: () =>
+                                    _openAddCustomFormulation(context, ctrl),
+                                icon: const Icon(Icons.add_rounded, size: 18),
+                                label: const Text('Add Custom Formulation'),
+                                style: OutlinedButton.styleFrom(
+                                  foregroundColor: AppColors.primaryGreen,
+                                  side: const BorderSide(
+                                    color: AppColors.primaryGreen,
+                                  ),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 16,
+                                    vertical: 10,
+                                  ),
+                                ),
+                              ),
+                            ],
                           ],
                         ),
                       )
@@ -662,6 +763,357 @@ class _BastiTypePage extends StatelessWidget {
 
           const PhysicianYuktiBanner(),
         ],
+      ),
+    );
+  }
+}
+
+void _openAddCustomFormulation(
+  BuildContext context,
+  AssessmentController ctrl,
+) {
+  if (ctrl.selectedDisease.value == null) {
+    CustomSnackBar.showWarning(
+      'Please select a disease first before adding a custom formulation.',
+      title: 'Disease Required',
+    );
+    return;
+  }
+
+  showModalBottomSheet(
+    context: context,
+    backgroundColor: Colors.transparent,
+    isScrollControlled: true,
+    useRootNavigator: true,
+    builder: (sheetCtx) => _AddCustomFormulationBottomSheet(ctrl: ctrl),
+  );
+}
+
+class _AddCustomFormulationBottomSheet extends StatefulWidget {
+  final AssessmentController ctrl;
+
+  const _AddCustomFormulationBottomSheet({required this.ctrl});
+
+  @override
+  State<_AddCustomFormulationBottomSheet> createState() =>
+      _AddCustomFormulationBottomSheetState();
+}
+
+class _AddCustomFormulationBottomSheetState
+    extends State<_AddCustomFormulationBottomSheet> {
+  final _nameCtrl = TextEditingController();
+  String _selectedBastiType = 'Niruha Basti + Anuvasana Basti';
+  bool _isSaving = false;
+  String? _errorMessage;
+
+  final List<String> _bastiTypeOptions = const [
+    'Niruha Basti + Anuvasana Basti',
+    'Niruha Basti',
+    'Anuvasana Basti',
+    'Yapana Basti',
+    'Sneha Basti',
+  ];
+
+  @override
+  void dispose() {
+    _nameCtrl.dispose();
+    super.dispose();
+  }
+
+  Future<void> _submit() async {
+    final name = _nameCtrl.text.trim();
+    if (name.isEmpty) {
+      setState(() {
+        _errorMessage = 'Please enter a formulation name';
+      });
+      return;
+    }
+
+    setState(() {
+      _isSaving = true;
+      _errorMessage = null;
+    });
+
+    try {
+      final success = await widget.ctrl.addNewCustomFormulation(
+        name: name,
+        bastiType: _selectedBastiType,
+      );
+      if (success && mounted) {
+        Navigator.of(context).pop();
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _errorMessage = e.toString().replaceFirst('Exception: ', '');
+          _isSaving = false;
+        });
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isSaving = false;
+        });
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final diseaseName =
+        widget.ctrl.selectedDisease.value?.displayLabel ?? '';
+    final bottomInset = MediaQuery.of(context).viewInsets.bottom;
+
+    return Container(
+      decoration: const BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      padding: EdgeInsets.fromLTRB(20, 12, 20, 20 + bottomInset),
+      child: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Center(
+              child: Container(
+                width: 40,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: Colors.grey.shade300,
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+            ),
+            const SizedBox(height: 16),
+            Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: AppColors.primaryGreen.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: const Icon(
+                    Icons.medication_liquid_rounded,
+                    color: AppColors.primaryGreen,
+                    size: 20,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                const Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Add Custom Formulation',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: AppColors.textDarkGreen,
+                        ),
+                      ),
+                      SizedBox(height: 2),
+                      Text(
+                        'Create a custom Basti formulation for this patient',
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: AppColors.darkGrey,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                IconButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  icon: const Icon(Icons.close, size: 20),
+                  color: Colors.grey.shade600,
+                  splashRadius: 20,
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+            if (diseaseName.isNotEmpty) ...[
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 8,
+                ),
+                decoration: BoxDecoration(
+                  color: Colors.grey.shade50,
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: Colors.grey.shade200),
+                ),
+                child: Row(
+                  children: [
+                    const Icon(
+                      Icons.category_outlined,
+                      size: 16,
+                      color: AppColors.primaryGreen,
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        'Disease: $diseaseName',
+                        style: const TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w500,
+                          color: AppColors.textDarkGreen,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 16),
+            ],
+            const Text(
+              'Formulation Name *',
+              style: TextStyle(
+                fontSize: 13,
+                fontWeight: FontWeight.w600,
+                color: AppColors.textDarkGreen,
+              ),
+            ),
+            const SizedBox(height: 6),
+            TextField(
+              controller: _nameCtrl,
+              autofocus: true,
+              textCapitalization: TextCapitalization.sentences,
+              decoration: InputDecoration(
+                hintText: 'e.g. Palashadi niruha basti',
+                hintStyle: TextStyle(
+                  fontSize: 13,
+                  color: Colors.grey.shade400,
+                ),
+                errorText: _errorMessage,
+                filled: true,
+                fillColor: Colors.grey.shade50,
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 14,
+                  vertical: 12,
+                ),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                  borderSide: BorderSide(color: Colors.grey.shade300),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                  borderSide: BorderSide(color: Colors.grey.shade300),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                  borderSide: const BorderSide(
+                    color: AppColors.primaryGreen,
+                    width: 1.5,
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 16),
+            const Text(
+              'Basti Type',
+              style: TextStyle(
+                fontSize: 13,
+                fontWeight: FontWeight.w600,
+                color: AppColors.textDarkGreen,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12),
+              decoration: BoxDecoration(
+                color: Colors.grey.shade50,
+                borderRadius: BorderRadius.circular(10),
+                border: Border.all(color: Colors.grey.shade300),
+              ),
+              child: DropdownButtonHideUnderline(
+                child: DropdownButton<String>(
+                  value: _selectedBastiType,
+                  isExpanded: true,
+                  icon: const Icon(
+                    Icons.arrow_drop_down,
+                    color: AppColors.primaryGreen,
+                  ),
+                  items: _bastiTypeOptions.map((type) {
+                    return DropdownMenuItem<String>(
+                      value: type,
+                      child: Text(
+                        type,
+                        style: const TextStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w500,
+                          color: AppColors.textDarkGreen,
+                        ),
+                      ),
+                    );
+                  }).toList(),
+                  onChanged: (val) {
+                    if (val != null) {
+                      setState(() {
+                        _selectedBastiType = val;
+                      });
+                    }
+                  },
+                ),
+              ),
+            ),
+            const SizedBox(height: 24),
+            Row(
+              children: [
+                Expanded(
+                  child: OutlinedButton(
+                    onPressed: _isSaving
+                        ? null
+                        : () => Navigator.of(context).pop(),
+                    style: OutlinedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                      side: BorderSide(color: Colors.grey.shade300),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                    child: const Text(
+                      'Cancel',
+                      style: TextStyle(
+                        color: AppColors.darkGrey,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: _isSaving ? null : _submit,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.primaryGreen,
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                      elevation: 0,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                    child: _isSaving
+                        ? const SizedBox(
+                            width: 20,
+                            height: 20,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              color: Colors.white,
+                            ),
+                          )
+                        : const Text(
+                            'Add Formulation',
+                            style: TextStyle(fontWeight: FontWeight.w600),
+                          ),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -692,49 +1144,114 @@ class _DravyaDosePage extends StatelessWidget {
               children: [
                 Obx(() {
                   final opt = ctrl.selectedBastiOption.value;
-                  final bType =
-                      (opt?.bastiTypeCode.isNotEmpty == true
-                              ? opt!.bastiTypeCode
-                              : opt?.bastiTypeDisplay ?? '')
-                          .toLowerCase();
+                  String bType = (opt?.bastiTypeCode.isNotEmpty == true
+                          ? opt!.bastiTypeCode
+                          : opt?.bastiTypeDisplay ?? '')
+                      .toLowerCase();
+                  if (bType.isEmpty) {
+                    bType = ctrl.selectedBastiType.value?.toLowerCase() ?? '';
+                  }
+                  if (bType.isEmpty && ctrl.selectedPattern.value != null) {
+                    bType = ctrl.selectedPattern.value!.code.toLowerCase();
+                  }
+                  if (bType.isEmpty && ctrl.initialPlan != null) {
+                    bType = (ctrl.initialPlan!.selectedPatternCode.isNotEmpty
+                            ? ctrl.initialPlan!.selectedPatternCode
+                            : ctrl.initialPlan!.bastiName)
+                        .toLowerCase();
+                  }
 
                   final niruha = ctrl.calculatedNiruhaDose.value;
                   final anuvasana = ctrl.calculatedAnuvasanaDose.value;
                   final matra = ctrl.calculatedMatraDose.value;
                   final yapana = ctrl.calculatedYapanaDose.value;
-                  final activeBala = ctrl.bala.value ?? 'Avara';
+                  final activeBala = ctrl.bala.value ?? 'Madhyama';
 
                   List<DoseCalculationResult> doses = [];
                   if (bType.contains('yapana') || bType == 'yb') {
-                    if (yapana == null)
-                      return const Center(
-                        child: Padding(
-                          padding: EdgeInsets.all(16),
-                          child: CircularProgressIndicator(),
-                        ),
-                      );
-                    doses.add(yapana);
+                    if (yapana != null) {
+                      doses.add(yapana);
+                    } else if (niruha != null) {
+                      doses.add(DoseCalculationResult(
+                        bastiType: 'Yapana Basti',
+                        bala: niruha.bala,
+                        totalVolume: niruha.totalVolume,
+                        unit: niruha.unit,
+                        components: niruha.components,
+                        sourceReference: niruha.sourceReference,
+                      ));
+                    }
                   } else if (bType.contains('matra') ||
                       (bType.contains('sneha') && !bType.contains('niruha')) ||
                       bType == 'mb') {
-                    if (matra == null)
-                      return const Center(
-                        child: Padding(
-                          padding: EdgeInsets.all(16),
-                          child: CircularProgressIndicator(),
-                        ),
-                      );
-                    doses.add(matra);
+                    if (matra != null) {
+                      doses.add(matra);
+                    } else if (anuvasana != null) {
+                      final mVol = anuvasana.totalVolume > 60
+                          ? anuvasana.totalVolume / 2
+                          : anuvasana.totalVolume;
+                      doses.add(DoseCalculationResult(
+                        bastiType: 'Matra Basti',
+                        bala: anuvasana.bala,
+                        totalVolume: mVol,
+                        unit: anuvasana.unit,
+                        components: anuvasana.components,
+                        sourceReference: anuvasana.sourceReference,
+                      ));
+                    }
                   } else {
-                    if (niruha == null || anuvasana == null)
-                      return const Center(
-                        child: Padding(
-                          padding: EdgeInsets.all(16),
-                          child: CircularProgressIndicator(),
-                        ),
-                      );
-                    doses.add(niruha);
-                    doses.add(anuvasana);
+                    if (niruha != null) doses.add(niruha);
+                    if (anuvasana != null) doses.add(anuvasana);
+                  }
+
+                  if (doses.isEmpty) {
+                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                      ctrl.recalculateDoses();
+                    });
+
+                    return Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 24,
+                        horizontal: 16,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: Colors.grey.shade200),
+                      ),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const SizedBox(
+                            width: 24,
+                            height: 24,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2.2,
+                              color: AppColors.primaryGreen,
+                            ),
+                          ),
+                          const SizedBox(height: 12),
+                          const Text(
+                            'Calculating automated doses...',
+                            style: TextStyle(
+                              fontSize: 13,
+                              color: AppColors.darkGrey,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          TextButton.icon(
+                            onPressed: () => ctrl.recalculateDoses(),
+                            icon: const Icon(Icons.refresh_rounded, size: 16),
+                            label: const Text('Retry Calculation'),
+                            style: TextButton.styleFrom(
+                              foregroundColor: AppColors.primaryGreen,
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
                   }
 
                   return DoseBreakdownCard(
@@ -874,10 +1391,13 @@ class _ObservationPage extends StatefulWidget {
 class _ObservationPageState extends State<_ObservationPage> {
   int? _expandedIndex;
   final Map<int, GlobalKey> _cardKeys = {};
+  late final ScrollController _scrollController;
+  bool _hasInitialScrolled = false;
 
   @override
   void initState() {
     super.initState();
+    _scrollController = ScrollController();
     if (Get.isRegistered<AssessmentController>()) {
       final ctrl = Get.find<AssessmentController>();
       final logged = ctrl.loggedSessionCount;
@@ -890,29 +1410,47 @@ class _ObservationPageState extends State<_ObservationPage> {
     }
   }
 
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _scrollToIndex(
+    int index, {
+    bool delayed = false,
+    Duration duration = const Duration(milliseconds: 380),
+  }) {
+    void performScroll() {
+      if (!mounted) return;
+      final key = _cardKeys[index];
+      if (key?.currentContext != null) {
+        Scrollable.ensureVisible(
+          key!.currentContext!,
+          duration: duration,
+          curve: Curves.easeOutCubic,
+          alignment: 0.05,
+          alignmentPolicy: ScrollPositionAlignmentPolicy.explicit,
+        );
+      }
+    }
+
+    if (delayed) {
+      Future.delayed(const Duration(milliseconds: 140), performScroll);
+    } else {
+      WidgetsBinding.instance.addPostFrameCallback((_) => performScroll());
+    }
+  }
+
   void _handleToggle(int i, AssessmentController ctrl) {
     final wasExpanded = _expandedIndex == i;
     setState(() => _expandedIndex = wasExpanded ? null : i);
     
-    // Restore persisted data when expanding a session card
+    // Restore persisted data and smoothly scroll when expanding a session card
     if (!wasExpanded) {
       ctrl.restoreSessionData(i + 1);
+      _scrollToIndex(i, delayed: true);
     }
-    
-    // Add post frame callback to scroll to the card
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (mounted) {
-        final key = _cardKeys[i];
-        if (key?.currentContext != null) {
-          Scrollable.ensureVisible(
-            key!.currentContext!,
-            duration: const Duration(milliseconds: 300),
-            curve: Curves.easeInOut,
-            alignment: 0.1, // Scroll so the card is near the top
-          );
-        }
-      }
-    });
   }
 
   @override
@@ -927,6 +1465,17 @@ class _ObservationPageState extends State<_ObservationPage> {
       }
 
       final sessions = ctrl.sessions;
+
+      if (sessions.isNotEmpty && !_hasInitialScrolled && _expandedIndex != null) {
+        _hasInitialScrolled = true;
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          _scrollToIndex(
+            _expandedIndex!,
+            delayed: true,
+            duration: const Duration(milliseconds: 450),
+          );
+        });
+      }
 
       if (sessions.isEmpty) {
         return Center(
@@ -974,31 +1523,92 @@ class _ObservationPageState extends State<_ObservationPage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Expanded(
-                      flex: 3,
                       child: Obx(() {
                         ctrl.observationTick.value;
-                        final logged = ctrl.loggedSessionCount;
+                        final tpc = Get.isRegistered<TreatmentPlanController>()
+                            ? Get.find<TreatmentPlanController>()
+                            : null;
+                        final isPlanDone = ctrl.pradhankarmaComplete.value ||
+                            ctrl.initialPradhanaKarmaCompleted ||
+                            (tpc != null &&
+                                tpc.currentPlan.value?.status ==
+                                    TreatmentStatus.completed);
                         final total = sessions.length;
+                        final logged = isPlanDone && total > 0
+                            ? total
+                            : ctrl.loggedSessionCount;
                         return Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(
-                              '$logged of $total sessions logged',
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: const TextStyle(
-                                color: AppColors.textDarkGreen,
-                                fontSize: 13,
-                                fontWeight: FontWeight.w600,
-                              ),
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: Text(
+                                    '$logged of $total sessions logged',
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: const TextStyle(
+                                      color: AppColors.textDarkGreen,
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                ),
+                                if (!isPlanDone && logged < total) ...[
+                                  const SizedBox(width: 6),
+                                  GestureDetector(
+                                    onTap: () {
+                                      if (_expandedIndex != logged) {
+                                        setState(() => _expandedIndex = logged);
+                                        ctrl.restoreSessionData(logged + 1);
+                                      }
+                                      _scrollToIndex(logged, delayed: true);
+                                    },
+                                    child: Container(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 8,
+                                        vertical: 2,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        color: AppColors.primaryGreen.withValues(
+                                          alpha: 0.1,
+                                        ),
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                      child: Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          const Icon(
+                                            Icons.my_location_rounded,
+                                            size: 11,
+                                            color: AppColors.primaryGreen,
+                                          ),
+                                          const SizedBox(width: 4),
+                                          Text(
+                                            'Day ${logged + 1}',
+                                            style: const TextStyle(
+                                              color: AppColors.primaryGreen,
+                                              fontSize: 11,
+                                              fontWeight: FontWeight.w700,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ],
                             ),
                             const SizedBox(height: 6),
                             ClipRRect(
                               borderRadius: BorderRadius.circular(4),
                               child: LinearProgressIndicator(
-                                value: total == 0 ? 0 : logged / total,
+                                value: total == 0
+                                    ? 0
+                                    : (isPlanDone ? 1.0 : logged / total),
                                 minHeight: 5,
                                 backgroundColor: AppColors.inputBackground,
                                 valueColor: const AlwaysStoppedAnimation<Color>(
@@ -1010,19 +1620,19 @@ class _ObservationPageState extends State<_ObservationPage> {
                         );
                       }),
                     ),
-                    const SizedBox(width: 10),
-                    Flexible(
-                      flex: 2,
-                      child: Obx(() {
-                        final bastiName =
-                            ctrl.selectedBastiOption.value?.name ??
-                            ctrl.initialPlan?.bastiName ??
-                            ctrl.selectedBastiType.value ??
-                            '';
-                        if (bastiName.trim().isEmpty) {
-                          return const SizedBox.shrink();
-                        }
-                        return Container(
+                    Obx(() {
+                      final bastiName =
+                          ctrl.selectedBastiOption.value?.name ??
+                          ctrl.initialPlan?.bastiName ??
+                          ctrl.selectedBastiType.value ??
+                          '';
+                      if (bastiName.trim().isEmpty) {
+                        return const SizedBox.shrink();
+                      }
+                      return Padding(
+                        padding: const EdgeInsets.only(left: 10),
+                        child: Container(
+                          constraints: const BoxConstraints(maxWidth: 130),
                           padding: const EdgeInsets.symmetric(
                             horizontal: 10,
                             vertical: 5,
@@ -1043,9 +1653,9 @@ class _ObservationPageState extends State<_ObservationPage> {
                               fontWeight: FontWeight.w600,
                             ),
                           ),
-                        );
-                      }),
-                    ),
+                        ),
+                      );
+                    }),
                   ],
                 ),
               ],
@@ -1054,7 +1664,12 @@ class _ObservationPageState extends State<_ObservationPage> {
           // ── Session list ───────────────────────────────────────────────
           Expanded(
             child: ListView.builder(
-              padding: const EdgeInsets.fromLTRB(12, 10, 12, 16),
+              controller: _scrollController,
+              physics: const BouncingScrollPhysics(
+                parent: AlwaysScrollableScrollPhysics(),
+              ),
+              keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+              padding: const EdgeInsets.fromLTRB(12, 10, 12, 32),
               itemCount: sessions.length + 1,
               itemBuilder: (_, i) {
                 if (i == sessions.length) {
@@ -1104,14 +1719,22 @@ class _SessionCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.only(bottom: 8),
+      margin: const EdgeInsets.only(bottom: 10),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: isExpanded
+              ? AppColors.primaryGreen.withValues(alpha: 0.35)
+              : Colors.transparent,
+          width: 1.2,
+        ),
         boxShadow: [
           BoxShadow(
-            color: AppColors.primaryGreen.withValues(alpha: 0.05),
-            blurRadius: 8,
+            color: isExpanded
+                ? AppColors.primaryGreen.withValues(alpha: 0.08)
+                : Colors.black.withValues(alpha: 0.03),
+            blurRadius: isExpanded ? 10 : 6,
             offset: const Offset(0, 2),
           ),
         ],
@@ -1130,14 +1753,22 @@ class _SessionCard extends StatelessWidget {
                     ctrl.observationTick.value;
                     final tpcRegistered =
                         Get.isRegistered<TreatmentPlanController>();
-                    final isPersistedComplete =
-                        tpcRegistered &&
-                        Get.find<TreatmentPlanController>().persistedSessions
-                            .any(
-                              (ps) =>
-                                  ps.dayNumber == session.sessionNumber &&
-                                  ps.isCompleted,
-                            );
+                    final isPlanCompleted = ctrl.pradhankarmaComplete.value ||
+                        ctrl.initialPradhanaKarmaCompleted ||
+                        (tpcRegistered &&
+                            Get.find<TreatmentPlanController>()
+                                    .currentPlan
+                                    .value
+                                    ?.status ==
+                                TreatmentStatus.completed);
+                    final isPersistedComplete = isPlanCompleted ||
+                        (tpcRegistered &&
+                            Get.find<TreatmentPlanController>().persistedSessions
+                                .any(
+                                  (ps) =>
+                                      ps.dayNumber == session.sessionNumber &&
+                                      ps.isCompleted,
+                                ));
 
                     return AnimatedContainer(
                       duration: const Duration(milliseconds: 200),
@@ -1194,8 +1825,32 @@ class _SessionCard extends StatelessWidget {
                               ? schedule[dayIndex]
                               : null;
 
-                          final titleText = dayModel != null
-                              ? '${session.sessionNumber} — ${dayModel.scheduledBastiType} (${dayModel.scheduledDose.toInt()} ${dayModel.doseUnit})'
+                          String rawType = dayModel?.scheduledBastiType ?? '';
+                          if (rawType.isEmpty &&
+                              Get.isRegistered<TreatmentPlanController>()) {
+                            final ps = Get.find<TreatmentPlanController>()
+                                .persistedSessions
+                                .firstWhereOrNull(
+                                  (p) => p.dayNumber == session.sessionNumber,
+                                );
+                            if (ps != null && ps.scheduledBastiType.isNotEmpty) {
+                              rawType = ps.scheduledBastiType;
+                            }
+                          }
+
+                          // Strip any ml dose string if present e.g. "(480ml)" or "(480 ml)"
+                          final cleanType = rawType
+                              .replaceAll(
+                                RegExp(
+                                  r'\s*\(\s*\d+(\.\d+)?\s*ml\s*\)',
+                                  caseSensitive: false,
+                                ),
+                                '',
+                              )
+                              .trim();
+
+                          final titleText = cleanType.isNotEmpty
+                              ? '${session.sessionNumber} — $cleanType'
                               : '${session.sessionNumber}';
 
                           return Text(
@@ -1212,15 +1867,23 @@ class _SessionCard extends StatelessWidget {
                           // Check persisted status
                           final tpcRegistered =
                               Get.isRegistered<TreatmentPlanController>();
-                          final isPersistedComplete =
-                              tpcRegistered &&
-                              Get.find<TreatmentPlanController>()
-                                  .persistedSessions
-                                  .any(
-                                    (ps) =>
-                                        ps.dayNumber == session.sessionNumber &&
-                                        ps.isCompleted,
-                                  );
+                          final isPlanCompleted = ctrl.pradhankarmaComplete.value ||
+                              ctrl.initialPradhanaKarmaCompleted ||
+                              (tpcRegistered &&
+                                  Get.find<TreatmentPlanController>()
+                                          .currentPlan
+                                          .value
+                                          ?.status ==
+                                      TreatmentStatus.completed);
+                          final isPersistedComplete = isPlanCompleted ||
+                              (tpcRegistered &&
+                                  Get.find<TreatmentPlanController>()
+                                      .persistedSessions
+                                      .any(
+                                        (ps) =>
+                                            ps.dayNumber == session.sessionNumber &&
+                                            ps.isCompleted,
+                                      ));
 
                           final isSaving =
                               ctrl.savingSessionDay.value ==
@@ -1331,7 +1994,8 @@ class _SessionCard extends StatelessWidget {
                   ),
                   AnimatedRotation(
                     turns: isExpanded ? 0.5 : 0,
-                    duration: const Duration(milliseconds: 200),
+                    duration: const Duration(milliseconds: 250),
+                    curve: Curves.fastOutSlowIn,
                     child: const Icon(
                       Icons.keyboard_arrow_down_rounded,
                       color: AppColors.darkGrey,
@@ -1344,8 +2008,10 @@ class _SessionCard extends StatelessWidget {
           ),
           // ── Expandable body ──────────────────────────────────────────────
           AnimatedSize(
-            duration: const Duration(milliseconds: 260),
-            curve: Curves.easeInOut,
+            duration: const Duration(milliseconds: 280),
+            curve: Curves.fastOutSlowIn,
+            alignment: Alignment.topCenter,
+            clipBehavior: Clip.antiAlias,
             child: isExpanded
                 ? _SessionBody(
                     session: session,
@@ -1556,13 +2222,21 @@ class _SessionBody extends StatelessWidget {
                 ctrl.observationTick.value;
                 final tpcRegistered =
                     Get.isRegistered<TreatmentPlanController>();
-                final isPersistedComplete =
-                    tpcRegistered &&
-                    Get.find<TreatmentPlanController>().persistedSessions.any(
-                      (ps) =>
-                          ps.dayNumber == session.sessionNumber &&
-                          ps.isCompleted,
-                    );
+                final isPlanCompleted = ctrl.pradhankarmaComplete.value ||
+                    ctrl.initialPradhanaKarmaCompleted ||
+                    (tpcRegistered &&
+                        Get.find<TreatmentPlanController>()
+                                .currentPlan
+                                .value
+                                ?.status ==
+                            TreatmentStatus.completed);
+                final isPersistedComplete = isPlanCompleted ||
+                    (tpcRegistered &&
+                        Get.find<TreatmentPlanController>().persistedSessions.any(
+                          (ps) =>
+                              ps.dayNumber == session.sessionNumber &&
+                              ps.isCompleted,
+                        ));
                 final isSaving =
                     ctrl.savingSessionDay.value == session.sessionNumber;
                 final isDeleting =
@@ -2063,7 +2737,7 @@ class _TimeField extends StatelessWidget {
 
   DateTime _parseTimeString(String text) {
     final now = DateTime.now();
-    if (text.trim().isEmpty) return now;
+    if (text.trim().isEmpty || text.trim().toLowerCase() == 'administered') return now;
     try {
       final clean = text.trim();
       final parts = clean.split(RegExp(r'[:\s]+'));
@@ -2107,6 +2781,9 @@ class _TimeField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (isTimePicker && controller.text.trim().toLowerCase() == 'administered') {
+      controller.clear();
+    }
     final effectiveIcon =
         suffixIcon ?? (isTimePicker ? Icons.access_time_rounded : null);
 

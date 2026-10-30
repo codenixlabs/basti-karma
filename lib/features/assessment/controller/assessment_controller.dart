@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../../app/data/models/master/basti_formulation_model.dart';
+import '../../../app/data/models/master/dose_component.dart';
+import '../../../app/shared/utils/custom_snackbar.dart';
 import '../../../app/data/models/master/basti_option_model.dart';
 import '../../../app/data/models/master/basti_pattern_model.dart';
 import '../../../app/data/models/master/disease_model.dart';
@@ -12,7 +15,6 @@ import '../../../app/data/models/poorva_karma/poorva_karma_results.dart';
 import '../../../app/data/repositories/api_poorva_karma_repository.dart';
 import '../../../app/data/repositories/api_paschata_karma_repository.dart';
 import '../../../app/data/repositories/api_pradhana_karma_repository.dart';
-import '../../../app/data/repositories/api_treatment_repository.dart';
 import '../../../app/data/repositories/basti_clinical_repository.dart';
 import '../../../app/data/services/api_service.dart';
 import '../../../app/data/services/basti_dose_calculator_service.dart';
@@ -271,21 +273,26 @@ class AssessmentController extends GetxController {
     clinicalDataError.value = '';
     try {
       await syncBalaFromPoorvaKarma();
-      final diseases = await repository.getDiseases(forceRefresh: forceRefresh);
+      final diseases = await repository.getDiseases(
+        patientId: patientId,
+        forceRefresh: forceRefresh,
+      );
       final sortedDiseases = List<DiseaseModel>.from(diseases)
         ..sort((a, b) => a.displayLabel.trim().toLowerCase().compareTo(b.displayLabel.trim().toLowerCase()));
       availableDiseases.value = sortedDiseases;
 
-      final effectivePlan =
-          initialPlan ??
-          (Get.isRegistered<TreatmentPlanController>() &&
-                  Get.find<TreatmentPlanController>()
-                          .currentPlan
-                          .value
-                          ?.patientId ==
-                      patientId
-              ? Get.find<TreatmentPlanController>().currentPlan.value
-              : null);
+      BastiTreatmentPlanModel? effectivePlan = initialPlan;
+      if (effectivePlan == null && Get.isRegistered<TreatmentPlanController>() && patientId != null) {
+        final tpc = Get.find<TreatmentPlanController>();
+        if (tpc.currentPlan.value?.patientId == patientId) {
+          effectivePlan = tpc.currentPlan.value;
+        } else {
+          final loaded = await tpc.loadActiveOrLatestPlanForPatient(patientId!);
+          if (loaded) {
+            effectivePlan = tpc.currentPlan.value;
+          }
+        }
+      }
 
       // Determine initial disease
       if (effectivePlan != null &&
@@ -367,9 +374,10 @@ class AssessmentController extends GetxController {
         final options = await repository.getBastiOptionsForDisease(
           d.id,
           diseaseName: d.name,
+          patientId: patientId,
           forceRefresh: forceRefresh,
         );
-        availableBastiOptions.value = options;
+        availableBastiOptions.assignAll(options);
         if (options.isNotEmpty) {
           if (effectivePlan != null &&
               (effectivePlan.bastiOptionId.isNotEmpty ||
@@ -475,13 +483,18 @@ class AssessmentController extends GetxController {
   Future<void> _restoreAllPersistedSessions() async {
     if (!Get.isRegistered<TreatmentPlanController>()) return;
     final tpc = Get.find<TreatmentPlanController>();
+    final isPlanDone = pradhankarmaComplete.value ||
+        initialPradhanaKarmaCompleted ||
+        tpc.currentPlan.value?.status == TreatmentStatus.completed;
+
     for (int day = 1; day <= generatedSchedule.length; day++) {
       final persisted = await tpc.getSession(day);
       final dayIndex = day - 1;
       if (dayIndex >= 0 && dayIndex < sessions.length) {
         final sessionData = sessions[dayIndex];
         if (persisted != null && persisted.isCompleted) {
-          if (persisted.adanaKala.isNotEmpty) {
+          if (persisted.adanaKala.isNotEmpty &&
+              persisted.adanaKala.trim().toLowerCase() != 'administered') {
             sessionData.adanaKala.text = persisted.adanaKala;
           }
           if (persisted.pratyagamana.isNotEmpty) {
@@ -518,6 +531,10 @@ class AssessmentController extends GetxController {
             i++
           ) {
             sessionData.atiyoga[i] = persisted.atiyogaSelected[i];
+          }
+        } else if (isPlanDone) {
+          if (sessionData.samyaka.isNotEmpty && !sessionData.samyaka.any((v) => v)) {
+            sessionData.samyaka[0] = true;
           }
         } else {
           sessionData.adanaKala.clear();
@@ -568,11 +585,12 @@ class AssessmentController extends GetxController {
       final options = await repository.getBastiOptionsForDisease(
         effectiveDisease.id,
         diseaseName: effectiveDisease.name,
+        patientId: patientId,
         forceRefresh: forceRefresh,
       );
 
       if (options.isNotEmpty) {
-        availableBastiOptions.value = options;
+        availableBastiOptions.assignAll(options);
         // Keep existing selection if valid and not Yukti, otherwise select first
         final current = selectedBastiOption.value;
         final matching = current == null || current.name.contains('Yukti')
@@ -649,10 +667,22 @@ class AssessmentController extends GetxController {
             : 'Madhyama');
 
     final opt = selectedBastiOption.value;
-    final bType = (opt?.bastiTypeCode.isNotEmpty == true
+    String bType = (opt?.bastiTypeCode.isNotEmpty == true
             ? opt!.bastiTypeCode
             : opt?.bastiTypeDisplay ?? '')
         .toLowerCase();
+    if (bType.isEmpty) {
+      bType = selectedBastiType.value?.toLowerCase() ?? '';
+    }
+    if (bType.isEmpty && selectedPattern.value != null) {
+      bType = selectedPattern.value!.code.toLowerCase();
+    }
+    if (bType.isEmpty && effectivePlan != null) {
+      bType = (effectivePlan.selectedPatternCode.isNotEmpty
+              ? effectivePlan.selectedPatternCode
+              : effectivePlan.bastiName)
+          .toLowerCase();
+    }
 
     DoseCalculationResult? niruhaRes;
     DoseCalculationResult? anuvasanaRes;
@@ -660,22 +690,152 @@ class AssessmentController extends GetxController {
     DoseCalculationResult? yapanaRes;
 
     if (bType.contains('yapana') || bType == 'yb') {
-      yapanaRes = await doseCalculator.calculateDose(
+      try {
+        yapanaRes = await doseCalculator.calculateDose(
           bastiType: 'Yapana',
           patientBala: activeBala,
-      );
-    } else if (bType.contains('matra') || (bType.contains('sneha') && !bType.contains('niruha')) || bType == 'mb') {
-      matraRes = await doseCalculator.calculateDose(
+        );
+      } catch (_) {}
+      if (yapanaRes == null) {
+        try {
+          yapanaRes = await doseCalculator.calculateDose(
+            bastiType: 'Niruha',
+            patientBala: activeBala,
+          );
+        } catch (_) {}
+      }
+      if (yapanaRes == null) {
+        final bLower = activeBala.toLowerCase();
+        final vol = bLower == 'pravara'
+            ? 840.0
+            : (bLower == 'avara' ? 350.0 : 480.0);
+        yapanaRes = DoseCalculationResult(
+          bastiType: 'Yapana Basti',
+          bala: activeBala,
+          totalVolume: vol,
+          unit: 'ml',
+          components: [
+            DoseComponent(
+              name: 'Kashaya / Kwatha Dravya',
+              amount: vol * 0.5,
+              unit: 'ml',
+            ),
+            DoseComponent(
+              name: 'Sneha Dravya (Taila/Ghrita)',
+              amount: vol * 0.25,
+              unit: 'ml',
+            ),
+            DoseComponent(name: 'Honey (Madhu)', amount: vol * 0.15, unit: 'ml'),
+            DoseComponent(name: 'Kalka Dravya', amount: vol * 0.1, unit: 'gm'),
+          ],
+          sourceReference: 'DOSE OF BASTI',
+        );
+      }
+    } else if (bType.contains('matra') ||
+        (bType.contains('sneha') && !bType.contains('niruha')) ||
+        bType == 'mb') {
+      try {
+        matraRes = await doseCalculator.calculateDose(
           bastiType: 'Matra',
           patientBala: activeBala,
-      );
+        );
+      } catch (_) {}
+      if (matraRes == null) {
+        final aRule = await doseCalculator.calculateDose(
+          bastiType: 'Anuvasana',
+          patientBala: activeBala,
+        );
+        final vol = aRule != null
+            ? (aRule.totalVolume > 60 ? aRule.totalVolume / 2 : aRule.totalVolume)
+            : 60.0;
+        matraRes = DoseCalculationResult(
+          bastiType: 'Matra Basti',
+          bala: activeBala,
+          totalVolume: vol,
+          unit: 'ml',
+          components: [
+            DoseComponent(
+              name: 'Sneha Dravya (Taila/Ghrita)',
+              amount: vol,
+              unit: 'ml',
+            ),
+          ],
+          sourceReference: 'DOSE OF BASTI',
+        );
+      }
     } else {
-      final results = await Future.wait([
-        doseCalculator.calculateDose(bastiType: 'Niruha', patientBala: activeBala),
-        doseCalculator.calculateDose(bastiType: 'Anuvasana', patientBala: activeBala),
-      ]);
-      niruhaRes = results[0];
-      anuvasanaRes = results[1];
+      try {
+        final results = await Future.wait([
+          doseCalculator.calculateDose(
+            bastiType: 'Niruha',
+            patientBala: activeBala,
+          ),
+          doseCalculator.calculateDose(
+            bastiType: 'Anuvasana',
+            patientBala: activeBala,
+          ),
+        ]);
+        niruhaRes = results[0];
+        anuvasanaRes = results[1];
+      } catch (_) {}
+
+      if (niruhaRes == null) {
+        final bLower = activeBala.toLowerCase();
+        final vol = bLower == 'pravara'
+            ? 840.0
+            : (bLower == 'avara' ? 350.0 : 480.0);
+        niruhaRes = DoseCalculationResult(
+          bastiType: 'Niruha',
+          bala: activeBala,
+          totalVolume: vol,
+          unit: 'ml',
+          components: bLower == 'pravara'
+              ? const [
+                  DoseComponent(name: 'Honey', amount: 120, unit: 'ml'),
+                  DoseComponent(name: 'Lavana', amount: 12, unit: 'gm'),
+                  DoseComponent(name: 'Sneha', amount: 240, unit: 'ml'),
+                  DoseComponent(name: 'Kalka', amount: 80, unit: 'gm'),
+                  DoseComponent(name: 'Kashaya', amount: 400, unit: 'ml'),
+                ]
+              : (bLower == 'avara'
+                  ? const [
+                      DoseComponent(name: 'Honey', amount: 80, unit: 'ml'),
+                      DoseComponent(name: 'Lavana', amount: 12, unit: 'gm'),
+                      DoseComponent(name: 'Sneha', amount: 70, unit: 'ml'),
+                      DoseComponent(name: 'Kalka', amount: 18, unit: 'gm'),
+                      DoseComponent(name: 'Kashaya', amount: 200, unit: 'ml'),
+                    ]
+                  : const [
+                      DoseComponent(name: 'Honey', amount: 80, unit: 'ml'),
+                      DoseComponent(name: 'Lavana', amount: 12, unit: 'gm'),
+                      DoseComponent(name: 'Sneha', amount: 60, unit: 'ml'),
+                      DoseComponent(name: 'Kalka', amount: 30, unit: 'gm'),
+                      DoseComponent(name: 'Kashaya', amount: 310, unit: 'ml'),
+                    ]),
+          sourceReference: 'DOSE OF BASTI',
+        );
+      }
+
+      if (anuvasanaRes == null) {
+        final bLower = activeBala.toLowerCase();
+        final vol = bLower == 'pravara'
+            ? 60.0
+            : (bLower == 'avara' ? 120.0 : 80.0);
+        anuvasanaRes = DoseCalculationResult(
+          bastiType: 'Anuvasana',
+          bala: activeBala,
+          totalVolume: vol,
+          unit: 'ml',
+          components: [
+            DoseComponent(
+              name: 'Sneha Dravya (Taila/Ghrita)',
+              amount: vol,
+              unit: 'ml',
+            ),
+          ],
+          sourceReference: 'DOSE OF BASTI',
+        );
+      }
     }
 
     calculatedNiruhaDose.value = niruhaRes;
@@ -686,10 +846,14 @@ class AssessmentController extends GetxController {
     if (bType.contains('yapana') || bType == 'yb') {
       final yVol = yapanaRes?.totalVolume ?? niruhaRes?.totalVolume ?? 400.0;
       dravyaDoseCtrl.text = 'Yapana: ${yVol.toInt()} ml';
-    } else if (bType.contains('matra') || (bType.contains('sneha') && !bType.contains('niruha')) || bType == 'mb') {
-      final mVol = matraRes?.totalVolume ?? (anuvasanaRes != null ? (anuvasanaRes.totalVolume / 2) : 50.0);
+    } else if (bType.contains('matra') ||
+        (bType.contains('sneha') && !bType.contains('niruha')) ||
+        bType == 'mb') {
+      final mVol = matraRes?.totalVolume ??
+          (anuvasanaRes != null ? (anuvasanaRes.totalVolume / 2) : 50.0);
       final aVol = anuvasanaRes?.totalVolume ?? 100.0;
-      dravyaDoseCtrl.text = 'Matra: ${mVol.toInt()} ml | Anuvasana: ${aVol.toInt()} ml';
+      dravyaDoseCtrl.text =
+          'Matra: ${mVol.toInt()} ml | Anuvasana: ${aVol.toInt()} ml';
     } else if (niruhaRes != null && anuvasanaRes != null) {
       dravyaDoseCtrl.text =
           'Niruha: ${niruhaRes.totalVolume.toInt()} ml | Anuvasana: ${anuvasanaRes.totalVolume.toInt()} ml';
@@ -698,9 +862,12 @@ class AssessmentController extends GetxController {
     final hasExistingPlan =
         effectivePlan != null ||
         (Get.isRegistered<TreatmentPlanController>() &&
-            Get.find<TreatmentPlanController>().currentPlan.value != null) ||
+            Get.find<TreatmentPlanController>().currentPlan.value != null &&
+            Get.find<TreatmentPlanController>().currentPlan.value!.patientId == patientId) ||
         generatedSchedule.isNotEmpty ||
-        selectedPattern.value != null;
+        selectedPattern.value != null ||
+        pradhankarmaComplete.value ||
+        initialPradhanaKarmaCompleted;
 
     bool didCallGenerate = false;
     // Recommend pattern aligned with patient Bala ONLY for brand-new treatment creation
@@ -810,18 +977,119 @@ class AssessmentController extends GetxController {
       return;
     }
 
-    final newDisease = DiseaseModel(
-      id: DiseaseModel.slugify(trimmed),
-      name: trimmed,
-      englishName: trimmed,
-      description: 'Custom added disease',
-    );
+    DiseaseModel newDisease;
+    if (patientId != null && patientId!.isNotEmpty) {
+      try {
+        newDisease = await repository.addCustomDisease(
+          name: trimmed,
+          patientId: patientId!,
+        );
+        CustomSnackBar.showSuccess(
+          'Custom disease "$trimmed" added successfully.',
+          title: 'Disease Added',
+        );
+      } catch (e) {
+        debugPrint('[AssessmentController] Error adding custom disease via API: $e');
+        newDisease = DiseaseModel(
+          id: 'custom_${DateTime.now().millisecondsSinceEpoch}',
+          name: trimmed,
+          englishName: trimmed,
+          description: 'Custom added disease',
+          isCustom: true,
+          patientId: patientId,
+        );
+      }
+    } else {
+      newDisease = DiseaseModel(
+        id: 'custom_${DateTime.now().millisecondsSinceEpoch}',
+        name: trimmed,
+        englishName: trimmed,
+        description: 'Custom added disease',
+        isCustom: true,
+      );
+    }
 
-    availableDiseases.add(newDisease);
-    availableDiseases.sort(
+    final updatedDiseases = List<DiseaseModel>.from(availableDiseases);
+    updatedDiseases.removeWhere((d) => d.id == newDisease.id);
+    updatedDiseases.add(newDisease);
+    updatedDiseases.sort(
       (a, b) => a.displayLabel.trim().toLowerCase().compareTo(b.displayLabel.trim().toLowerCase()),
     );
+    availableDiseases.assignAll(updatedDiseases);
     await selectDisease(newDisease);
+  }
+
+  /// Adds a custom formulation directly under the selected disease and patient (§8.4).
+  Future<bool> addNewCustomFormulation({
+    required String name,
+    String? bastiType,
+  }) async {
+    final trimmed = name.trim();
+    if (trimmed.isEmpty) return false;
+    final d = selectedDisease.value;
+    if (d == null) {
+      CustomSnackBar.showWarning(
+        'Please select a disease first before adding a formulation.',
+        title: 'Disease Required',
+      );
+      return false;
+    }
+
+    try {
+      isLoadingClinicalData.value = true;
+      BastiFormulationModel createdFormulation;
+      if (patientId != null && patientId!.isNotEmpty) {
+        createdFormulation = await repository.addCustomFormulation(
+          name: trimmed,
+          diseaseId: d.id,
+          patientId: patientId!,
+          bastiType: bastiType,
+        );
+      } else {
+        createdFormulation = BastiFormulationModel(
+          id: 'custom_formulation_${DateTime.now().millisecondsSinceEpoch}',
+          name: trimmed,
+          rawName: '$trimmed. (NB+AB)',
+          bastiType: bastiType ?? 'Niruha Basti + Anuvasana Basti',
+          formulationDetails: 'Custom formulation created by doctor',
+          ingredientsRaw: '',
+          isCustom: true,
+          diseaseIds: [d.id],
+        );
+      }
+
+      final option = BastiOptionModel.fromFormulation(
+        createdFormulation,
+        diseaseId: d.id,
+      );
+
+      // Remove fallback placeholder Yukti if adding first real formulation
+      final updatedOptions = List<BastiOptionModel>.from(availableBastiOptions);
+      updatedOptions.removeWhere(
+        (o) => o.name.contains('Yukti') && o.ingredients.isEmpty,
+      );
+      updatedOptions.removeWhere(
+        (o) => o.id == option.id || o.name.toLowerCase() == option.name.toLowerCase(),
+      );
+      updatedOptions.insert(0, option);
+      availableBastiOptions.assignAll(updatedOptions);
+
+      await selectBastiOption(option);
+
+      CustomSnackBar.showSuccess(
+        'Custom formulation "$trimmed" added successfully.',
+        title: 'Formulation Added',
+      );
+      return true;
+    } catch (e) {
+      debugPrint('[AssessmentController] Error adding custom formulation: $e');
+      CustomSnackBar.showError(
+        'Failed to add custom formulation: ${e.toString().replaceFirst('Exception: ', '')}',
+      );
+      return false;
+    } finally {
+      isLoadingClinicalData.value = false;
+    }
   }
 
   Future<void> _syncDiseaseSelection() async {
@@ -1305,7 +1573,8 @@ class AssessmentController extends GetxController {
       '[Day $dayNumber / ${persisted.id}] Selected observation IDs returned when Day $dayNumber is reopened: $selectedReopened',
     );
 
-    if (persisted.adanaKala.isNotEmpty) {
+    if (persisted.adanaKala.isNotEmpty &&
+        persisted.adanaKala.trim().toLowerCase() != 'administered') {
       sessionData.adanaKala.text = persisted.adanaKala;
     }
     if (persisted.pratyagamana.isNotEmpty) {
@@ -1703,6 +1972,17 @@ class AssessmentController extends GetxController {
             if (!isAlreadySelected) {
               await fetchBastiOptionsForSelectedDisease(forceRefresh: false);
             }
+          } else if (model.diseaseId != null && model.diseaseId!.isNotEmpty) {
+            try {
+              final directDisease = await repository.getDiseaseById(
+                model.diseaseId!,
+                patientId: patientId,
+              );
+              if (directDisease != null) {
+                selectedDisease.value = directDisease;
+                await fetchBastiOptionsForSelectedDisease(forceRefresh: false);
+              }
+            } catch (_) {}
           }
         }
 
@@ -1742,6 +2022,11 @@ class AssessmentController extends GetxController {
             formulationCtrl.text = firstReal.formulationDetails;
           }
         }
+        if (selectedBastiOption.value == null && availableBastiOptions.isNotEmpty) {
+          selectedBastiOption.value = availableBastiOptions.first;
+          selectedBastiType.value = availableBastiOptions.first.name;
+          formulationCtrl.text = availableBastiOptions.first.formulationDetails;
+        }
 
         // 3. Restore Pattern
         if (model.bastiPatternCode != null && model.bastiPatternCode!.isNotEmpty) {
@@ -1754,7 +2039,7 @@ class AssessmentController extends GetxController {
           }
         }
 
-        // 4. Restore Schedule if not yet set
+        // 4. Restore Schedule
         final rawPatternCode =
             model.bastiPatternCode ?? data['bastiPatternCode']?.toString();
         final rawFormulation =
@@ -1766,8 +2051,13 @@ class AssessmentController extends GetxController {
             rawFormulation != null &&
             rawFormulation.toString().trim().isNotEmpty;
 
-        if (generatedSchedule.isEmpty &&
-            (hasValidPattern || hasValidFormulation)) {
+        final isPlanDone = pradhankarmaComplete.value || initialPradhanaKarmaCompleted;
+        final bool scheduleNeedsRestore = generatedSchedule.isEmpty ||
+            (data['sequence'] is List && (data['sequence'] as List).length != generatedSchedule.length) ||
+            isPlanDone;
+
+        if (scheduleNeedsRestore &&
+            (hasValidPattern || hasValidFormulation || isPlanDone)) {
           List<String> seq = [];
           if (data['sequence'] is List &&
               (data['sequence'] as List).isNotEmpty) {
@@ -1987,8 +2277,10 @@ class AssessmentController extends GetxController {
                     : Map<String, dynamic>.from(item);
 
                 final adminTime = item['timeAdministered']?.toString();
-                if (adminTime != null && adminTime.isNotEmpty) {
-                  sData.adanaKala.text = adminTime;
+                if (adminTime != null &&
+                    adminTime.trim().isNotEmpty &&
+                    adminTime.trim().toLowerCase() != 'administered') {
+                  sData.adanaKala.text = adminTime.trim();
                 }
 
                 String parsedPratyagamana = item['pratyagamana']?.toString() ??
@@ -2165,9 +2457,13 @@ class AssessmentController extends GetxController {
       }
       
       if (Get.isRegistered<TreatmentPlanController>()) {
-        await Get.find<TreatmentPlanController>().loadActivePlanForPatient(patientId!);
+        await Get.find<TreatmentPlanController>().loadActiveOrLatestPlanForPatient(patientId!);
+        await _restoreAllPersistedSessions();
       }
       
+      // Ensure doses are calculated & available in memory when resuming
+      await recalculateDoses();
+
       _hasLoadedPradhanaKarma = true;
     } catch (e) {
       debugPrint('Error loading pradhana karma from backend: $e');
@@ -2651,10 +2947,20 @@ class AssessmentController extends GetxController {
   /// Returns the number of COMPLETED sessions from the persisted store.
   /// Falls back to the in-memory heuristic if the controller is not registered.
   int get loggedSessionCount {
+    final isDone = pradhankarmaComplete.value || initialPradhanaKarmaCompleted;
     if (Get.isRegistered<TreatmentPlanController>()) {
-      return Get.find<TreatmentPlanController>().completedSessionCount;
+      final tpc = Get.find<TreatmentPlanController>();
+      if ((isDone || tpc.currentPlan.value?.status == TreatmentStatus.completed) &&
+          generatedSchedule.isNotEmpty) {
+        final tpcCount = tpc.completedSessionCount;
+        return tpcCount >= generatedSchedule.length ? tpcCount : generatedSchedule.length;
+      }
+      return tpc.completedSessionCount;
     }
     // Fallback: count in-memory sessions that have any data
+    if (isDone && generatedSchedule.isNotEmpty) {
+      return generatedSchedule.length;
+    }
     return sessions
         .where(
           (s) =>

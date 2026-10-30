@@ -9,7 +9,7 @@ import 'auth_service.dart';
 
 class ApiService extends GetConnect {
   static const String defaultBaseUrl =
-      'https://bhastikarma-app-backend.onrender.com/api';
+      'https://bhastikarma-app-backend-l0lb.onrender.com/api';
 
   static const Duration defaultTimeout = Duration(seconds: 15);
   Duration timeoutDuration = defaultTimeout;

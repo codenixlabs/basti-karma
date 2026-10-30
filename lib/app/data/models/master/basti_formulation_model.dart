@@ -18,6 +18,10 @@ class BastiFormulationModel {
   final List<BastiIngredient> ingredients;
   final List<String> diseaseIds;
 
+  final bool isCustom;
+  final String? patientId;
+  final String? doctorId;
+
   const BastiFormulationModel({
     required this.id,
     this.mongoId,
@@ -35,6 +39,9 @@ class BastiFormulationModel {
     this.recipeCompleteness,
     this.ingredients = const [],
     this.diseaseIds = const [],
+    this.isCustom = false,
+    this.patientId,
+    this.doctorId,
   });
 
   BastiFormulationModel copyWith({
@@ -54,6 +61,9 @@ class BastiFormulationModel {
     String? recipeCompleteness,
     List<BastiIngredient>? ingredients,
     List<String>? diseaseIds,
+    bool? isCustom,
+    String? patientId,
+    String? doctorId,
   }) {
     return BastiFormulationModel(
       id: id ?? this.id,
@@ -72,12 +82,17 @@ class BastiFormulationModel {
       recipeCompleteness: recipeCompleteness ?? this.recipeCompleteness,
       ingredients: ingredients ?? this.ingredients,
       diseaseIds: diseaseIds ?? this.diseaseIds,
+      isCustom: isCustom ?? this.isCustom,
+      patientId: patientId ?? this.patientId,
+      doctorId: doctorId ?? this.doctorId,
     );
   }
 
   factory BastiFormulationModel.fromJson(Map<String, dynamic> json) {
+    final rawId = (json['id'] as String?) ?? (json['_id'] as String?) ?? '';
+    final isCustom = (json['isCustom'] as bool?) ?? rawId.startsWith('custom_');
     return BastiFormulationModel(
-      id: (json['id'] as String?) ?? (json['_id'] as String?) ?? '',
+      id: rawId,
       mongoId: json['_id'] as String?,
       name: (json['name'] as String?) ?? '',
       rawName: (json['rawName'] as String?) ?? '',
@@ -106,6 +121,9 @@ class BastiFormulationModel {
               ?.map((e) => e.toString())
               .toList() ??
           const [],
+      isCustom: isCustom,
+      patientId: json['patientId'] as String?,
+      doctorId: json['doctorId'] as String?,
     );
   }
 
@@ -127,6 +145,9 @@ class BastiFormulationModel {
       if (recipeCompleteness != null) 'recipeCompleteness': recipeCompleteness,
       'ingredients': ingredients.map((e) => e.toJson()).toList(),
       'diseaseIds': diseaseIds,
+      if (isCustom) 'isCustom': isCustom,
+      if (patientId != null) 'patientId': patientId,
+      if (doctorId != null) 'doctorId': doctorId,
     };
   }
 

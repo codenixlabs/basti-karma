@@ -6,6 +6,9 @@ class DiseaseModel {
   final String? category;
   final String description;
   final String? sourceName;
+  final bool isCustom;
+  final String? patientId;
+  final String? doctorId;
 
   const DiseaseModel({
     required this.id,
@@ -15,6 +18,9 @@ class DiseaseModel {
     this.category,
     this.description = '',
     this.sourceName,
+    this.isCustom = false,
+    this.patientId,
+    this.doctorId,
   });
 
   /// Null-safe display label:
@@ -36,6 +42,9 @@ class DiseaseModel {
     String? category,
     String? description,
     String? sourceName,
+    bool? isCustom,
+    String? patientId,
+    String? doctorId,
   }) {
     return DiseaseModel(
       id: id ?? this.id,
@@ -45,6 +54,9 @@ class DiseaseModel {
       category: category ?? this.category,
       description: description ?? this.description,
       sourceName: sourceName ?? this.sourceName,
+      isCustom: isCustom ?? this.isCustom,
+      patientId: patientId ?? this.patientId,
+      doctorId: doctorId ?? this.doctorId,
     );
   }
 
@@ -65,6 +77,9 @@ class DiseaseModel {
     final mongoId = json['_id'] as String?;
     final name = (json['name'] as String?) ?? '';
 
+    final isCustom = (json['isCustom'] as bool?) ??
+        (rawId?.startsWith('custom_') ?? false);
+
     // If rawId is missing or is just a 24-hex mongoId, generate slug from name
     final isMongoHex =
         rawId != null && RegExp(r'^[0-9a-fA-F]{24}$').hasMatch(rawId);
@@ -80,6 +95,9 @@ class DiseaseModel {
       category: json['category'] as String?,
       description: (json['description'] as String?) ?? '',
       sourceName: json['sourceName'] as String?,
+      isCustom: isCustom,
+      patientId: json['patientId'] as String?,
+      doctorId: json['doctorId'] as String?,
     );
   }
 
@@ -92,6 +110,9 @@ class DiseaseModel {
       'category': category,
       'description': description,
       if (sourceName != null) 'sourceName': sourceName,
+      if (isCustom) 'isCustom': isCustom,
+      if (patientId != null) 'patientId': patientId,
+      if (doctorId != null) 'doctorId': doctorId,
     };
   }
 

@@ -105,6 +105,37 @@ class BastiOptionCard extends StatelessWidget {
                                   ),
                                 ),
                               ),
+                              if (option.isCustom)
+                                Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                                  decoration: BoxDecoration(
+                                    color: Colors.purple.shade50,
+                                    borderRadius: BorderRadius.circular(20),
+                                    border: Border.all(
+                                      color: Colors.purple.shade200,
+                                      width: 0.8,
+                                    ),
+                                  ),
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Icon(
+                                        Icons.person_outline,
+                                        size: 12,
+                                        color: Colors.purple.shade700,
+                                      ),
+                                      const SizedBox(width: 4),
+                                      Text(
+                                        'Custom',
+                                        style: TextStyle(
+                                          fontSize: 11,
+                                          fontWeight: FontWeight.w600,
+                                          color: Colors.purple.shade700,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
                               if (isSelected)
                                 Container(
                                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),

@@ -15,6 +15,7 @@ import '../../assessment/controller/assessment_controller.dart';
 import '../../assessment/controller/treatment_plan_controller.dart';
 import '../../assessment/screens/paschatkarma_screen.dart';
 import '../../assessment/screens/pradhankarma_screen.dart';
+import '../../assessment/screens/purvakarma_screen.dart';
 import '../controller/patient_controller.dart';
 import '../widgets/patient_case_sheet_sheet.dart';
 import '../widgets/patient_documents_sheet.dart';
@@ -220,14 +221,20 @@ class _PatientDetailScreenState extends State<PatientDetailScreen>
     }
   }
 
-  void _continueTreatment(BastiTreatmentPlanModel plan) {
+  Future<void> _ensureAssessmentController({BastiTreatmentPlanModel? plan}) async {
     final patientCtrl = Get.find<PatientController>();
     patientCtrl.selectPatient(_patient);
 
-    _tpc.currentPlan.value = plan;
-    _tpc.getSessions(plan.id).then((sessions) {
-      _tpc.persistedSessions.assignAll(sessions);
-    }).catchError((_) {});
+    final targetPlan = plan ?? _activePlan ?? (_historyPlans.isNotEmpty ? _historyPlans.first : null);
+    _tpc.currentPlan.value = targetPlan;
+    if (targetPlan != null) {
+      try {
+        final sessions = await _tpc.getSessions(targetPlan.id);
+        _tpc.persistedSessions.assignAll(sessions);
+      } catch (_) {}
+    } else {
+      _tpc.persistedSessions.clear();
+    }
 
     if (Get.isRegistered<AssessmentController>()) {
       Get.delete<AssessmentController>();
@@ -247,104 +254,38 @@ class _PatientDetailScreenState extends State<PatientDetailScreen>
         vyayamaShakti: _patient.vyayamaShakti,
         vaya: _patient.vaya,
         jihwa: _patient.jihwa,
-        initialPlan: plan,
+        initialPlan: targetPlan,
         initialPoorvaKarmaCompleted: _patient.poorvaKarmaCompleted,
         initialPradhanaKarmaCompleted: _patient.pradhanaKarmaCompleted,
         initialPaschataKarmaCompleted: _patient.paschataKarmaCompleted,
       ),
     );
+  }
+
+  Future<void> _continueTreatment(BastiTreatmentPlanModel plan) async {
+    await _ensureAssessmentController(plan: plan);
 
     if (!_patient.poorvaKarmaCompleted) {
       Get.toNamed(AppRoutes.assessment)?.then((_) => _loadData());
       return;
     }
 
-    final initialStep = _completedSessionsCount > 0 ? 3 : 0;
+    final initialStep = (_completedSessionsCount > 0 || _patient.pradhanaKarmaCompleted) ? 3 : 0;
     Get.to(
       () => PradhanKarmaScreen(initialStep: initialStep),
     )?.then((_) => _loadData());
   }
 
-  void _startPradhanKarma() {
-    final patientCtrl = Get.find<PatientController>();
-    patientCtrl.selectPatient(_patient);
-
-    final plan = _activePlan;
-    if (plan != null) {
-      _tpc.currentPlan.value = plan;
-      _tpc.getSessions(plan.id).then((sessions) {
-        _tpc.persistedSessions.assignAll(sessions);
-      }).catchError((_) {});
-    } else {
-      _tpc.currentPlan.value = null;
-      _tpc.persistedSessions.clear();
-    }
-
-    if (Get.isRegistered<AssessmentController>()) {
-      Get.delete<AssessmentController>();
-    }
-    Get.put(
-      AssessmentController(
-        patientId: _patient.id,
-        patientName: _patient.name,
-        patientAge: _patient.age,
-        prakriti: _patient.prakriti,
-        sarataha: _patient.sarataha,
-        sanhanan: _patient.sanhanan,
-        pramana: _patient.pramana,
-        satva: _patient.satva,
-        satmya: _patient.satmya,
-        aharaShakti: _patient.aharaShakti,
-        vyayamaShakti: _patient.vyayamaShakti,
-        vaya: _patient.vaya,
-        jihwa: _patient.jihwa,
-        initialPlan: plan,
-        initialPoorvaKarmaCompleted: _patient.poorvaKarmaCompleted,
-        initialPradhanaKarmaCompleted: _patient.pradhanaKarmaCompleted,
-        initialPaschataKarmaCompleted: _patient.paschataKarmaCompleted,
-      ),
-    );
+  Future<void> _startPradhanKarma() async {
+    await _ensureAssessmentController(plan: _activePlan);
 
     Get.to(
       () => const PradhanKarmaScreen(initialStep: 0),
     )?.then((_) => _loadData());
   }
 
-  void _openAssessment() {
-    final patientCtrl = Get.find<PatientController>();
-    patientCtrl.selectPatient(_patient);
-
-    final plan = _activePlan;
-    _tpc.currentPlan.value = plan;
-    if (plan == null) {
-      _tpc.persistedSessions.clear();
-    }
-
-    if (Get.isRegistered<AssessmentController>()) {
-      Get.delete<AssessmentController>();
-    }
-    Get.put(
-      AssessmentController(
-        patientId: _patient.id,
-        patientName: _patient.name,
-        patientAge: _patient.age,
-        prakriti: _patient.prakriti,
-        sarataha: _patient.sarataha,
-        sanhanan: _patient.sanhanan,
-        pramana: _patient.pramana,
-        satva: _patient.satva,
-        satmya: _patient.satmya,
-        aharaShakti: _patient.aharaShakti,
-        vyayamaShakti: _patient.vyayamaShakti,
-        vaya: _patient.vaya,
-        jihwa: _patient.jihwa,
-        initialPlan: plan,
-        initialPoorvaKarmaCompleted: _patient.poorvaKarmaCompleted,
-        initialPradhanaKarmaCompleted: _patient.pradhanaKarmaCompleted,
-        initialPaschataKarmaCompleted: _patient.paschataKarmaCompleted,
-      ),
-    );
-
+  Future<void> _openAssessment() async {
+    await _ensureAssessmentController();
     Get.toNamed(AppRoutes.assessment)?.then((_) => _loadData());
   }
 
@@ -2450,7 +2391,8 @@ class _PatientDetailScreenState extends State<PatientDetailScreen>
             SizedBox(
               width: double.infinity,
               child: ElevatedButton.icon(
-                onPressed: () {
+                onPressed: () async {
+                  await _ensureAssessmentController();
                   Get.to(
                     () => const PaschatkarmaScreen(),
                   )?.then((_) => _loadData());
@@ -2513,56 +2455,71 @@ class _PatientDetailScreenState extends State<PatientDetailScreen>
     // 1. Poorva Karma in History if completed
     if (_patient.poorvaKarmaCompleted) {
       items.add(
-        Container(
-          margin: const EdgeInsets.only(bottom: 10),
-          padding: const EdgeInsets.all(12),
-          decoration: BoxDecoration(
-            color: Colors.white,
+        Material(
+          color: Colors.transparent,
+          child: InkWell(
+            onTap: () async {
+              await _ensureAssessmentController();
+              Get.to(() => const PurvakarmaScreen())?.then((_) => _loadData());
+            },
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: const Color(0xFFE0E0E0)),
-          ),
-          child: Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: AppColors.successGreen.withValues(alpha: 0.1),
-                  shape: BoxShape.circle,
-                ),
-                child: const Icon(
-                  Icons.check_circle_outline_rounded,
-                  color: AppColors.successGreen,
-                  size: 20,
-                ),
+            child: Container(
+              margin: const EdgeInsets.only(bottom: 10),
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: const Color(0xFFE0E0E0)),
               ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Poorva Karma Assessment',
-                      style: AppTextStyles.sectionHeading.copyWith(
-                        fontSize: 15,
-                      ),
+              child: Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: AppColors.successGreen.withValues(alpha: 0.1),
+                      shape: BoxShape.circle,
                     ),
-                    const SizedBox(height: 2),
-                    const Text(
-                      'Pariksha, Agni & Kostha Assessment',
-                      style: AppTextStyles.captionText,
+                    child: const Icon(
+                      Icons.check_circle_outline_rounded,
+                      color: AppColors.successGreen,
+                      size: 20,
                     ),
-                    const SizedBox(height: 2),
-                    Text(
-                      'Completed',
-                      style: AppTextStyles.captionText.copyWith(
-                        color: AppColors.successGreen,
-                        fontWeight: FontWeight.w600,
-                      ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Poorva Karma Assessment',
+                          style: AppTextStyles.sectionHeading.copyWith(
+                            fontSize: 15,
+                          ),
+                        ),
+                        const SizedBox(height: 2),
+                        const Text(
+                          'Pariksha, Agni & Kostha Assessment',
+                          style: AppTextStyles.captionText,
+                        ),
+                        const SizedBox(height: 2),
+                        Text(
+                          'Completed',
+                          style: AppTextStyles.captionText.copyWith(
+                            color: AppColors.successGreen,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
+                  ),
+                  const Icon(
+                    Icons.arrow_forward_ios_rounded,
+                    size: 14,
+                    color: AppColors.darkGrey,
+                  ),
+                ],
               ),
-            ],
+            ),
           ),
         ),
       );
@@ -2579,116 +2536,140 @@ class _PatientDetailScreenState extends State<PatientDetailScreen>
                         ? 16
                         : 8));
         items.add(
-          Container(
-            margin: const EdgeInsets.only(bottom: 10),
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: Colors.white,
+          Material(
+            color: Colors.transparent,
+            child: InkWell(
+              onTap: () => _continueTreatment(plan),
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: const Color(0xFFE0E0E0)),
-            ),
-            child: Row(
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    color: AppColors.successGreen.withValues(alpha: 0.1),
-                    shape: BoxShape.circle,
-                  ),
-                  child: const Icon(
-                    Icons.check_circle_outline_rounded,
-                    color: AppColors.successGreen,
-                    size: 20,
-                  ),
+              child: Container(
+                margin: const EdgeInsets.only(bottom: 10),
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: const Color(0xFFE0E0E0)),
                 ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        plan.diseaseName.isNotEmpty
-                            ? plan.diseaseName
-                            : 'Basti Treatment',
-                        style: AppTextStyles.sectionHeading.copyWith(
-                          fontSize: 15,
-                        ),
+                child: Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: AppColors.successGreen.withValues(alpha: 0.1),
+                        shape: BoxShape.circle,
                       ),
-                      const SizedBox(height: 2),
-                      Text(
-                        '${plan.bastiName} • ${plan.selectedPatternName}',
-                        style: AppTextStyles.captionText,
+                      child: const Icon(
+                        Icons.check_circle_outline_rounded,
+                        color: AppColors.successGreen,
+                        size: 20,
                       ),
-                      const SizedBox(height: 2),
-                      Text(
-                        '$totalPlanDays Days • Completed',
-                        style: AppTextStyles.captionText.copyWith(
-                          color: AppColors.successGreen,
-                          fontWeight: FontWeight.w600,
-                        ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            plan.diseaseName.isNotEmpty
+                                ? plan.diseaseName
+                                : 'Basti Treatment',
+                            style: AppTextStyles.sectionHeading.copyWith(
+                              fontSize: 15,
+                            ),
+                          ),
+                          const SizedBox(height: 2),
+                          Text(
+                            '${plan.bastiName} • ${plan.selectedPatternName}',
+                            style: AppTextStyles.captionText,
+                          ),
+                          const SizedBox(height: 2),
+                          Text(
+                            '$totalPlanDays Days • Completed',
+                            style: AppTextStyles.captionText.copyWith(
+                              color: AppColors.successGreen,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
+                    ),
+                    const Icon(
+                      Icons.arrow_forward_ios_rounded,
+                      size: 14,
+                      color: AppColors.darkGrey,
+                    ),
+                  ],
                 ),
-              ],
+              ),
             ),
           ),
         );
       }
     } else if (_patient.pradhanaKarmaCompleted) {
       items.add(
-        Container(
-          margin: const EdgeInsets.only(bottom: 10),
-          padding: const EdgeInsets.all(12),
-          decoration: BoxDecoration(
-            color: Colors.white,
+        Material(
+          color: Colors.transparent,
+          child: InkWell(
+            onTap: _openAssessment,
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: const Color(0xFFE0E0E0)),
-          ),
-          child: Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: AppColors.successGreen.withValues(alpha: 0.1),
-                  shape: BoxShape.circle,
-                ),
-                child: const Icon(
-                  Icons.check_circle_outline_rounded,
-                  color: AppColors.successGreen,
-                  size: 20,
-                ),
+            child: Container(
+              margin: const EdgeInsets.only(bottom: 10),
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: const Color(0xFFE0E0E0)),
               ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      _patient.diagnosis.isNotEmpty
-                          ? _patient.diagnosis
-                          : 'Pradhan Karma Treatment',
-                      style: AppTextStyles.sectionHeading.copyWith(
-                        fontSize: 15,
-                      ),
+              child: Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: AppColors.successGreen.withValues(alpha: 0.1),
+                      shape: BoxShape.circle,
                     ),
-                    const SizedBox(height: 2),
-                    const Text(
-                      'Basti Administration & Daily Observation',
-                      style: AppTextStyles.captionText,
+                    child: const Icon(
+                      Icons.check_circle_outline_rounded,
+                      color: AppColors.successGreen,
+                      size: 20,
                     ),
-                    const SizedBox(height: 2),
-                    Text(
-                      'Completed',
-                      style: AppTextStyles.captionText.copyWith(
-                        color: AppColors.successGreen,
-                        fontWeight: FontWeight.w600,
-                      ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          _patient.diagnosis.isNotEmpty
+                              ? _patient.diagnosis
+                              : 'Pradhan Karma Treatment',
+                          style: AppTextStyles.sectionHeading.copyWith(
+                            fontSize: 15,
+                          ),
+                        ),
+                        const SizedBox(height: 2),
+                        const Text(
+                          'Basti Administration & Daily Observation',
+                          style: AppTextStyles.captionText,
+                        ),
+                        const SizedBox(height: 2),
+                        Text(
+                          'Completed',
+                          style: AppTextStyles.captionText.copyWith(
+                            color: AppColors.successGreen,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
+                  ),
+                  const Icon(
+                    Icons.arrow_forward_ios_rounded,
+                    size: 14,
+                    color: AppColors.darkGrey,
+                  ),
+                ],
               ),
-            ],
+            ),
           ),
         ),
       );
@@ -2697,56 +2678,71 @@ class _PatientDetailScreenState extends State<PatientDetailScreen>
     // 3. Paschatkarma in History if completed
     if (_patient.paschataKarmaCompleted) {
       items.add(
-        Container(
-          margin: const EdgeInsets.only(bottom: 10),
-          padding: const EdgeInsets.all(12),
-          decoration: BoxDecoration(
-            color: Colors.white,
+        Material(
+          color: Colors.transparent,
+          child: InkWell(
+            onTap: () async {
+              await _ensureAssessmentController();
+              Get.to(() => const PaschatkarmaScreen())?.then((_) => _loadData());
+            },
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: const Color(0xFFE0E0E0)),
-          ),
-          child: Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: AppColors.successGreen.withValues(alpha: 0.1),
-                  shape: BoxShape.circle,
-                ),
-                child: const Icon(
-                  Icons.check_circle_outline_rounded,
-                  color: AppColors.successGreen,
-                  size: 20,
-                ),
+            child: Container(
+              margin: const EdgeInsets.only(bottom: 10),
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: const Color(0xFFE0E0E0)),
               ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Paschatkarma Assessment',
-                      style: AppTextStyles.sectionHeading.copyWith(
-                        fontSize: 15,
-                      ),
+              child: Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: AppColors.successGreen.withValues(alpha: 0.1),
+                      shape: BoxShape.circle,
                     ),
-                    const SizedBox(height: 2),
-                    const Text(
-                      'Post-procedure Complication Management',
-                      style: AppTextStyles.captionText,
+                    child: const Icon(
+                      Icons.check_circle_outline_rounded,
+                      color: AppColors.successGreen,
+                      size: 20,
                     ),
-                    const SizedBox(height: 2),
-                    Text(
-                      'Completed',
-                      style: AppTextStyles.captionText.copyWith(
-                        color: AppColors.successGreen,
-                        fontWeight: FontWeight.w600,
-                      ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Paschatkarma Assessment',
+                          style: AppTextStyles.sectionHeading.copyWith(
+                            fontSize: 15,
+                          ),
+                        ),
+                        const SizedBox(height: 2),
+                        const Text(
+                          'Post-procedure Complication Management',
+                          style: AppTextStyles.captionText,
+                        ),
+                        const SizedBox(height: 2),
+                        Text(
+                          'Completed',
+                          style: AppTextStyles.captionText.copyWith(
+                            color: AppColors.successGreen,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
+                  ),
+                  const Icon(
+                    Icons.arrow_forward_ios_rounded,
+                    size: 14,
+                    color: AppColors.darkGrey,
+                  ),
+                ],
               ),
-            ],
+            ),
           ),
         ),
       );

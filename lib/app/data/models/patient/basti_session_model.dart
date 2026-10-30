@@ -105,7 +105,9 @@ class BastiSessionModel {
       scheduledDose: (json['scheduledDose'] as num).toDouble(),
       doseUnit: json['doseUnit'] as String,
       status: sessionStatusFromJson(json['status'] as String?),
-      adanaKala: json['adanaKala'] as String? ?? '',
+      adanaKala: ((json['adanaKala'] as String? ?? '').trim().toLowerCase() == 'administered')
+          ? ''
+          : (json['adanaKala'] as String? ?? ''),
       pratyagamana: json['pratyagamana'] as String? ?? '',
       vega: json['vega'] as String? ?? '',
       samyakaSelected: (json['samyakaSelected'] as List<dynamic>)

@@ -263,6 +263,14 @@ class ApiTreatmentRepository implements TreatmentPlanRepository {
       status = TreatmentStatus.completed;
     }
 
+    if (status == TreatmentStatus.completed && scheduleDays.isNotEmpty) {
+      for (int i = 0; i < scheduleDays.length; i++) {
+        if (!scheduleDays[i].isCompleted) {
+          scheduleDays[i] = scheduleDays[i].copyWith(isCompleted: true);
+        }
+      }
+    }
+
     DateTime? startDate;
     if (data['startDate'] != null) {
       startDate = DateTime.tryParse(data['startDate'].toString());
@@ -454,8 +462,12 @@ class ApiTreatmentRepository implements TreatmentPlanRepository {
 
   @override
   Future<List<BastiSessionModel>> getSessions(String treatmentPlanId) async {
-    final patientId = _planToPatientId[treatmentPlanId];
-    if (patientId != null) {
+    String? patientId = _planToPatientId[treatmentPlanId];
+    if ((patientId == null || patientId.isEmpty) && treatmentPlanId.startsWith('plan_')) {
+      patientId = treatmentPlanId.replaceFirst('plan_', '');
+    }
+
+    if (patientId != null && patientId.isNotEmpty) {
       try {
         final model = await _pradhanaRepo.getPradhanaKarma(patientId);
         if (model != null && model.rawJson != null) {
@@ -463,286 +475,345 @@ class ApiTreatmentRepository implements TreatmentPlanRepository {
               ? Map<String, dynamic>.from(model.rawJson!['data'] as Map)
               : model.rawJson!;
 
+          final statusStr = data['treatmentStatus']?.toString().toUpperCase();
+          final isPlanCompleted = statusStr == 'COMPLETED';
+
           final obs = data['observation'];
-          if (obs is Map && obs['dailyObservations'] is List) {
-            final dailyList = obs['dailyObservations'] as List;
-            final sessionsByDay = <int, BastiSessionModel>{};
+          final dailyList = (obs is Map && obs['dailyObservations'] is List)
+              ? (obs['dailyObservations'] as List)
+              : const [];
+          final sessionsByDay = <int, BastiSessionModel>{};
 
-            for (final item in dailyList) {
-              if (item is Map) {
-                final rawDay = item['day'] ?? item['dayNumber'];
-                final dayNum = rawDay is int
-                    ? rawDay
-                    : int.tryParse(rawDay?.toString() ?? '') ?? 1;
-                final statusStr = item['status']?.toString().toUpperCase() ?? 'PENDING';
-                final isCompleted = statusStr == 'COMPLETED';
+          for (final item in dailyList) {
+            if (item is Map) {
+              final rawDay = item['day'] ?? item['dayNumber'];
+              final dayNum = rawDay is int
+                  ? rawDay
+                  : int.tryParse(rawDay?.toString() ?? '') ?? 1;
+              final itemStatusStr = item['status']?.toString().toUpperCase() ?? 'PENDING';
+              final isCompleted = itemStatusStr == 'COMPLETED' || isPlanCompleted;
 
-                // Resolve symptoms map (supports both flat and nested 'symptoms' key)
-                final symptomMap = (item['symptoms'] is Map)
-                    ? Map<String, dynamic>.from(item['symptoms'] as Map)
-                    : Map<String, dynamic>.from(item);
+              // Resolve symptoms map (supports both flat and nested 'symptoms' key)
+              final symptomMap = (item['symptoms'] is Map)
+                  ? Map<String, dynamic>.from(item['symptoms'] as Map)
+                  : Map<String, dynamic>.from(item);
 
-                // Determine whether this day was Niruha or Anuvasana
-                String? bastiCode = item['bastiType']?.toString().toUpperCase();
+              // Determine whether this day was Niruha or Anuvasana
+              String? bastiCode = item['bastiType']?.toString().toUpperCase();
+              if (bastiCode == null || bastiCode.isEmpty) {
+                if (symptomMap['bastiType'] != null) {
+                  bastiCode = symptomMap['bastiType'].toString().toUpperCase();
+                }
+                // Fallback 1: check scheduleDays from plan or rawJson
+                if ((bastiCode == null || bastiCode.isEmpty) && data['scheduleDays'] is List) {
+                  final sDays = data['scheduleDays'] as List;
+                  for (final sd in sDays) {
+                    if (sd is Map && (sd['dayNumber'] == dayNum || sd['day'] == dayNum)) {
+                      bastiCode = sd['bastiTypeCodeShort']?.toString().toUpperCase();
+                      break;
+                    }
+                  }
+                }
+                // Fallback 2: check sequence
+                if ((bastiCode == null || bastiCode.isEmpty) && data['sequence'] is List) {
+                  final seq = data['sequence'] as List;
+                  if (dayNum >= 1 && dayNum <= seq.length) {
+                    bastiCode = seq[dayNum - 1]?.toString().toUpperCase();
+                  }
+                }
+                // Fallback 3: check presence of Niruha-specific symptoms
                 if (bastiCode == null || bastiCode.isEmpty) {
-                  if (symptomMap['bastiType'] != null) {
-                    bastiCode = symptomMap['bastiType'].toString().toUpperCase();
-                  }
-                  // Fallback 1: check scheduleDays from plan or rawJson
-                  if ((bastiCode == null || bastiCode.isEmpty) && data['scheduleDays'] is List) {
-                    final sDays = data['scheduleDays'] as List;
-                    for (final sd in sDays) {
-                      if (sd is Map && (sd['dayNumber'] == dayNum || sd['day'] == dayNum)) {
-                        bastiCode = sd['bastiTypeCodeShort']?.toString().toUpperCase();
-                        break;
-                      }
-                    }
-                  }
-                  // Fallback 2: check sequence
-                  if ((bastiCode == null || bastiCode.isEmpty) && data['sequence'] is List) {
-                    final seq = data['sequence'] as List;
-                    if (dayNum >= 1 && dayNum <= seq.length) {
-                      bastiCode = seq[dayNum - 1]?.toString().toUpperCase();
-                    }
-                  }
-                  // Fallback 3: check presence of Niruha-specific symptoms
-                  if (bastiCode == null || bastiCode.isEmpty) {
-                    final hasNiruhaKey = symptomMap['prasristaVinaMutra'] == true ||
-                        symptomMap['sameerantwama'] == true ||
-                        symptomMap['ashayaLaghava'] == true ||
-                        symptomMap['rogashanti'] == true ||
-                        symptomMap['prakritiBala'] == true ||
-                        symptomMap['siroHridGudaVedana'] == true ||
-                        symptomMap['siroHridGudaBastiMedhraVedana'] == true ||
-                        symptomMap['kaphaPittaVataRaktaKshayajVikara'] == true ||
-                        symptomMap['angamarda'] == true ||
-                        symptomMap['vepathu'] == true;
-                    bastiCode = hasNiruhaKey ? 'N' : 'A';
-                  }
-                }
-
-                final isKwathaBased = bastiCode == 'N' ||
-                    bastiCode == 'NIRUHA' ||
-                    bastiCode == 'YB' ||
-                    bastiCode == 'YAPANA';
-
-                final String scheduledType;
-                final String shortCode;
-                final double defaultDose;
-
-                if (bastiCode == 'MB' || bastiCode == 'MATRA') {
-                  scheduledType = 'Matra Basti';
-                  shortCode = 'MB';
-                  defaultDose = 50.0;
-                } else if (bastiCode == 'YB' || bastiCode == 'YAPANA') {
-                  scheduledType = 'Yapana Basti';
-                  shortCode = 'YB';
-                  defaultDose = 400.0;
-                } else if (isKwathaBased) {
-                  scheduledType = 'Niruha';
-                  shortCode = 'N';
-                  defaultDose = 400.0;
-                } else {
-                  scheduledType = 'Anuvasana';
-                  shortCode = 'A';
-                  defaultDose = 100.0;
-                }
-
-                final samyaka = isCompleted
-                    ? (isKwathaBased
-                        ? [
-                            symptomMap['prasristaVinaMutra'] == true,
-                            symptomMap['sameerantwama'] == true,
-                            symptomMap['agniVriddhi'] == true,
-                            symptomMap['ruchi'] == true,
-                            symptomMap['ashayaLaghava'] == true,
-                            symptomMap['rogashanti'] == true,
-                            symptomMap['prakriti'] == true || symptomMap['prakritiBala'] == true,
-                          ]
-                        : [
-                            symptomMap['sapurishaSnehaPratyeti'] == true,
-                            symptomMap['shariraLaghavta'] == true,
-                            symptomMap['bala'] == true,
-                            symptomMap['srustachVega'] == true,
-                            symptomMap['vatanulomana'] == true,
-                            symptomMap['agnidipta'] == true,
-                          ])
-                    : List<bool>.filled(isKwathaBased ? 7 : 6, false);
-
-                final ayoga = isCompleted
-                    ? (isKwathaBased
-                        ? [
-                            symptomMap['siroHridGudaVedana'] == true ||
-                                symptomMap['siroHridGudaBastiMedhraVedana'] == true,
-                            symptomMap['sopha'] == true,
-                            symptomMap['pratishyaya'] == true,
-                            symptomMap['vikartika'] == true,
-                            symptomMap['hrullasa'] == true,
-                            symptomMap['marutaSanga'] == true,
-                            symptomMap['mutraSanga'] == true,
-                            symptomMap['shvaskashta'] == true,
-                          ]
-                        : [
-                            symptomMap['adhaSariraRuja'] == true ||
-                                symptomMap['adhaShariraRuja'] == true,
-                            symptomMap['udaraRuja'] == true,
-                            symptomMap['bahuPrushthaRuja'] == true,
-                            symptomMap['parshvaRuja'] == true,
-                            symptomMap['rukshaGatra'] == true,
-                            symptomMap['rukshaSvara'] == true,
-                            symptomMap['vitSanga'] == true,
-                            symptomMap['mutraSanga'] == true,
-                          ])
-                    : List<bool>.filled(8, false);
-
-                final isKlamaSelected = symptomMap['klama'] == true ||
-                    symptomMap['kalma'] == true ||
-                    item['klama'] == true ||
-                    item['kalma'] == true;
-
-                final atiyoga = isCompleted
-                    ? (isKwathaBased
-                        ? [
-                            symptomMap['kaphaPittaVataRaktaKshayajVikara'] == true || item['kaphaPittaVataRaktaKshayajVikara'] == true,
-                            symptomMap['supti'] == true || item['supti'] == true,
-                            symptomMap['angamarda'] == true || item['angamarda'] == true,
-                            isKlamaSelected,
-                            symptomMap['vepathu'] == true || item['vepathu'] == true,
-                            symptomMap['nidraNasha'] == true || item['nidraNasha'] == true,
-                            symptomMap['balaNasha'] == true || item['balaNasha'] == true,
-                            symptomMap['tamaPravesha'] == true || item['tamaPravesha'] == true,
-                            symptomMap['unmada'] == true || item['unmada'] == true,
-                            symptomMap['hikka'] == true || item['hikka'] == true,
-                          ]
-                        : [
-                            symptomMap['hrullasa'] == true || item['hrullasa'] == true,
-                            symptomMap['moha'] == true || item['moha'] == true,
-                            isKlamaSelected,
-                            symptomMap['sada'] == true || item['sada'] == true,
-                            symptomMap['murchha'] == true || item['murchha'] == true,
-                            symptomMap['vikartika'] == true || item['vikartika'] == true,
-                          ])
-                    : List<bool>.filled(isKwathaBased ? 10 : 6, false);
-
-                final rawUpdated = item['updatedAt'] ?? item['date'] ?? data['updatedAt'];
-                final itemUpdatedAt = rawUpdated != null
-                    ? (DateTime.tryParse(rawUpdated.toString()) ?? DateTime.fromMillisecondsSinceEpoch(0))
-                    : DateTime.fromMillisecondsSinceEpoch(0);
-
-                String parsedPratyagamana = item['pratyagamana']?.toString() ??
-                    symptomMap['pratyagamana']?.toString() ??
-                    '';
-                if (parsedPratyagamana.isEmpty && item['notes'] != null) {
-                  final match = RegExp(r'Pratyagamana:\s*([^|]+)').firstMatch(item['notes'].toString());
-                  if (match != null) {
-                    parsedPratyagamana = match.group(1)?.trim() ?? '';
-                  }
-                }
-
-                String parsedVega = item['vega']?.toString() ?? '';
-                if (parsedVega.isEmpty && item['notes'] != null) {
-                  final match = RegExp(r'Vega:\s*([^|]+)').firstMatch(item['notes'].toString());
-                  if (match != null) {
-                    parsedVega = match.group(1)?.trim() ?? '';
-                  } else if (!item['notes'].toString().contains('Pratyagamana:')) {
-                    parsedVega = item['notes'].toString().replaceFirst(RegExp(r'^Vega:\s*'), '').trim();
-                  }
-                }
-
-                String parsedNiruhaVyapada = '';
-                String parsedAnuvasanaVyapada = '';
-                if (item['paschataKarma'] != null && item['paschataKarma']['vyapadaAndManagement'] != null) {
-                  final vyapada = item['paschataKarma']['vyapadaAndManagement'];
-                  parsedNiruhaVyapada = vyapada['niruhaVyapada']?.toString() ?? '';
-                  parsedAnuvasanaVyapada = vyapada['anuvasanaVyapada']?.toString() ?? '';
-                }
-
-                final session = BastiSessionModel(
-                  id: 'session_${treatmentPlanId}_day$dayNum',
-                  treatmentPlanId: treatmentPlanId,
-                  dayNumber: dayNum,
-                  scheduledBastiType: scheduledType,
-                  bastiTypeCodeShort: shortCode,
-                  scheduledDose: defaultDose,
-                  doseUnit: 'ml',
-                  status: isCompleted ? SessionStatus.completed : SessionStatus.pending,
-                  adanaKala: isCompleted ? (item['timeAdministered']?.toString() ?? '') : '',
-                  pratyagamana: isCompleted ? parsedPratyagamana : '',
-                  vega: isCompleted ? parsedVega : '',
-                  samyakaSelected: samyaka,
-                  ayogaSelected: ayoga,
-                  atiyogaSelected: atiyoga,
-                  niruhaVyapada: parsedNiruhaVyapada,
-                  anuvasanaVyapada: parsedAnuvasanaVyapada,
-                  createdAt: itemUpdatedAt,
-                  updatedAt: itemUpdatedAt,
-                );
-
-                final existing = sessionsByDay[dayNum];
-                if (existing == null || isCompleted || !existing.isCompleted) {
-                  sessionsByDay[dayNum] = session;
+                  final hasNiruhaKey = symptomMap['prasristaVinaMutra'] == true ||
+                      symptomMap['sameerantwama'] == true ||
+                      symptomMap['ashayaLaghava'] == true ||
+                      symptomMap['rogashanti'] == true ||
+                      symptomMap['prakritiBala'] == true ||
+                      symptomMap['siroHridGudaVedana'] == true ||
+                      symptomMap['siroHridGudaBastiMedhraVedana'] == true ||
+                      symptomMap['kaphaPittaVataRaktaKshayajVikara'] == true ||
+                      symptomMap['angamarda'] == true ||
+                      symptomMap['vepathu'] == true;
+                  bastiCode = hasNiruhaKey ? 'N' : 'A';
                 }
               }
-            }
 
-            // Sync with _inMemoryStore and check for more recent in-memory sessions
-            for (final dayNum in sessionsByDay.keys.toList()) {
-              final backendSession = sessionsByDay[dayNum]!;
-              final inMemJson = await _inMemoryStore.fetchSession(treatmentPlanId, dayNum);
-              if (inMemJson != null) {
-                final inMemSession = BastiSessionModel.fromJson(inMemJson);
-                if (inMemSession.isCompleted) {
-                  // Merge symptoms: preserve any symptom selected in inMemSession that backend might have stripped
-                  final mergedAtiyoga = List<bool>.generate(
-                    backendSession.atiyogaSelected.length,
-                    (i) => backendSession.atiyogaSelected[i] ||
-                        (i < inMemSession.atiyogaSelected.length && inMemSession.atiyogaSelected[i]),
-                  );
-                  final mergedSamyaka = List<bool>.generate(
-                    backendSession.samyakaSelected.length,
-                    (i) => backendSession.samyakaSelected[i] ||
-                        (i < inMemSession.samyakaSelected.length && inMemSession.samyakaSelected[i]),
-                  );
-                  final mergedAyoga = List<bool>.generate(
-                    backendSession.ayogaSelected.length,
-                    (i) => backendSession.ayogaSelected[i] ||
-                        (i < inMemSession.ayogaSelected.length && inMemSession.ayogaSelected[i]),
-                  );
-                  final mergedSession = backendSession.copyWith(
-                    adanaKala: backendSession.adanaKala.isNotEmpty
-                        ? backendSession.adanaKala
-                        : inMemSession.adanaKala,
-                    pratyagamana: backendSession.pratyagamana.isNotEmpty
-                        ? backendSession.pratyagamana
-                        : inMemSession.pratyagamana,
-                    vega: backendSession.vega.isNotEmpty
-                        ? backendSession.vega
-                        : inMemSession.vega,
-                    samyakaSelected: mergedSamyaka,
-                    ayogaSelected: mergedAyoga,
-                    atiyogaSelected: mergedAtiyoga,
-                    niruhaVyapada: backendSession.niruhaVyapada.isNotEmpty
-                        ? backendSession.niruhaVyapada
-                        : inMemSession.niruhaVyapada,
-                    anuvasanaVyapada: backendSession.anuvasanaVyapada.isNotEmpty
-                        ? backendSession.anuvasanaVyapada
-                        : inMemSession.anuvasanaVyapada,
-                    updatedAt: inMemSession.updatedAt.isAfter(backendSession.updatedAt)
-                        ? inMemSession.updatedAt
-                        : backendSession.updatedAt,
-                  );
-                  sessionsByDay[dayNum] = mergedSession;
-                  _inMemoryStore.saveSession(mergedSession);
-                  continue;
+              final isKwathaBased = bastiCode == 'N' ||
+                  bastiCode == 'NIRUHA' ||
+                  bastiCode == 'YB' ||
+                  bastiCode == 'YAPANA';
+
+              final String scheduledType;
+              final String shortCode;
+              final double defaultDose;
+
+              if (bastiCode == 'MB' || bastiCode == 'MATRA') {
+                scheduledType = 'Matra Basti';
+                shortCode = 'MB';
+                defaultDose = 50.0;
+              } else if (bastiCode == 'YB' || bastiCode == 'YAPANA') {
+                scheduledType = 'Yapana Basti';
+                shortCode = 'YB';
+                defaultDose = 400.0;
+              } else if (isKwathaBased) {
+                scheduledType = 'Niruha';
+                shortCode = 'N';
+                defaultDose = 400.0;
+              } else {
+                scheduledType = 'Anuvasana';
+                shortCode = 'A';
+                defaultDose = 100.0;
+              }
+
+              final samyaka = isCompleted
+                  ? (isKwathaBased
+                      ? [
+                          symptomMap['prasristaVinaMutra'] == true,
+                          symptomMap['sameerantwama'] == true,
+                          symptomMap['agniVriddhi'] == true,
+                          symptomMap['ruchi'] == true,
+                          symptomMap['ashayaLaghava'] == true,
+                          symptomMap['rogashanti'] == true,
+                          symptomMap['prakriti'] == true || symptomMap['prakritiBala'] == true,
+                        ]
+                      : [
+                          symptomMap['sapurishaSnehaPratyeti'] == true,
+                          symptomMap['shariraLaghavta'] == true,
+                          symptomMap['bala'] == true,
+                          symptomMap['srustachVega'] == true,
+                          symptomMap['vatanulomana'] == true,
+                          symptomMap['agnidipta'] == true,
+                        ])
+                  : List<bool>.filled(isKwathaBased ? 7 : 6, false);
+
+              final ayoga = isCompleted
+                  ? (isKwathaBased
+                      ? [
+                          symptomMap['siroHridGudaVedana'] == true ||
+                              symptomMap['siroHridGudaBastiMedhraVedana'] == true,
+                          symptomMap['sopha'] == true,
+                          symptomMap['pratishyaya'] == true,
+                          symptomMap['vikartika'] == true,
+                          symptomMap['hrullasa'] == true,
+                          symptomMap['marutaSanga'] == true,
+                          symptomMap['mutraSanga'] == true,
+                          symptomMap['shvaskashta'] == true,
+                        ]
+                      : [
+                          symptomMap['adhaSariraRuja'] == true ||
+                              symptomMap['adhaShariraRuja'] == true,
+                          symptomMap['udaraRuja'] == true,
+                          symptomMap['bahuPrushthaRuja'] == true,
+                          symptomMap['parshvaRuja'] == true,
+                          symptomMap['rukshaGatra'] == true,
+                          symptomMap['rukshaSvara'] == true,
+                          symptomMap['vitSanga'] == true,
+                          symptomMap['mutraSanga'] == true,
+                        ])
+                  : List<bool>.filled(8, false);
+
+              final isKlamaSelected = symptomMap['klama'] == true ||
+                  symptomMap['kalma'] == true ||
+                  item['klama'] == true ||
+                  item['kalma'] == true;
+
+              final atiyoga = isCompleted
+                  ? (isKwathaBased
+                      ? [
+                          symptomMap['kaphaPittaVataRaktaKshayajVikara'] == true || item['kaphaPittaVataRaktaKshayajVikara'] == true,
+                          symptomMap['supti'] == true || item['supti'] == true,
+                          symptomMap['angamarda'] == true || item['angamarda'] == true,
+                          isKlamaSelected,
+                          symptomMap['vepathu'] == true || item['vepathu'] == true,
+                          symptomMap['nidraNasha'] == true || item['nidraNasha'] == true,
+                          symptomMap['balaNasha'] == true || item['balaNasha'] == true,
+                          symptomMap['tamaPravesha'] == true || item['tamaPravesha'] == true,
+                          symptomMap['unmada'] == true || item['unmada'] == true,
+                          symptomMap['hikka'] == true || item['hikka'] == true,
+                        ]
+                      : [
+                          symptomMap['hrullasa'] == true || item['hrullasa'] == true,
+                          symptomMap['moha'] == true || item['moha'] == true,
+                          isKlamaSelected,
+                          symptomMap['sada'] == true || item['sada'] == true,
+                          symptomMap['murchha'] == true || item['murchha'] == true,
+                          symptomMap['vikartika'] == true || item['vikartika'] == true,
+                        ])
+                  : List<bool>.filled(isKwathaBased ? 10 : 6, false);
+
+              final rawUpdated = item['updatedAt'] ?? item['date'] ?? data['updatedAt'];
+              final itemUpdatedAt = rawUpdated != null
+                  ? (DateTime.tryParse(rawUpdated.toString()) ?? DateTime.fromMillisecondsSinceEpoch(0))
+                  : DateTime.fromMillisecondsSinceEpoch(0);
+
+              String parsedPratyagamana = item['pratyagamana']?.toString() ??
+                  symptomMap['pratyagamana']?.toString() ??
+                  '';
+              if (parsedPratyagamana.isEmpty && item['notes'] != null) {
+                final match = RegExp(r'Pratyagamana:\s*([^|]+)').firstMatch(item['notes'].toString());
+                if (match != null) {
+                  parsedPratyagamana = match.group(1)?.trim() ?? '';
                 }
               }
-              _inMemoryStore.saveSession(backendSession);
-            }
 
-            final sessions = sessionsByDay.values.toList()
-              ..sort((a, b) => a.dayNumber.compareTo(b.dayNumber));
-            if (sessions.isNotEmpty) return sessions;
+              String parsedVega = item['vega']?.toString() ?? '';
+              if (parsedVega.isEmpty && item['notes'] != null) {
+                final match = RegExp(r'Vega:\s*([^|]+)').firstMatch(item['notes'].toString());
+                if (match != null) {
+                  parsedVega = match.group(1)?.trim() ?? '';
+                } else if (!item['notes'].toString().contains('Pratyagamana:')) {
+                  parsedVega = item['notes'].toString().replaceFirst(RegExp(r'^Vega:\s*'), '').trim();
+                }
+              }
+
+              String parsedNiruhaVyapada = '';
+              String parsedAnuvasanaVyapada = '';
+              if (item['paschataKarma'] != null && item['paschataKarma']['vyapadaAndManagement'] != null) {
+                final vyapada = item['paschataKarma']['vyapadaAndManagement'];
+                parsedNiruhaVyapada = vyapada['niruhaVyapada']?.toString() ?? '';
+                parsedAnuvasanaVyapada = vyapada['anuvasanaVyapada']?.toString() ?? '';
+              }
+
+              final session = BastiSessionModel(
+                id: 'session_${treatmentPlanId}_day$dayNum',
+                treatmentPlanId: treatmentPlanId,
+                dayNumber: dayNum,
+                scheduledBastiType: scheduledType,
+                bastiTypeCodeShort: shortCode,
+                scheduledDose: defaultDose,
+                doseUnit: 'ml',
+                status: isCompleted ? SessionStatus.completed : SessionStatus.pending,
+                adanaKala: (item['timeAdministered'] != null &&
+                        item['timeAdministered'].toString().trim().isNotEmpty &&
+                        item['timeAdministered'].toString().trim().toLowerCase() != 'administered')
+                    ? item['timeAdministered'].toString().trim()
+                    : '',
+                pratyagamana: isCompleted ? parsedPratyagamana : '',
+                vega: isCompleted ? parsedVega : '',
+                samyakaSelected: samyaka,
+                ayogaSelected: ayoga,
+                atiyogaSelected: atiyoga,
+                niruhaVyapada: parsedNiruhaVyapada,
+                anuvasanaVyapada: parsedAnuvasanaVyapada,
+                createdAt: itemUpdatedAt,
+                updatedAt: itemUpdatedAt,
+              );
+
+              final existing = sessionsByDay[dayNum];
+              if (existing == null || isCompleted || !existing.isCompleted) {
+                sessionsByDay[dayNum] = session;
+              }
+            }
           }
+
+          if (isPlanCompleted) {
+            // Ensure all existing sessions have completed status
+            for (final dayNum in sessionsByDay.keys.toList()) {
+              final s = sessionsByDay[dayNum]!;
+              if (!s.isCompleted) {
+                sessionsByDay[dayNum] = s.copyWith(status: SessionStatus.completed);
+              }
+            }
+
+            // If some days from sequence / scheduleDays were not in observation list, synthesize them
+            int expectedDays = 8;
+            if (data['sequence'] is List && (data['sequence'] as List).isNotEmpty) {
+              expectedDays = (data['sequence'] as List).length;
+            } else if (data['totalDays'] is int) {
+              expectedDays = data['totalDays'] as int;
+            } else if (data['scheduleDays'] is List && (data['scheduleDays'] as List).isNotEmpty) {
+              expectedDays = (data['scheduleDays'] as List).length;
+            }
+
+            List<String> planSeq = [];
+            if (data['sequence'] is List) {
+              planSeq = (data['sequence'] as List).map((e) => e.toString().toUpperCase()).toList();
+            }
+
+            for (int d = 1; d <= expectedDays; d++) {
+              if (!sessionsByDay.containsKey(d)) {
+                final code = (d <= planSeq.length) ? planSeq[d - 1] : (d.isOdd ? 'A' : 'N');
+                final isKwatha = code == 'N' || code == 'YB';
+                sessionsByDay[d] = BastiSessionModel(
+                  id: 'session_${treatmentPlanId}_day$d',
+                  treatmentPlanId: treatmentPlanId,
+                  dayNumber: d,
+                  scheduledBastiType: isKwatha ? 'Niruha' : 'Anuvasana',
+                  bastiTypeCodeShort: code,
+                  scheduledDose: isKwatha ? 480.0 : 80.0,
+                  doseUnit: 'ml',
+                  status: SessionStatus.completed,
+                  adanaKala: '',
+                  pratyagamana: '',
+                  vega: '',
+                  samyakaSelected: List<bool>.filled(isKwatha ? 7 : 6, true),
+                  ayogaSelected: List<bool>.filled(8, false),
+                  atiyogaSelected: List<bool>.filled(isKwatha ? 10 : 6, false),
+                  niruhaVyapada: '',
+                  anuvasanaVyapada: '',
+                  createdAt: DateTime.now(),
+                  updatedAt: DateTime.now(),
+                );
+              }
+            }
+          }
+
+          // Sync with _inMemoryStore and check for more recent in-memory sessions
+          for (final dayNum in sessionsByDay.keys.toList()) {
+            final backendSession = sessionsByDay[dayNum]!;
+            final inMemJson = await _inMemoryStore.fetchSession(treatmentPlanId, dayNum);
+            if (inMemJson != null) {
+              final inMemSession = BastiSessionModel.fromJson(inMemJson);
+              if (inMemSession.isCompleted) {
+                // Merge symptoms: preserve any symptom selected in inMemSession that backend might have stripped
+                final mergedAtiyoga = List<bool>.generate(
+                  backendSession.atiyogaSelected.length,
+                  (i) => backendSession.atiyogaSelected[i] ||
+                      (i < inMemSession.atiyogaSelected.length && inMemSession.atiyogaSelected[i]),
+                );
+                final mergedSamyaka = List<bool>.generate(
+                  backendSession.samyakaSelected.length,
+                  (i) => backendSession.samyakaSelected[i] ||
+                      (i < inMemSession.samyakaSelected.length && inMemSession.samyakaSelected[i]),
+                );
+                final mergedAyoga = List<bool>.generate(
+                  backendSession.ayogaSelected.length,
+                  (i) => backendSession.ayogaSelected[i] ||
+                      (i < inMemSession.ayogaSelected.length && inMemSession.ayogaSelected[i]),
+                );
+                final mergedSession = backendSession.copyWith(
+                  adanaKala: (backendSession.adanaKala.isNotEmpty && backendSession.adanaKala.trim().toLowerCase() != 'administered')
+                      ? backendSession.adanaKala
+                      : (inMemSession.adanaKala.trim().toLowerCase() == 'administered' ? '' : inMemSession.adanaKala),
+                  pratyagamana: backendSession.pratyagamana.isNotEmpty
+                      ? backendSession.pratyagamana
+                      : inMemSession.pratyagamana,
+                  vega: backendSession.vega.isNotEmpty
+                      ? backendSession.vega
+                      : inMemSession.vega,
+                  samyakaSelected: mergedSamyaka,
+                  ayogaSelected: mergedAyoga,
+                  atiyogaSelected: mergedAtiyoga,
+                  niruhaVyapada: backendSession.niruhaVyapada.isNotEmpty
+                      ? backendSession.niruhaVyapada
+                      : inMemSession.niruhaVyapada,
+                  anuvasanaVyapada: backendSession.anuvasanaVyapada.isNotEmpty
+                      ? backendSession.anuvasanaVyapada
+                      : inMemSession.anuvasanaVyapada,
+                  updatedAt: inMemSession.updatedAt.isAfter(backendSession.updatedAt)
+                      ? inMemSession.updatedAt
+                      : backendSession.updatedAt,
+                );
+                sessionsByDay[dayNum] = mergedSession;
+                _inMemoryStore.saveSession(mergedSession);
+                continue;
+              }
+            }
+            _inMemoryStore.saveSession(backendSession);
+          }
+
+          final sessions = sessionsByDay.values.toList()
+            ..sort((a, b) => a.dayNumber.compareTo(b.dayNumber));
+          if (sessions.isNotEmpty) return sessions;
         }
       } catch (e) {
         debugPrint('ApiTreatmentRepository.getSessions error: $e');
@@ -771,7 +842,9 @@ class ApiTreatmentRepository implements TreatmentPlanRepository {
         }
         if (inMemSession != null && inMemSession.isCompleted) {
           return s.copyWith(
-            adanaKala: s.adanaKala.isNotEmpty ? s.adanaKala : inMemSession.adanaKala,
+            adanaKala: (s.adanaKala.isNotEmpty && s.adanaKala.trim().toLowerCase() != 'administered')
+                ? s.adanaKala
+                : (inMemSession.adanaKala.trim().toLowerCase() == 'administered' ? '' : inMemSession.adanaKala),
             pratyagamana: s.pratyagamana.isNotEmpty ? s.pratyagamana : inMemSession.pratyagamana,
             vega: s.vega.isNotEmpty ? s.vega : inMemSession.vega,
             niruhaVyapada: s.niruhaVyapada.isNotEmpty ? s.niruhaVyapada : inMemSession.niruhaVyapada,
@@ -967,7 +1040,7 @@ class ApiTreatmentRepository implements TreatmentPlanRepository {
           status: 'COMPLETED',
           bastiType: bastiTypeToSend,
           dose: doseStr,
-          timeAdministered: session.adanaKala.isNotEmpty ? session.adanaKala : null,
+          timeAdministered: (session.adanaKala.isNotEmpty && session.adanaKala.trim().toLowerCase() != 'administered') ? session.adanaKala : null,
           pratyagamana: session.pratyagamana.isNotEmpty ? session.pratyagamana : null,
           notes: notes,
           symptoms: symptoms,
@@ -1033,7 +1106,8 @@ class ApiTreatmentRepository implements TreatmentPlanRepository {
           'status': 'COMPLETED',
           'bastiType': updateBastiTypeToSend,
           'dose': doseStr,
-          if (session.adanaKala.isNotEmpty) 'timeAdministered': session.adanaKala,
+          if (session.adanaKala.isNotEmpty && session.adanaKala.trim().toLowerCase() != 'administered')
+            'timeAdministered': session.adanaKala,
           if (session.pratyagamana.isNotEmpty) 'pratyagamana': session.pratyagamana,
           'notes': notes,
           ...symptoms,
@@ -1053,7 +1127,7 @@ class ApiTreatmentRepository implements TreatmentPlanRepository {
             status: 'COMPLETED',
             bastiType: updateBastiTypeToSend,
             dose: doseStr,
-            timeAdministered: session.adanaKala.isNotEmpty ? session.adanaKala : null,
+            timeAdministered: (session.adanaKala.isNotEmpty && session.adanaKala.trim().toLowerCase() != 'administered') ? session.adanaKala : null,
             pratyagamana: session.pratyagamana.isNotEmpty ? session.pratyagamana : null,
             notes: notes,
             symptoms: symptoms,

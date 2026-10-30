@@ -33,8 +33,13 @@ class TreatmentPlanController extends GetxController {
 
   /// Number of sessions with status COMPLETED — derived from persisted records.
   /// Never a manually incremented counter.
-  int get completedSessionCount =>
-      persistedSessions.where((s) => s.isCompleted).length;
+  int get completedSessionCount {
+    if (currentPlan.value?.status == TreatmentStatus.completed && totalPlannedDays > 0) {
+      final actualCompleted = persistedSessions.where((s) => s.isCompleted).length;
+      return actualCompleted >= totalPlannedDays ? actualCompleted : totalPlannedDays;
+    }
+    return persistedSessions.where((s) => s.isCompleted).length;
+  }
 
   /// Total planned days (from the schedule).
   int get totalPlannedDays {
@@ -49,8 +54,8 @@ class TreatmentPlanController extends GetxController {
 
   /// True only when all planned sessions are completed.
   bool get allSessionsCompleted =>
-      totalPlannedDays > 0 &&
-      completedSessionCount == totalPlannedDays;
+      currentPlan.value?.status == TreatmentStatus.completed ||
+      (totalPlannedDays > 0 && completedSessionCount >= totalPlannedDays);
 
   // ── Plan lifecycle ─────────────────────────────────────────────────────────
 
@@ -76,6 +81,30 @@ class TreatmentPlanController extends GetxController {
     final activePlan = await _repository.getActivePlanForPatient(patientId);
     if (activePlan == null) return false;
     currentPlan.value = activePlan;
+    await _refreshSessions();
+    return true;
+  }
+
+  /// Loads the active treatment plan for [patientId], or if none is active,
+  /// loads the most recent completed or existing plan and its sessions.
+  Future<bool> loadActiveOrLatestPlanForPatient(String patientId) async {
+    final plans = await _repository.getPlansForPatient(patientId);
+    if (plans.isEmpty) return false;
+
+    // 1. Prefer active plan
+    BastiTreatmentPlanModel? targetPlan = plans.firstWhereOrNull(
+      (p) => p.status == TreatmentStatus.active,
+    );
+
+    // 2. Fallback to completed plan
+    targetPlan ??= plans.firstWhereOrNull(
+      (p) => p.status == TreatmentStatus.completed,
+    );
+
+    // 3. Fallback to first available plan
+    targetPlan ??= plans.first;
+
+    currentPlan.value = targetPlan;
     await _refreshSessions();
     return true;
   }

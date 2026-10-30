@@ -25,11 +25,13 @@ class ApiMasterRepository {
 
   // ── In-Memory Caches ────────────────────────────────────────────────────────
   static List<DiseaseModel>? _cachedDiseases;
+  static final Map<String, List<DiseaseModel>> _cachedDiseasesByPatient = {};
   static final Map<String, List<BastiFormulationModel>> _cachedFormulationsByDisease = {};
   static List<DoseRuleModel>? _cachedDoseRules;
   static List<BastiPatternModel>? _cachedPatterns;
 
   static Future<List<DiseaseModel>>? _inFlightDiseases;
+  static final Map<String, Future<List<DiseaseModel>>> _inFlightDiseasesByPatient = {};
   static final Map<String, Future<List<BastiFormulationModel>>> _inFlightFormulations = {};
   static Future<List<DoseRuleModel>>? _inFlightDoseRules;
   static Future<List<BastiPatternModel>>? _inFlightPatterns;
@@ -41,15 +43,23 @@ class ApiMasterRepository {
                 : ApiService());
 
   /// Clears in-memory cache.
-  void clearCache() {
-    _cachedDiseases = null;
-    _cachedFormulationsByDisease.clear();
-    _cachedDoseRules = null;
-    _cachedPatterns = null;
-    _inFlightDiseases = null;
-    _inFlightFormulations.clear();
-    _inFlightDoseRules = null;
-    _inFlightPatterns = null;
+  void clearCache([String? patientId]) {
+    if (patientId != null && patientId.trim().isNotEmpty) {
+      final pKey = patientId.trim();
+      _cachedDiseasesByPatient.remove(pKey);
+      _cachedFormulationsByDisease.removeWhere((k, _) => k.endsWith(':$pKey'));
+    } else {
+      _cachedDiseases = null;
+      _cachedDiseasesByPatient.clear();
+      _cachedFormulationsByDisease.clear();
+      _cachedDoseRules = null;
+      _cachedPatterns = null;
+      _inFlightDiseases = null;
+      _inFlightDiseasesByPatient.clear();
+      _inFlightFormulations.clear();
+      _inFlightDoseRules = null;
+      _inFlightPatterns = null;
+    }
   }
 
   List<DiseaseModel>? get cachedDiseases => _cachedDiseases;
@@ -86,27 +96,58 @@ class ApiMasterRepository {
   // ── Diseases ───────────────────────────────────────────────────────────────
 
   /// Fetches all diseases from `GET /master/diseases`.
-  Future<List<DiseaseModel>> getDiseases({bool forceRefresh = false}) async {
-    if (!forceRefresh && _cachedDiseases != null) {
+  /// Passing optional [patientId] returns standard diseases plus custom diseases for this patient (§8.2).
+  Future<List<DiseaseModel>> getDiseases({
+    String? patientId,
+    bool forceRefresh = false,
+  }) async {
+    final cacheKey = (patientId != null && patientId.trim().isNotEmpty)
+        ? patientId.trim()
+        : 'global';
+
+    if (!forceRefresh && _cachedDiseasesByPatient.containsKey(cacheKey)) {
+      ApiService.log('📦 [ApiMasterRepository] Using ${_cachedDiseasesByPatient[cacheKey]!.length} cached diseases for key: $cacheKey');
+      return _cachedDiseasesByPatient[cacheKey]!;
+    }
+
+    if (!forceRefresh && _cachedDiseases != null && cacheKey == 'global') {
       ApiService.log('📦 [ApiMasterRepository] Using ${_cachedDiseases!.length} cached diseases');
       return _cachedDiseases!;
     }
 
-    if (!forceRefresh && _inFlightDiseases != null) {
+    if (!forceRefresh && _inFlightDiseasesByPatient.containsKey(cacheKey)) {
+      return _inFlightDiseasesByPatient[cacheKey]!;
+    }
+
+    if (!forceRefresh && _inFlightDiseases != null && cacheKey == 'global') {
       return _inFlightDiseases!;
     }
 
-    final future = _fetchDiseases();
-    _inFlightDiseases = future;
+    final future = _fetchDiseases(patientId: patientId);
+    _inFlightDiseasesByPatient[cacheKey] = future;
+    if (cacheKey == 'global') {
+      _inFlightDiseases = future;
+    }
     try {
       return await future;
     } finally {
-      _inFlightDiseases = null;
+      _inFlightDiseasesByPatient.remove(cacheKey);
+      if (cacheKey == 'global') {
+        _inFlightDiseases = null;
+      }
     }
   }
 
-  Future<List<DiseaseModel>> _fetchDiseases() async {
-    final response = await _apiService.get('/master/diseases');
+  Future<List<DiseaseModel>> _fetchDiseases({String? patientId}) async {
+    final query = <String, dynamic>{};
+    if (patientId != null && patientId.trim().isNotEmpty) {
+      query['patientId'] = patientId.trim();
+    }
+
+    final response = await _apiService.get(
+      '/master/diseases',
+      query: query.isNotEmpty ? query : null,
+    );
     if (!response.isOk) {
       final msg = ApiService.extractErrorMessage(response);
       throw Exception(msg.isNotEmpty ? msg : 'Failed to load diseases (${response.statusCode})');
@@ -121,14 +162,74 @@ class ApiMasterRepository {
       (a, b) => a.displayLabel.trim().toLowerCase().compareTo(b.displayLabel.trim().toLowerCase()),
     );
 
-    _cachedDiseases = List.unmodifiable(diseases);
-    ApiService.log('📥 [ApiMasterRepository] Parsed and cached ${diseases.length} diseases from API response');
-    return _cachedDiseases!;
+    final unmod = List<DiseaseModel>.unmodifiable(diseases);
+    final cacheKey = (patientId != null && patientId.trim().isNotEmpty)
+        ? patientId.trim()
+        : 'global';
+    _cachedDiseasesByPatient[cacheKey] = unmod;
+    _cachedDiseases = unmod;
+    ApiService.log('📥 [ApiMasterRepository] Parsed and cached ${diseases.length} diseases (key: $cacheKey)');
+    return unmod;
+  }
+
+  /// Adds a custom disease for a patient (§8.1).
+  /// Endpoint: `POST /master/custom-disease`.
+  Future<DiseaseModel> addCustomDisease({
+    required String name,
+    required String patientId,
+  }) async {
+    final trimmedName = name.trim();
+    final trimmedPatientId = patientId.trim();
+
+    final response = await _apiService.post(
+      '/master/custom-disease',
+      {
+        'name': trimmedName,
+        'patientId': trimmedPatientId,
+      },
+    );
+
+    if (!response.isOk) {
+      final msg = ApiService.extractErrorMessage(response);
+      throw Exception(
+        msg.isNotEmpty ? msg : 'Failed to add custom disease (${response.statusCode})',
+      );
+    }
+
+    final resBody = response.body;
+    Map<String, dynamic> dataMap;
+    if (resBody is Map && resBody['data'] is Map) {
+      dataMap = _toMap(resBody['data']);
+    } else if (resBody is Map<String, dynamic>) {
+      dataMap = resBody;
+    } else {
+      throw Exception('Invalid response format for custom disease');
+    }
+
+    final created = DiseaseModel.fromJson(dataMap);
+
+    // Update patient cache
+    final cacheKey = trimmedPatientId;
+    final currentList = _cachedDiseasesByPatient[cacheKey] ?? _cachedDiseases ?? [];
+    final updatedList = List<DiseaseModel>.from(currentList)
+      ..removeWhere((d) => d.id == created.id)
+      ..add(created)
+      ..sort((a, b) => a.displayLabel.trim().toLowerCase().compareTo(b.displayLabel.trim().toLowerCase()));
+
+    final unmod = List<DiseaseModel>.unmodifiable(updatedList);
+    _cachedDiseasesByPatient[cacheKey] = unmod;
+    _cachedDiseases = unmod;
+
+    return created;
   }
 
   /// Finds a disease by its string `id` or MongoDB `_id` or name.
-  Future<DiseaseModel?> getDiseaseById(String id, {bool forceRefresh = false}) async {
-    final diseases = await getDiseases(forceRefresh: forceRefresh);
+  Future<DiseaseModel?> getDiseaseById(
+    String id, {
+    String? patientId,
+    bool forceRefresh = false,
+  }) async {
+    final diseases = await getDiseases(patientId: patientId, forceRefresh: forceRefresh);
     try {
       final target = id.trim().toLowerCase();
       return diseases.firstWhere(
@@ -182,64 +283,80 @@ class ApiMasterRepository {
   ///
   /// CRITICAL: [diseaseId] MUST be the disease string `id`, NOT MongoDB `_id`.
   /// Automatically resolves MongoDB `_id` or custom IDs to proper slug if [diseaseName] is supplied.
+  /// Passing [patientId] includes any custom formulations created for that disease and patient (§8.3).
   Future<List<BastiFormulationModel>> getFormulationsByDisease(
     String diseaseId, {
     String? diseaseName,
+    String? patientId,
     bool forceRefresh = false,
   }) async {
     final slug = resolveDiseaseSlug(diseaseId, diseaseName: diseaseName);
+    final pKey = patientId != null && patientId.trim().isNotEmpty ? patientId.trim() : '';
+    final slugKey = pKey.isNotEmpty ? '$slug:$pKey' : slug;
+    final diseaseKey = pKey.isNotEmpty ? '$diseaseId:$pKey' : diseaseId;
 
     if (!forceRefresh) {
-      if (_cachedFormulationsByDisease.containsKey(slug)) {
-        return _cachedFormulationsByDisease[slug]!;
+      if (_cachedFormulationsByDisease.containsKey(slugKey)) {
+        return _cachedFormulationsByDisease[slugKey]!;
       }
-      if (_cachedFormulationsByDisease.containsKey(diseaseId)) {
-        return _cachedFormulationsByDisease[diseaseId]!;
+      if (_cachedFormulationsByDisease.containsKey(diseaseKey)) {
+        return _cachedFormulationsByDisease[diseaseKey]!;
       }
-      if (_inFlightFormulations.containsKey(slug)) {
-        return _inFlightFormulations[slug]!;
+      if (_inFlightFormulations.containsKey(slugKey)) {
+        return _inFlightFormulations[slugKey]!;
       }
-      if (_inFlightFormulations.containsKey(diseaseId)) {
-        return _inFlightFormulations[diseaseId]!;
+      if (_inFlightFormulations.containsKey(diseaseKey)) {
+        return _inFlightFormulations[diseaseKey]!;
       }
     }
 
-    final future = _fetchFormulationsByDisease(slug, diseaseId, diseaseName);
-    _inFlightFormulations[slug] = future;
-    _inFlightFormulations[diseaseId] = future;
+    final future = _fetchFormulationsByDisease(slug, diseaseId, diseaseName, patientId: patientId);
+    _inFlightFormulations[slugKey] = future;
+    _inFlightFormulations[diseaseKey] = future;
     try {
       return await future;
     } finally {
-      _inFlightFormulations.remove(slug);
-      _inFlightFormulations.remove(diseaseId);
+      _inFlightFormulations.remove(slugKey);
+      _inFlightFormulations.remove(diseaseKey);
     }
   }
 
   Future<List<BastiFormulationModel>> _fetchFormulationsByDisease(
     String slug,
     String diseaseId,
-    String? diseaseName,
-  ) async {
+    String? diseaseName, {
+    String? patientId,
+  }) async {
+    final query = <String, dynamic>{};
+    if (patientId != null && patientId.trim().isNotEmpty) {
+      query['patientId'] = patientId.trim();
+    }
+    final queryMap = query.isNotEmpty ? query : null;
+
     // Try primary query with resolved slug
-    var response = await _apiService.get('/master/formulations/$slug');
+    var response = await _apiService.get('/master/formulations/$slug', query: queryMap);
 
     // If 404 and slug differs from original diseaseId, try fallback with diseaseId
     if (response.statusCode == 404 && slug != diseaseId && !diseaseId.startsWith('custom_')) {
-      response = await _apiService.get('/master/formulations/$diseaseId');
+      response = await _apiService.get('/master/formulations/$diseaseId', query: queryMap);
     }
 
     // If still 404 and diseaseName is available and different, try slugifying diseaseName
     if (response.statusCode == 404 && diseaseName != null && diseaseName.trim().isNotEmpty) {
       final nameSlug = DiseaseModel.slugify(diseaseName);
       if (nameSlug != slug && nameSlug != diseaseId) {
-        response = await _apiService.get('/master/formulations/$nameSlug');
+        response = await _apiService.get('/master/formulations/$nameSlug', query: queryMap);
       }
     }
 
+    final pKey = patientId != null && patientId.trim().isNotEmpty ? patientId.trim() : '';
+    final slugKey = pKey.isNotEmpty ? '$slug:$pKey' : slug;
+    final diseaseKey = pKey.isNotEmpty ? '$diseaseId:$pKey' : diseaseId;
+
     if (response.statusCode == 404) {
-      // Gracefully return empty list when no formulations exist
-      _cachedFormulationsByDisease[slug] = const [];
-      _cachedFormulationsByDisease[diseaseId] = const [];
+      // Gracefully return empty list when no formulations exist (e.g. newly created custom disease)
+      _cachedFormulationsByDisease[slugKey] = const [];
+      _cachedFormulationsByDisease[diseaseKey] = const [];
       return const [];
     }
 
@@ -258,9 +375,95 @@ class ApiMasterRepository {
         .toList();
 
     final unmod = List<BastiFormulationModel>.unmodifiable(formulations);
-    _cachedFormulationsByDisease[slug] = unmod;
-    _cachedFormulationsByDisease[diseaseId] = unmod;
+    _cachedFormulationsByDisease[slugKey] = unmod;
+    _cachedFormulationsByDisease[diseaseKey] = unmod;
     return unmod;
+  }
+
+  /// Adds a custom formulation directly under the selected disease and patient (§8.4).
+  /// Endpoint: `POST /master/custom-formulation`.
+  Future<BastiFormulationModel> addCustomFormulation({
+    required String name,
+    required String diseaseId,
+    required String patientId,
+    String? rawName,
+    String? bastiType,
+  }) async {
+    final body = <String, dynamic>{
+      'name': name.trim(),
+      'diseaseId': diseaseId.trim(),
+      'patientId': patientId.trim(),
+    };
+    if (rawName != null && rawName.trim().isNotEmpty) {
+      body['rawName'] = rawName.trim();
+    }
+    if (bastiType != null && bastiType.trim().isNotEmpty) {
+      body['bastiType'] = bastiType.trim();
+    }
+
+    final response = await _apiService.post(
+      '/master/custom-formulation',
+      body,
+    );
+
+    if (!response.isOk) {
+      final msg = ApiService.extractErrorMessage(response);
+      throw Exception(
+        msg.isNotEmpty ? msg : 'Failed to add custom formulation (${response.statusCode})',
+      );
+    }
+
+    final resBody = response.body;
+    Map<String, dynamic> dataMap;
+    if (resBody is Map && resBody['data'] is Map) {
+      dataMap = _toMap(resBody['data']);
+    } else if (resBody is Map<String, dynamic>) {
+      dataMap = resBody;
+    } else {
+      throw Exception('Invalid response format for custom formulation');
+    }
+
+    final created = BastiFormulationModel.fromJson(dataMap);
+
+    // Invalidate caches
+    final slug = resolveDiseaseSlug(diseaseId);
+    final pKey = patientId.trim();
+    _cachedFormulationsByDisease.remove(slug);
+    _cachedFormulationsByDisease.remove(diseaseId);
+    _cachedFormulationsByDisease.remove('$slug:$pKey');
+    _cachedFormulationsByDisease.remove('$diseaseId:$pKey');
+
+    return created;
+  }
+
+  /// Fetches custom formulations created by the doctor (§8.5).
+  /// Endpoint: `GET /master/custom-formulations?diseaseId=<diseaseId>&patientId=<patientId>`.
+  Future<List<BastiFormulationModel>> getCustomFormulations({
+    String? diseaseId,
+    String? patientId,
+  }) async {
+    final query = <String, dynamic>{};
+    if (diseaseId != null && diseaseId.trim().isNotEmpty) {
+      query['diseaseId'] = diseaseId.trim();
+    }
+    if (patientId != null && patientId.trim().isNotEmpty) {
+      query['patientId'] = patientId.trim();
+    }
+
+    final response = await _apiService.get(
+      '/master/custom-formulations',
+      query: query.isNotEmpty ? query : null,
+    );
+
+    if (!response.isOk) {
+      final msg = ApiService.extractErrorMessage(response);
+      throw Exception(
+        msg.isNotEmpty ? msg : 'Failed to load custom formulations (${response.statusCode})',
+      );
+    }
+
+    final list = _extractDataList(response.body);
+    return list.map((e) => BastiFormulationModel.fromJson(_toMap(e))).toList();
   }
 
   /// Fetches formulations for [diseaseId] transformed into [BastiOptionModel] list,
@@ -268,11 +471,13 @@ class ApiMasterRepository {
   Future<List<BastiOptionModel>> getBastiOptionsForDisease(
     String diseaseId, {
     String? diseaseName,
+    String? patientId,
     bool forceRefresh = false,
   }) async {
     final formulations = await getFormulationsByDisease(
       diseaseId,
       diseaseName: diseaseName,
+      patientId: patientId,
       forceRefresh: forceRefresh,
     );
 
@@ -280,7 +485,7 @@ class ApiMasterRepository {
         .map((f) => BastiOptionModel.fromFormulation(f, diseaseId: diseaseId))
         .toList();
 
-    return List.unmodifiable(options);
+    return options;
   }
 
   // ── Dose Rules ─────────────────────────────────────────────────────────────

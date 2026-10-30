@@ -74,9 +74,10 @@ class AssessmentDashboardScreen extends StatelessWidget {
                         color: const Color(0xFF1565C0),
                         status: status,
                         onTap: () {
+                          final isDone = ctrl.pradhankarmaComplete.value || ctrl.initialPradhanaKarmaCompleted;
                           final hasActiveSessions = ctrl.loggedSessionCount > 0;
                           final initialStep =
-                              (ctrl.purvakarmaComplete.value && hasActiveSessions)
+                              (isDone || (ctrl.purvakarmaComplete.value && hasActiveSessions))
                                   ? 3
                                   : 0;
                           Get.to(() => PradhanKarmaScreen(initialStep: initialStep));

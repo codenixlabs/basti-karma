@@ -17,27 +17,91 @@ class BastiClinicalRepository {
   }) : _apiMasterRepo = apiMasterRepo ?? ApiMasterRepository();
 
   // ── Diseases ───────────────────────────────────────────────────────────────
-  Future<List<DiseaseModel>> getDiseases({bool forceRefresh = false}) {
-    return _apiMasterRepo.getDiseases(forceRefresh: forceRefresh);
+  Future<List<DiseaseModel>> getDiseases({
+    String? patientId,
+    bool forceRefresh = false,
+  }) {
+    return _apiMasterRepo.getDiseases(
+      patientId: patientId,
+      forceRefresh: forceRefresh,
+    );
   }
 
-  Future<DiseaseModel?> getDiseaseById(String id, {bool forceRefresh = false}) {
-    return _apiMasterRepo.getDiseaseById(id, forceRefresh: forceRefresh);
+  Future<DiseaseModel?> getDiseaseById(
+    String id, {
+    String? patientId,
+    bool forceRefresh = false,
+  }) {
+    return _apiMasterRepo.getDiseaseById(
+      id,
+      patientId: patientId,
+      forceRefresh: forceRefresh,
+    );
+  }
+
+  Future<DiseaseModel> addCustomDisease({
+    required String name,
+    required String patientId,
+  }) {
+    return _apiMasterRepo.addCustomDisease(
+      name: name,
+      patientId: patientId,
+    );
   }
 
   // ── Formulations ───────────────────────────────────────────────────────────
   Future<List<BastiFormulationModel>> getAvailableFormulationsForDisease(
-      String diseaseId, {String? diseaseName, bool forceRefresh = false}) {
-    return _apiMasterRepo.getFormulationsByDisease(diseaseId,
-        diseaseName: diseaseName,
-        forceRefresh: forceRefresh);
+    String diseaseId, {
+    String? diseaseName,
+    String? patientId,
+    bool forceRefresh = false,
+  }) {
+    return _apiMasterRepo.getFormulationsByDisease(
+      diseaseId,
+      diseaseName: diseaseName,
+      patientId: patientId,
+      forceRefresh: forceRefresh,
+    );
   }
 
   Future<List<BastiOptionModel>> getBastiOptionsForDisease(
-      String diseaseId, {String? diseaseName, bool forceRefresh = false}) {
-    return _apiMasterRepo.getBastiOptionsForDisease(diseaseId,
-        diseaseName: diseaseName,
-        forceRefresh: forceRefresh);
+    String diseaseId, {
+    String? diseaseName,
+    String? patientId,
+    bool forceRefresh = false,
+  }) {
+    return _apiMasterRepo.getBastiOptionsForDisease(
+      diseaseId,
+      diseaseName: diseaseName,
+      patientId: patientId,
+      forceRefresh: forceRefresh,
+    );
+  }
+
+  Future<BastiFormulationModel> addCustomFormulation({
+    required String name,
+    required String diseaseId,
+    required String patientId,
+    String? rawName,
+    String? bastiType,
+  }) {
+    return _apiMasterRepo.addCustomFormulation(
+      name: name,
+      diseaseId: diseaseId,
+      patientId: patientId,
+      rawName: rawName,
+      bastiType: bastiType,
+    );
+  }
+
+  Future<List<BastiFormulationModel>> getCustomFormulations({
+    String? diseaseId,
+    String? patientId,
+  }) {
+    return _apiMasterRepo.getCustomFormulations(
+      diseaseId: diseaseId,
+      patientId: patientId,
+    );
   }
 
   // ── Dose Rules ─────────────────────────────────────────────────────────────
